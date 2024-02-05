@@ -17,6 +17,14 @@ could be useful, but are not required.
 
 ## Conventions
 
+### Branches
+
+We use the following branch naming conventions:
+- `master` for the main branch
+- `feature/<branch>` for feature branches
+- `bugfix/<branch>` for bugfix branches
+- `hotfix/<branch>` for hotfix branches
+
 ### Commit messages
 
 We use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for our commit messages.
