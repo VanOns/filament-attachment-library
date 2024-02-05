@@ -17,23 +17,13 @@ body:
         2. Click on '....'
         3. Scroll down to '....'
         4. See error
-      value: |
-        1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
-        4. See error
       render: markdown
     validations:
       required: true
-  - type: textarea
-    attributes:
-      label: Logs
-      description: If you have any logs or error output, please paste it here.
-      render: shell
   - type: input
     attributes:
       label: Version
-      description: What version of Filament media library are you using?
+      description: Which version of the package are you using?
       placeholder: v1.2.3
     validations:
       required: true
@@ -52,6 +42,11 @@ body:
       render: markdown
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: If you have any logs or error output, please paste it here.
+      render: shell
   - type: textarea
     attributes:
       label: Additional details
