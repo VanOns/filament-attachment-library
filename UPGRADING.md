@@ -13,4 +13,4 @@ across such a case, please let us know by [opening an issue][issues], or by addi
 * Run `php artisan migrate` to update the database.
 -->
 
-[issues]: https://github.com/VanOns/filament-media-library/issues
+[issues]: https://github.com/VanOns/filament-attachment-library/issues

@@ -24,6 +24,6 @@ By contributing, you agree that your contributions will be licensed under its [M
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 
 [code-of-conduct]: CODE_OF_CONDUCT.md
-[issues]: https://github.com/VanOns/filament-media-library/issues
-[discussions]: https://github.com/VanOns/filament-media-library/discussions
+[issues]: https://github.com/VanOns/filament-attachment-library/issues
+[discussions]: https://github.com/VanOns/filament-attachment-library/discussions
 [license]: LICENSE.md

@@ -1,10 +1,10 @@
-<p align="center"><img src="art/social-card.png" alt="Social card of Filament media library"></p>
+<p align="center"><img src="art/social-card.png" alt="Social card of Filament attachment library"></p>
 
-# Filament media library
+# Filament attachment library
 
 <!-- BADGES -->
 
-Filament package for easy media uploading and browsing.
+Filament package for easy attachment uploading and browsing.
 
 ## Quick start
 
@@ -12,7 +12,7 @@ Filament package for easy media uploading and browsing.
 
 ```bash
 # Composer
-composer require van-ons/filament-media-library
+composer require van-ons/filament-attachment-library
 ```
 
 ### Usage
