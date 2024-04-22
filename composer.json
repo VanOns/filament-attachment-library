@@ -1,0 +1,66 @@
+{
+  "name": "van-ons/filament-attachment-library",
+  "description": "A Filament library for attaching files to Eloquent models.",
+  "keywords": [
+    "van ons",
+    "filament",
+    "filament-attachment-library",
+    "attachments",
+    "library",
+    "eloquent"
+  ],
+  "homepage": "https://github.com/VanOns/filament-attachment-library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dangelo Brusorio",
+      "email": "dangelo@van-ons.nl"
+    },
+    {
+      "name": "Danique Wijnalda",
+      "email": "danique@van-ons.nl"
+    }
+  ],
+  "require": {
+    "van-ons/laravel-attachment-library": "@dev"
+  },
+  "require-dev": {
+    "larastan/larastan": "^2.9",
+    "laravel/pint": "^1.14",
+    "orchestra/testbench": "^8.21",
+    "phpunit/phpunit": "^10.1",
+    "filament/filament": "^3.0-stable"
+  },
+  "scripts" : {
+    "analyse": "./vendor/bin/phpstan analyse",
+    "format": "./vendor/bin/pint",
+    "test": "./vendor/bin/phpunit"
+  },
+  "autoload": {
+    "psr-4": {
+      "VanOns\\FilamentAttachmentLibrary\\": "src",
+      "Database\\Factories\\": "database/factories/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "VanOns\\FilamentAttachmentLibrary\\Test\\": "tests"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "VanOns\\FilamentAttachmentLibrary\\FilamentAttachmentLibraryServiceProvider"
+      ]
+    }
+  },
+  "config" : {
+    "sort-packages": true
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/home/dangelo/projects/laravel-attachment-library"
+    }
+  ]
+}
