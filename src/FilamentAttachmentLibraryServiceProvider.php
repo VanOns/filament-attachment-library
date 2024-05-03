@@ -29,8 +29,6 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 
                         $callable->call('filament:assets');
                     }
-
-                    $callable->comment("Make sure to add './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php' to your tailwind.config.js!");
                 });
             });
     }

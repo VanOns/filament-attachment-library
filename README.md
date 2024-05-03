@@ -29,8 +29,28 @@ export default {
         './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php',
     ],
 }
-
 ```
+
+Lastly, register the plugin in the desired Filament panel.
+
+```php
+<?php
+
+namespace App\Providers\Filament;
+
+use VanOns\FilamentAttachmentLibrary\FilamentAttachmentLibrary;
+
+class ExamplePanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->plugin(FilamentAttachmentLibrary::make());
+    }
+
+}
+```
+
 ### Usage
 
 ```php
