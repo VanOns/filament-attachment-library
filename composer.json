@@ -9,6 +9,8 @@
     "library",
     "eloquent"
   ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "homepage": "https://github.com/VanOns/filament-attachment-library",
   "license": "MIT",
   "authors": [
@@ -22,6 +24,7 @@
     }
   ],
   "require": {
+    "php": "^8.2",
     "van-ons/laravel-attachment-library": "@dev"
   },
   "require-dev": {
@@ -38,8 +41,7 @@
   },
   "autoload": {
     "psr-4": {
-      "VanOns\\FilamentAttachmentLibrary\\": "src",
-      "Database\\Factories\\": "database/factories/"
+      "VanOns\\FilamentAttachmentLibrary\\": "src"
     }
   },
   "autoload-dev": {
@@ -56,11 +58,5 @@
   },
   "config" : {
     "sort-packages": true
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "/home/dangelo/projects/laravel-attachment-library"
-    }
-  ]
+  }
 }
