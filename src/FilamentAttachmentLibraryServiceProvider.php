@@ -2,17 +2,36 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Console\OutputStyle;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('van-ons/filament-attachment-library')
+            ->name('filament-attachment-library')
             ->hasConfigFile('filament-attachment-library')
             ->hasViews('filament-attachment-library')
-            ->hasTranslations();;
+            ->hasTranslations()
+            ->hasInstallCommand(function (InstallCommand $command){
+                $command->startWith(function(InstallCommand $callable){
+                    if ($callable->confirm('Would you like to install the van-ons/laravel-attachment-library?')) {
+                        $callable->comment('Installing van-ons/laravel-attachment-library...');
+
+                        $callable->call('attachment-library:install');
+                    }
+
+                    if ($callable->confirm('Would you like to publish the filament assets?')) {
+                        $callable->comment('Publishing filament assets...');
+
+                        $callable->call('filament:assets');
+                    }
+
+                    $callable->comment("Make sure to add './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php' to your tailwind.config.js!");
+                });
+            });
     }
 }

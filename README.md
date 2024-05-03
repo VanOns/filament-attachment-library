@@ -9,12 +9,28 @@ Filament package for easy attachment uploading and browsing.
 ## Quick start
 
 ### Installation
-
+The Filament Attachment Library can be installed using composer by running the following command:
 ```bash
-# Composer
-composer require van-ons/filament-attachment-library
+$ composer require van-ons/filament-attachment-library
 ```
 
+For this package, an installation command is available that ensures that the migrations and assets are installed.
+```bash
+$ php artisan filament-attachment-library:install
+```
+
+The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the tailwind.config.js file should be extended with:
+```bash
+# tailwind.config.js
+export default {
+    presets: ...,
+    content: [
+        ...
+        './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php',
+    ],
+}
+
+```
 ### Usage
 
 ```php
