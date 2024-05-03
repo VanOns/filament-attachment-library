@@ -20,12 +20,12 @@ $ php artisan filament-attachment-library:install
 ```
 
 The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the tailwind.config.js file should be extended with:
-```bash
-# tailwind.config.js
+```javascript
+// tailwind.config.js
 export default {
-    presets: ...,
+    presets: '',
     content: [
-        ...
+        // ...
         './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php',
     ],
 }
