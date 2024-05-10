@@ -39,7 +39,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
-    public ?Attachment $highlightedAttachment = null;
+    public ?Attachment $highlightedAttachment;
 
     public ?bool $showActions;
 
@@ -84,7 +84,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         return Action::make('deleteAttachment')->requiresConfirmation()->color('danger')->action(
             function (array $arguments) {
-                if ($this->highlightedAttachment->id === $arguments['attachment_id']) {
+                if ($this->highlightedAttachment?->id === $arguments['attachment_id']) {
                     $this->highlightedAttachment = null;
                 }
                 AttachmentManager::delete(Attachment::find($arguments['attachment_id']));

@@ -38,7 +38,7 @@
 
         {{-- Show info block for highlighted attachment --}}
         @if(! $items->isEmpty())
-            @include('filament-attachment-library::components.attachment-info')
+            <livewire:attachment-info :attachment="$highlightedAttachment" wire:key="attachment-info-{{ Str::random(10) }}" />
         @endif
 
     </div>

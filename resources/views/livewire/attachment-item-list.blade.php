@@ -28,7 +28,8 @@
                 <p class="block text-sm font-medium" x-show="attachment.type === 'attachment'" x-text="attachment.size + ' MB'"></p>
             </div>
 
-            <div class="absolute top-4 right-4" x-on:click.stop="">
+
+            <div class="absolute top-4 right-4">
                 <x-filament::icon
                         icon="heroicon-o-check"
                         class="w-8 h-8 m-0"

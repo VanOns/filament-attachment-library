@@ -21,6 +21,8 @@ class AttachmentSynth extends Synth
             'path' => $target->path,
             'name' => $target->name,
             'url' => $target->url,
+            'created_at' => $target->created_at,
+            'mime_type' => $target->mime_type,
             'type' => 'attachment',
             'hasThumbnail' => in_array($target->mime_type, ['image/jpeg', 'image/png']),
             'size' => round(($target->size / 1024 / 1024), 2),
@@ -29,6 +31,6 @@ class AttachmentSynth extends Synth
 
     public function hydrate($value)
     {
-        // ...
+        return Attachment::find($value['id']);
     }
 }

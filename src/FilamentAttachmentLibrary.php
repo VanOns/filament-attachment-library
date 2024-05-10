@@ -10,7 +10,9 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentActions;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentItemList;
 use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\AttachmentSynth;
 use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\DirectorySynth;
@@ -32,6 +34,7 @@ class FilamentAttachmentLibrary implements Plugin
         // Register all package panel assets
         $panel->assets([
             Js::make('attachmentBrowser', __DIR__.'/../resources/js/attachmentBrowser.js')->loadedOnRequest(),
+            Js::make('clipboard', __DIR__.'/../resources/js/clipboard.js'),
         ]);
     }
 
@@ -45,13 +48,15 @@ class FilamentAttachmentLibrary implements Plugin
         // Register all livewire components
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-item-list', AttachmentItemList::class);
+        Livewire::component('attachment-info', AttachmentInfo::class);
+        Livewire::component('attachment-actions', AttachmentActions::class);
 
         // Don't render attachment browser by default, only if needed
         View::share('renderAttachmentBrowserModal', false);
 
         // Register attachment browser modal on every page start
         FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
+            PanelsRenderHook::PAGE_END,
             fn () => view('filament-attachment-library::livewire.attachment-browser-modal'),
         );
 
