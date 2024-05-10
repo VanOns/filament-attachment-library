@@ -5,7 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Illuminate\Console\OutputStyle;
+use VanOns\FilamentAttachmentLibrary\Command\ImportAttachments;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 {
@@ -29,7 +29,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 
                         $callable->call('filament:assets');
                     }
-                });
+                })->setHidden(false);
             });
     }
 }

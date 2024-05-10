@@ -3,7 +3,6 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\BaseFileUpload;
@@ -18,13 +17,14 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
+use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
-    use InteractsWithActions;
+    use InteractsWithActionsUsingAlpineJS;
     use InteractsWithForms;
     use WithPagination;
 
@@ -39,15 +39,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
-    public ?Attachment $highlightedAttachment;
-
     public ?bool $showActions;
 
     public ?bool $multiple;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
-    public function mount($multiple = false, $showActions = false)
+    public function mount(bool $multiple = false, bool $showActions = false): void
     {
         $this->multiple = $multiple;
         $this->showActions = $showActions;
@@ -58,7 +56,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return Action::make('deleteDirectory')->requiresConfirmation()->color('danger')->action(
             function (array $arguments) {
                 AttachmentManager::deleteDirectory($arguments['directory']['fullPath']);
-                $this->dispatch('$refresh')->self();
             }
         );
     }
@@ -76,7 +73,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ]))
             ->action(function (array $data, array $arguments) {
                 AttachmentManager::renameDirectory($arguments['directory']['fullPath'], $data['name']);
-                $this->dispatch('$refresh')->self();
             });
     }
 
@@ -84,9 +80,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         return Action::make('deleteAttachment')->requiresConfirmation()->color('danger')->action(
             function (array $arguments) {
-                if ($this->highlightedAttachment?->id === $arguments['attachment_id']) {
-                    $this->highlightedAttachment = null;
-                }
+                $this->dispatch('dehighlight-attachment', $arguments['attachment_id']);
+
                 AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
             }
         );
@@ -126,9 +121,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     ->fetchFileInformation()
                     ->saveUploadedFileUsing(
                         function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-                            $this->highlightedAttachment = AttachmentManager::upload($file, $this->currentPath);
+                            $attachment = AttachmentManager::upload($file, $this->currentPath);
+                            $this->dispatch('highlight-attachment', $attachment->id);
                             $file->delete();
-                            $this->dispatch('$refresh')->self();
                         }
                     ),
             ]);
@@ -145,7 +140,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->action(function (array $data) {
                 $path = implode('/', (array_filter([$this->currentPath, $data['name']])));
                 AttachmentManager::createDirectory($path);
-                $this->dispatch('$refresh')->self();
             });
     }
 
@@ -156,20 +150,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function openPath(?string $path): void
     {
         $this->currentPath = $path;
-        $this->highlightedAttachment = null;
-    }
-
-    /**
-     * Set highlighted attachment
-     */
-    #[On('highlight-attachment')]
-    public function highlightAttachment(?int $id): void
-    {
-        if ($id === null) {
-            $this->highlightedAttachment = null;
-        }
-
-        $this->highlightedAttachment = Attachment::find($id);
+        $this->dispatch('highlight-attachment',  null);
     }
 
     public function render()

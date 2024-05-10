@@ -29,7 +29,7 @@
 
             {{-- Attachment list & pagination --}}
             @if(! $items->isEmpty())
-                <livewire:attachment-item-list :attachments="$items->getCollection()" wire:key="attachment-item-list-{{ Str::random(10) }}" />
+                <livewire:attachment-item-list :attachments="$items->getCollection()" />
 
                 <x-filament::pagination :paginator="$items" extreme-links class="w-full"/>
             @endif
@@ -38,10 +38,10 @@
 
         {{-- Show info block for highlighted attachment --}}
         @if(! $items->isEmpty())
-            <livewire:attachment-info :attachment="$highlightedAttachment" wire:key="attachment-info-{{ Str::random(10) }}" />
+            <livewire:attachment-info />
         @endif
 
     </div>
-
     <x-filament-actions::modals/>
+
 </div>

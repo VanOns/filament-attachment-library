@@ -1,40 +1,124 @@
 Alpine.store('attachmentBrowser', {
+    /**
+     * Properties.
+     */
     states: {},
     currentStatePath: null,
 
+    /**
+     * Constructor.
+     */
     init() {
-        window.addEventListener('close-modal', $event => {this.close($event);})
-        window.addEventListener('open-modal', $event => {this.open($event);})
-        window.addEventListener('attachment-browser-add-state-path', $event => {this.addStatePath($event);})
+        window.addEventListener('open-modal', $event => {
+            this._onModalOpened($event);
+        })
+        window.addEventListener('close-modal', $event => {
+            this._onModalClosed($event);
+        })
+        window.addEventListener('attachment-browser-add-state-path', $event => {
+            this.addStatePath($event);
+        })
     },
 
-    openPath(path) {
-        this.resetSelection();
-
-        Livewire.dispatch('open-path', {path: path});
+    /**
+     * Getters and setters.
+     */
+    setCurrentState(statePath, state) {
+        this.currentStatePath = statePath;
+        this.addStatePath(statePath, state);
     },
 
-    open($event) {
+    addStatePath(statePath, state) {
+        this.states[statePath] = state;
+    },
+
+    isSelected(id, alternativeStatePath = null) {
+        let statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._statePathAbsentOrNull(statePath)) return false;
+
+        return this._isMultiple(statePath)
+            ? this.states[statePath].state.includes(id)
+            : this.states[statePath].state === id;
+    },
+
+    showActions(alternativeStatePath = null) {
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._statePathAbsentOrNull(statePath)) return false;
+
+        return this.states[statePath].showActions;
+    },
+
+    /**
+     * Helper methods and callbacks.
+     */
+    _onModalOpened($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
         this.currentStatePath = $event.detail.statePath;
     },
 
-    close($event) {
+    _onModalClosed($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
-        this.update();
+        this._dispatchUpdatedAttachments();
 
         this.currentStatePath = null;
+    },
+
+    _statePathAbsentOrNull(statePath) {
+        return !(statePath in this.states) || this.states[statePath] === null;
+    },
+
+    _isMultiple(statePath) {
+        return this.states[statePath].multiple;
+    },
+
+    _dispatchUpdatedAttachments(alternativeStatePath = null) {
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        Livewire.dispatch(
+            'selected-attachments-updated',
+            {
+                attachments: this.states[statePath].state,
+                statePath: statePath
+            }
+        );
+    },
+
+    handleItemClick(item, alternativeStatePath = null){
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        switch (item.type) {
+            case 'attachment':
+                this.isSelected(item.id, statePath)
+                    ? this.deselect(item.id, statePath)
+                    : this.select(item.id, statePath);
+                break;
+            case 'directory':
+                this.openPath(item.fullPath, statePath);
+                break;
+        }
+    },
+
+    /**
+     * Attachment and directory actions
+     */
+    openPath(path) {
+        this.states[this.currentStatePath].state = [];
+
+        Livewire.dispatch('open-path', {path: path});
     },
 
     select(id, alternativeStatePath = null) {
         let statePath = alternativeStatePath ?? this.currentStatePath;
 
-        if (! this.states[statePath].multiple) this.states[statePath].state = id;
-        if (this.states[statePath].multiple) this.states[statePath].state.push(id);
+        this._isMultiple(statePath)
+            ? this.states[statePath].state.push(id)
+            : this.states[statePath].state = id;
 
-        this.update();
+        this._dispatchUpdatedAttachments();
 
         Livewire.dispatch('highlight-attachment', {id: id});
     },
@@ -42,50 +126,14 @@ Alpine.store('attachmentBrowser', {
     deselect(id, alternativeStatePath = null) {
         let statePath = alternativeStatePath ?? this.currentStatePath;
 
-        if(!(statePath in this.states)) return false;
-        if(this.states[statePath] === null) return false;
-        if(this.states[statePath].multiple){
-            this.states[statePath].state = this.states[statePath].state.filter(e => e !== id);
-        } else {
-            this.states[statePath].state = null;
-        }
+        if (this._statePathAbsentOrNull(statePath)) return false;
 
-        this.update(statePath);
+        this.states[statePath].state = this._isMultiple(statePath)
+            ? this.states[statePath].state.filter(e => e !== id)
+            : null;
+
+        this._dispatchUpdatedAttachments(statePath);
 
         Livewire.dispatch('highlight-attachment', {id: null});
-    },
-
-    isSelected(id, alternativeStatePath = null) {
-        let statePath = alternativeStatePath ?? this.currentStatePath;
-
-        if(!(statePath in this.states)) return false;
-        if(this.states[statePath] === null) return false;
-        if(this.states[statePath].multiple){
-            return this.states[statePath].state.includes(id);
-        }
-        return this.states[statePath].state === id;
-    },
-
-    resetSelection(){
-        this.states[this.currentStatePath].state = [];
-    },
-
-    update(statePath = null){
-        Livewire.dispatch('selected-attachments-updated', {attachments: this.states[statePath ?? this.currentStatePath].state, statePath: statePath ?? this.currentStatePath});
-    },
-
-    showActions(statePath = null) {
-        if (this.states[statePath ?? this.currentStatePath] === undefined) return false;
-
-        return this.states[statePath ?? this.currentStatePath].showActions;
-    },
-
-    setCurrentState(statePath, state){
-        this.currentStatePath = statePath;
-        this.addStatePath(statePath, state);
-    },
-
-    addStatePath(statePath, state){
-        this.states[statePath] = state;
     }
 })

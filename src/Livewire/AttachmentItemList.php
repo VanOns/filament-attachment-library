@@ -2,26 +2,30 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Reactive;
 use Livewire\Component;
-use Livewire\WithPagination;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-class AttachmentItemList extends Component implements HasActions, HasForms
+#[Lazy]
+class AttachmentItemList extends Component
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
-    use WithPagination;
-
+    #[Reactive]
     public Collection|Attachment $attachments;
 
     public ?string $statePath;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-item-list';
+
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div class="flex-1">
+            <x-filament::loading-indicator class="h-8 w-8 mx-auto"/>
+        </div>
+        HTML;
+    }
 
     public function render()
     {

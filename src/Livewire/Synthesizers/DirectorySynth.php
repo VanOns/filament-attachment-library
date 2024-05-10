@@ -26,6 +26,6 @@ class DirectorySynth extends Synth
 
     public function hydrate($value)
     {
-        // ...
+        return new Directory($value['fullPath']);
     }
 }

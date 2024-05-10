@@ -1,10 +1,10 @@
 <div
-    x-data="{attachment: $wire.$entangle('attachment')}"
+    x-data="{attachment: $wire.$entangle('attachment').live}"
     class="p-6 flex-1 sticky top-24 w-full min-w-[400px] flex-grow-0 self-start rounded-l-xl bg-white dark:bg-gray-900 rounded-lg hidden md:block max-w-md">
 
     <x-filament::loading-indicator wire:loading wire:target="openPath" class="h-8 w-8 mx-auto" />
 
-    <template x-if="attachment === null">
+    <template x-if="typeof attachment === 'undefined' || attachment === null">
         <div wire:loading.remove wire:target="openPath">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                 <span class="break-words">Selecteer een map of bestand</span>
@@ -14,11 +14,12 @@
             </p>
         </div>
     </template>
-    <template x-if="attachment !== null">
+
+    <template x-if="typeof attachment !== 'undefined' && attachment !== null">
         <div wire:loading.remove wire:target="openPath">
 
             <template x-if="attachment.hasThumbnail">
-                <img loading="lazy" :src="attachment.url" class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
+                <img loading="lazy" :src="attachment?.url" class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
             </template>
 
             <template x-if="!attachment.hasThumbnail">
@@ -52,13 +53,22 @@
             <template x-if="$store.attachmentBrowser?.showActions()">
                 <div class="mt-6">
                     <div class="grid grid-cols-1 gap-2 mt-2">
-                        {{ $this->openAttachmentAction }}
-                        {{ $this->renameAttachmentAction }}
-                        {{ $this->deleteAttachmentAction }}
+                        <x-filament::button color="gray" x-on:click="window.open(attachment.url)">
+                            Open attachment
+                        </x-filament::button>
+
+                        <x-filament::button color="gray" x-on:click="$dispatch('mount-action', {name: 'renameAttachment', arguments: {'attachment_id': attachment.id}});">
+                            Rename attachment
+                        </x-filament::button>
+
+                        <x-filament::button color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteAttachment', arguments: {'attachment_id': attachment.id}});">
+                            Delete attachment
+                        </x-filament::button>
                     </div>
                 </div>
             </template>
 
         </div>
     </template>
+
 </div>

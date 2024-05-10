@@ -2,51 +2,35 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Livewire\Attributes\Lazy;
+use Livewire\Attributes\On;
 use Livewire\Component;
-use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
-use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 #[Lazy]
-class AttachmentInfo extends Component implements HasActions, HasForms
+class AttachmentInfo extends Component
 {
-    use InteractsWithActions;
-    use InteractsWithForms;
-
     public ?Attachment $attachment;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-info';
 
-    public function openAttachmentAction(): Action
+    #[On('highlight-attachment')]
+    public function highlightAttachment(?int $id): void
     {
-        return Action::make('openAttachment')
-            ->color('gray')
-            ->url($this->attachment->url ?? '')->openUrlInNewTab();
+        $this->attachment = Attachment::find($id);
     }
 
-    public function renameAttachmentAction(): Action
+    #[On('dehighlight-attachment')]
+    public function dehighlightAttachment(int $id): void
     {
-        return Action::make('renameAttachment')
-            ->color('gray')
-            ->form([TextInput::make('name')->rule(new DestinationExists(null))])
-            ->mountUsing(fn (ComponentContainer $form) => $form->fill(['name' => $this->attachment->name]))
-            ->action(fn (array $data) => AttachmentManager::rename($this->attachment, $data['name']));
+        if(isset($this->attachment) && $this->attachment->id !== $id) return;
+
+        $this->attachment = null;
     }
 
-    public function deleteAttachmentAction(): Action
+    public function mount()
     {
-        return Action::make('deleteAttachment')
-            ->color('danger')
-            ->requiresConfirmation()
-            ->action(fn() => $this->attachment->delete());
+        $this->attachment = null;
     }
 
     public function placeholder()

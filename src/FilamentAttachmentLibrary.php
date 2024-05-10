@@ -10,7 +10,6 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentActions;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentItemList;
@@ -49,7 +48,6 @@ class FilamentAttachmentLibrary implements Plugin
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-item-list', AttachmentItemList::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
-        Livewire::component('attachment-actions', AttachmentActions::class);
 
         // Don't render attachment browser by default, only if needed
         View::share('renderAttachmentBrowserModal', false);
