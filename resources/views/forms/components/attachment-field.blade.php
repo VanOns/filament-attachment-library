@@ -5,8 +5,9 @@
         :component="$getFieldWrapperView()"
         :field="$field">
     <div>
+
         <div class="flex gap-2 flex-wrap">
-            <livewire:attachment-item-list :attachments="$getAttachments()" :statePath="$getStatePath()" wire:key="attachment-item-list-{{ Str::random(10) }}" />
+            <livewire:attachment-item-list :lazy="false" :attachments="$getAttachments()" :statePath="$getStatePath()" wire:key="attachment-item-list-{{ Str::random(10) }}" />
         </div>
 
         <x-filament::button

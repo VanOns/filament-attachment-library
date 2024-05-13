@@ -22,6 +22,7 @@ class AttachmentField extends Field
     public function getAttachments(): Collection|Attachment
     {
         $attachments = Attachment::find($this->getState());
+
         if ($attachments instanceof Attachment) {
             $attachments = [$attachments];
         }

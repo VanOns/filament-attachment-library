@@ -3,45 +3,42 @@
      {{-- Load attachment browser javascript --}}
      x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser'))]">
 
-    {{-- Filtering, sorting and header actions --}}
     <div class="flex justify-between align-center mb-4 items-center flex-wrap">
+
+        {{-- Breadcrumbs --}}
         @include('filament-attachment-library::components.breadcrumbs')
-        <div class="min-w-full md:min-w-[initial]">
-            @include('filament-attachment-library::components.header-actions')
-            @include('filament-attachment-library::components.filters')
-        </div>
+
+        {{-- Filtering, sorting and header actions --}}
+        @include('filament-attachment-library::components.header-actions')
+
     </div>
 
     {{-- Main attachment browser content --}}
-    <div class="flex flex-row gap-4">
+    <div class="flex flex-row gap-4 mt-4">
 
-        {{-- Loading indicator for attachments --}}
-        <div class="flex-1" wire:loading wire:target="openPath,sortBy,pageSize,search">
-            <x-filament::loading-indicator class="h-8 w-8 mx-auto"/>
-        </div>
-
-        <div class="flex-1 flex flex-wrap gap-4 content-start" wire:loading.remove wire:target="openPath,sortBy,pageSize,search">
+        <div class="flex-1 flex flex-wrap gap-4 content-start">
 
             {{-- Empty directory notice --}}
-            @if($items->isEmpty())
+            @if($this->paginator->isEmpty())
                 @include('filament-attachment-library::components.empty-path-notice')
             @endif
 
             {{-- Attachment list & pagination --}}
-            @if(! $items->isEmpty())
-                <livewire:attachment-item-list :attachments="$items->getCollection()" />
+            @if(! $this->paginator->isEmpty())
+                <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" />
 
-                <x-filament::pagination :paginator="$items" extreme-links class="w-full"/>
+                <x-filament::pagination :paginator="$this->paginator" extreme-links class="w-full"/>
             @endif
 
         </div>
 
-        {{-- Show info block for highlighted attachment --}}
-        @if(! $items->isEmpty())
+        {{-- Show selected attachment metadata --}}
+        @if(! $this->paginator->isEmpty())
             <livewire:attachment-info />
         @endif
 
     </div>
+
     <x-filament-actions::modals/>
 
 </div>

@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\BaseFileUpload;
@@ -12,7 +13,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Reactive;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -44,6 +48,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?bool $multiple;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
+
+    public function render()
+    {
+        return view($this->view);
+    }
 
     public function mount(bool $multiple = false, bool $showActions = false): void
     {
@@ -78,7 +87,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function deleteAttachmentAction(): Action
     {
-        return Action::make('deleteAttachment')->requiresConfirmation()->color('danger')->action(
+        return Action::make('deleteAttachment')
+            ->requiresConfirmation()
+            ->color('danger')
+            ->action(
             function (array $arguments) {
                 $this->dispatch('dehighlight-attachment', $arguments['attachment_id']);
 
@@ -113,6 +125,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function uploadAttachmentAction(): Action
     {
         return Action::make('uploadAttachment')
+            ->label(__('filament-attachment-library::views.actions.attachment.upload'))
             ->icon('heroicon-o-arrow-up-tray')
             ->form([
                 FileUpload::make('attachment')
@@ -131,9 +144,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function createDirectoryAction(): Action
     {
-        return Action::make('createDirectory')->label('Maak map')
+        return Action::make('createDirectory')
+            ->label(__('filament-attachment-library::views.actions.directory.create'))
             ->form([
-                TextInput::make('name')->rules([new DestinationExists($this->currentPath)]),
+                TextInput::make('name')
+                    ->alphaDash()
+                    ->rules([new DestinationExists($this->currentPath)]),
             ])
             ->outlined()
             ->icon('heroicon-o-folder-plus')
@@ -153,18 +169,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $this->dispatch('highlight-attachment',  null);
     }
 
-    public function render()
-    {
-        return view($this->view.$this->viewType, [
-            'breadcrumbs' => $this->getCurrentPathBreadcrumbs(),
-            'items' => $this->getItems(),
-        ]);
-    }
-
     /**
      * Return current path in parts (breadcrumbs)
      */
-    public function getCurrentPathBreadcrumbs(): array
+    #[Computed]
+    public function breadcrumbs(): array
     {
         $crumbs = array_filter(explode('/', $this->currentPath));
         $breadcrumbs = [];
@@ -180,7 +189,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Return sorted and filtered attachments as paginator
      */
-    protected function getItems(): LengthAwarePaginator
+    #[Computed]
+    protected function paginator(): LengthAwarePaginator
     {
         $path = empty($this->currentPath) ? null : $this->currentPath;
 
@@ -199,9 +209,15 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         $items = collect($directories)->merge($attachments);
 
-        $pageItems = $items->skip($this->pageSize * ($this->getPage() - 1))->take($this->pageSize);
+        $pageItems = $items->skip($this->pageSize * ($this->getPage() - 1))
+            ->take($this->pageSize);
 
-        return new LengthAwarePaginator($pageItems, count($items), $this->pageSize, $this->getPage());
+        return new LengthAwarePaginator(
+            $pageItems,
+            count($items),
+            $this->pageSize,
+            $this->getPage()
+        );
     }
 
     /**
@@ -210,7 +226,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     private function applyFiltering(Collection $items): Collection
     {
         if ($this->search) {
-            $items = $items->filter(fn ($item) => str_contains(strtolower($item->name), strtolower($this->search)));
+            $items = $items->filter(fn ($item) =>
+                str_contains(strtolower($item->name), strtolower($this->search))
+            );
         }
 
         return $items;
