@@ -3,6 +3,7 @@
         <template x-for="(attachment, index) in attachments">
             <template x-if="attachment !== null">
                 <div @click="$store.attachmentBrowser?.handleItemClick(attachment, statePath)"
+                     x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle').parentNode.click(); return false;"
                      :class="{'dark:bg-white bg-black dark:text-black text-white': (attachment.type === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath))}"
                      class="cursor-pointer relative flex flex-col dark:bg-gray-900 hover:bg-black hover:dark:bg-white hover:text-white hover:dark:text-black transition ease-in-out bg-white rounded-lg box-border basis-3/12 grow min-w-56 h-32"
                 >
@@ -21,54 +22,55 @@
                     </div>
 
                     <div class="absolute top-4 right-4" x-on:click.stop="">
-                        <x-filament::dropdown placement="bottom-end"
-                                              x-show="attachment.type === 'attachment'
-                                              && !$store.attachmentBrowser?.isSelected(attachment.id, statePath)
-                                              && $store.attachmentBrowser?.showActions(statePath)">
-                            <x-slot name="trigger">
-                                <x-filament::icon
-                                        icon="heroicon-o-ellipsis-vertical"
-                                        class="w-8 h-8 m-0"
-                                />
-                            </x-slot>
+                        <template x-if="attachment.type === 'attachment'
+                            && !$store.attachmentBrowser?.isSelected(attachment.id, statePath)
+                            && $store.attachmentBrowser?.showActions(statePath)">
+                            <x-filament::dropdown placement="bottom-end">
+                                <x-slot name="trigger">
+                                    <x-filament::icon
+                                            icon="heroicon-o-ellipsis-vertical"
+                                            class="w-8 h-8 m-0 toggle"
+                                    />
+                                </x-slot>
 
-                            <x-filament::dropdown.list>
-                                <x-filament::dropdown.list.item x-on:click="window.open(attachment.url)">
-                                    {{__('filament-attachment-library::views.actions.attachment.open')}}
-                                </x-filament::dropdown.list.item>
+                                <x-filament::dropdown.list>
+                                    <x-filament::dropdown.list.item x-on:click="window.open(attachment.url)">
+                                        {{__('filament-attachment-library::views.actions.attachment.open')}}
+                                    </x-filament::dropdown.list.item>
 
-                                <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameAttachment', arguments: {'attachment_id': attachment.id}});">
-                                    {{__('filament-attachment-library::views.actions.attachment.rename')}}
-                                </x-filament::dropdown.list.item>
+                                    <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameAttachment', arguments: {'attachment_id': attachment.id}});">
+                                        {{__('filament-attachment-library::views.actions.attachment.rename')}}
+                                    </x-filament::dropdown.list.item>
 
-                                <x-filament::dropdown.list.item color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteAttachment', arguments: {'attachment_id': attachment.id}});">
-                                    {{__('filament-attachment-library::views.actions.attachment.delete')}}
-                                </x-filament::dropdown.list.item>
-                            </x-filament::dropdown.list>
-                        </x-filament::dropdown>
+                                    <x-filament::dropdown.list.item color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteAttachment', arguments: {'attachment_id': attachment.id}});">
+                                        {{__('filament-attachment-library::views.actions.attachment.delete')}}
+                                    </x-filament::dropdown.list.item>
+                                </x-filament::dropdown.list>
+                            </x-filament::dropdown>
+                        </template>
 
-                        <x-filament::dropdown
-                                placement="bottom-end"
-                                x-show="attachment.type === 'directory'
-                                && !$store.attachmentBrowser?.isSelected(attachment.id, statePath)
-                                && $store.attachmentBrowser?.showActions(statePath)">
-                            <x-slot name="trigger">
-                                <x-filament::icon
-                                        icon="heroicon-o-ellipsis-vertical"
-                                        class="w-8 h-8 m-0"
-                                />
-                            </x-slot>
+                        <template x-if="attachment.type === 'directory' && $store.attachmentBrowser?.showActions(statePath)">
+                            <x-filament::dropdown placement="bottom-end">
 
-                            <x-filament::dropdown.list>
-                                <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameDirectory', arguments: {'directory': attachment}});">
-                                    {{__('filament-attachment-library::views.actions.directory.rename')}}
-                                </x-filament::dropdown.list.item>
+                                <x-slot name="trigger">
+                                    <x-filament::icon
+                                            icon="heroicon-o-ellipsis-vertical"
+                                            class="w-8 h-8 m-0 toggle"
+                                    />
+                                </x-slot>
 
-                                <x-filament::dropdown.list.item color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteDirectory', arguments: {'directory': attachment}});">
-                                    {{__('filament-attachment-library::views.actions.directory.delete')}}
-                                </x-filament::dropdown.list.item>
-                            </x-filament::dropdown.list>
-                        </x-filament::dropdown>
+                                <x-filament::dropdown.list>
+                                    <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameDirectory', arguments: {'directory': attachment}});">
+                                        {{__('filament-attachment-library::views.actions.directory.rename')}}
+                                    </x-filament::dropdown.list.item>
+
+                                    <x-filament::dropdown.list.item color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteDirectory', arguments: {'directory': attachment}});">
+                                        {{__('filament-attachment-library::views.actions.directory.delete')}}
+                                    </x-filament::dropdown.list.item>
+                                </x-filament::dropdown.list>
+
+                            </x-filament::dropdown>
+                        </template>
 
                         <x-filament::icon
                                 icon="heroicon-o-check"
