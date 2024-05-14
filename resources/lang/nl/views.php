@@ -5,13 +5,13 @@ return [
         'empty' => [
             'title' => 'Geen bestanden of mappen gevonden',
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
-            'button' => 'Terug naar hoofdmap'
-        ]
+            'button' => 'Terug naar hoofdmap',
+        ],
     ],
     'info' => [
         'empty' => [
             'title' => 'Selecteer een map of bestand',
-            'description' => 'Selecteer een bestand om de informatie te bekijken. '
+            'description' => 'Selecteer een bestand om de informatie te bekijken. ',
         ],
         'details' => [
             'size' => 'Bestandsgrootte',
@@ -31,7 +31,7 @@ return [
         'directory' => [
             'rename' => 'Hernoem map',
             'delete' => 'Verwijder map',
-            'create' => 'Maak map'
+            'create' => 'Maak map',
         ],
     ],
     'header-actions' => [

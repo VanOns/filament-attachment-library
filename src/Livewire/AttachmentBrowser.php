@@ -3,7 +3,6 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\BaseFileUpload;
@@ -13,10 +12,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Reactive;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -91,12 +88,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->requiresConfirmation()
             ->color('danger')
             ->action(
-            function (array $arguments) {
-                $this->dispatch('dehighlight-attachment', $arguments['attachment_id']);
+                function (array $arguments) {
+                    $this->dispatch('dehighlight-attachment', $arguments['attachment_id']);
 
-                AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
-            }
-        );
+                    AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
+                }
+            );
     }
 
     public function renameAttachmentAction(): Action
@@ -112,6 +109,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->action(function (array $data, array $arguments) {
                 $attachment = Attachment::find($arguments['attachment_id']);
                 AttachmentManager::rename($attachment, $data['name']);
+                $this->dispatch('highlight-attachment', $arguments['attachment_id']);
             });
     }
 
@@ -166,7 +164,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function openPath(?string $path): void
     {
         $this->currentPath = $path;
-        $this->dispatch('highlight-attachment',  null);
+        $this->dispatch('highlight-attachment', null);
     }
 
     /**
@@ -226,9 +224,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     private function applyFiltering(Collection $items): Collection
     {
         if ($this->search) {
-            $items = $items->filter(fn ($item) =>
-                str_contains(strtolower($item->name), strtolower($this->search))
-            );
+            $items = $items->filter(fn ($item) => str_contains(strtolower($item->name), strtolower($this->search)));
         }
 
         return $items;

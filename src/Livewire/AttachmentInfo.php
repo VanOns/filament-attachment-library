@@ -23,7 +23,9 @@ class AttachmentInfo extends Component
     #[On('dehighlight-attachment')]
     public function dehighlightAttachment(int $id): void
     {
-        if(isset($this->attachment) && $this->attachment->id !== $id) return;
+        if (isset($this->attachment) && $this->attachment->id !== $id) {
+            return;
+        }
 
         $this->attachment = null;
     }

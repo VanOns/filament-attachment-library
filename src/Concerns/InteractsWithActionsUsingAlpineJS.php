@@ -4,7 +4,6 @@ namespace VanOns\FilamentAttachmentLibrary\Concerns;
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Renderless;
 
 trait InteractsWithActionsUsingAlpineJS
 {

@@ -9,7 +9,7 @@ class AttachmentSynth extends Synth
 {
     public static $key = 'attachment';
 
-    static function match($target)
+    public static function match($target)
     {
         return $target instanceof Attachment;
     }

@@ -5,7 +5,6 @@ namespace VanOns\FilamentAttachmentLibrary;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VanOns\FilamentAttachmentLibrary\Command\ImportAttachments;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 {
@@ -16,8 +15,8 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
             ->hasConfigFile('filament-attachment-library')
             ->hasViews('filament-attachment-library')
             ->hasTranslations()
-            ->hasInstallCommand(function (InstallCommand $command){
-                $command->startWith(function(InstallCommand $callable){
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command->startWith(function (InstallCommand $callable) {
                     if ($callable->confirm('Would you like to install the van-ons/laravel-attachment-library?')) {
                         $callable->comment('Installing van-ons/laravel-attachment-library...');
 
