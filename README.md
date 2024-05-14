@@ -14,7 +14,7 @@ The Filament Attachment Library can be installed using composer by running the f
 $ composer require van-ons/filament-attachment-library
 ```
 
-For this package, an installation command is available that ensures that the migrations and assets are installed.
+An installation command is available that ensures that the migrations and assets are installed.
 ```bash
 $ php artisan filament-attachment-library:install
 ```
@@ -31,7 +31,7 @@ export default {
 }
 ```
 
-Lastly, register the plugin in the desired Filament panel.
+Then, register the plugin in the desired Filament panel.
 
 ```php
 <?php
@@ -51,12 +51,29 @@ class ExamplePanelProvider extends PanelProvider
 }
 ```
 
+By default this package uses the 'public' disk defined in filesystems.php. This is configurable by adding the following to the project's .env file:
+```env
+ATTACHMENTS_DISK=disk_name_here
+```
+
+You may need to run ``` php artisan storage:link ``` to be able to preview attachments. See [the laravel documentation](https://laravel.com/docs/11.x/filesystem) for more information.
+
 ### Usage
 
+In your form schema add the AttachmentField like:
 ```php
-// How do you use this package?
-// Keep it brief, but give enough information to get started.
-// Extensive documentation can be provided in the docs folder.
+use Filament\Forms;
+use Filament\Forms\Form;
+use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
+ 
+public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            // ...
+            AttachmentField::make('attachment'),
+        ]);
+}
 ```
 
 ## Documentation
