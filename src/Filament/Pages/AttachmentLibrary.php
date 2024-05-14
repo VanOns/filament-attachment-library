@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Filament\Pages;
 
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -14,22 +15,13 @@ class AttachmentLibrary extends Page implements HasForms
     use WithFileUploads;
     use WithPagination;
 
-    protected static ?string $navigationGroup = 'Media';
-
-    protected static ?string $navigationIcon = 'heroicon-o-photo';
-
-    protected static ?int $navigationSort = 0;
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     protected static string $view = 'filament-attachment-library::pages.attachments';
 
     public static function getNavigationGroup(): ?string
     {
-        return self::$navigationGroup;
-    }
-
-    public static function getNavigationSort(): ?int
-    {
-        return self::$navigationSort;
+        return __('filament-attachment-library::views.group');
     }
 
     public static function getNavigationIcon(): ?string
@@ -44,11 +36,11 @@ class AttachmentLibrary extends Page implements HasForms
 
     public static function getNavigationLabel(): string
     {
-        return __('Bestandsbeheer');
+        return __('filament-attachment-library::views.title');
     }
 
-    public static function getSlug(): string
+    public function getTitle(): string|Htmlable
     {
-        return __('bestandsbeheer');
+        return __('filament-attachment-library::views.title');
     }
 }

@@ -30,8 +30,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     use InteractsWithForms;
     use WithPagination;
 
-    public string $viewType = '';
-
     #[Url(history: true, keep: true)]
     public ?string $currentPath = null;
 
@@ -178,6 +176,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         $this->currentPath = $path;
         $this->dispatch('highlight-attachment', null);
+    }
+
+    /**
+     * Reset page on search query update
+     */
+    public function updatingSearch(){
+        $this->resetPage();
     }
 
     /**

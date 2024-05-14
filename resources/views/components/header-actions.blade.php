@@ -1,9 +1,9 @@
-<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0">
+<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]">
 
     {{-- Filtering & sorting  --}}
 
     {{-- Search --}}
-    <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
+    <x-filament::input.wrapper class="flex-1 min-w-full sm:min-w-[initial]">
         <x-filament::input type="text" wire:model.change="search" placeholder="{{ __('filament-attachment-library::views.search')  }}" />
     </x-filament::input.wrapper>
 

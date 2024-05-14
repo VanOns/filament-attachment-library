@@ -8,6 +8,9 @@ return [
             'button' => 'Terug naar hoofdmap',
         ],
     ],
+    'attachment-browser-modal' => [
+        'close' => 'Sluiten',
+    ],
     'info' => [
         'empty' => [
             'title' => 'Selecteer een map of bestand',
@@ -41,6 +44,8 @@ return [
         'name_descending' => 'Naam aflopend',
         'actions' => 'Acties',
     ],
+    'title' => 'Bestandsbeheer',
+    'group' => 'Bestanden',
     'search' => 'Zoeken...',
     'home' => 'Hoofdmap',
 ];
