@@ -5,31 +5,26 @@ namespace VanOns\FilamentAttachmentLibrary\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
+use VanOns\LaravelAttachmentLibrary\Exceptions\DisallowedCharacterException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
-class DestinationExists implements ValidationRule
+class AllowedFilename implements ValidationRule
 {
-    public function __construct(private ?string $path)
-    {
-    }
-
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $path = "{$this->path}/";
+        $filename = $value;
 
         if ($value instanceof UploadedFile) {
             $filename = $value->getClientOriginalName();
             $name = pathinfo($filename, PATHINFO_FILENAME);
             $extension = $value->guessExtension() ?? pathinfo($filename, PATHINFO_EXTENSION);
-            $path .= "{$name}.{$extension}";
+            $filename = "{$name}.{$extension}";
         }
 
-        if (is_string($value)) {
-            $path .= $value;
-        }
-
-        if (AttachmentManager::destinationExists($path)) {
-            $fail(__('filament-attachment-library::exceptions.destination_exists'));
+        try {
+            AttachmentManager::validateBasename($filename);
+        }catch (DisallowedCharacterException $e){
+            $fail(__('filament-attachment-library::exceptions.allowed_filename'));;
         }
     }
 }

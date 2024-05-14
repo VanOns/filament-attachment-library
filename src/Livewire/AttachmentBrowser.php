@@ -19,6 +19,7 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
+use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -72,7 +73,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->outlined()
             ->form([
                 TextInput::make('name')
-                    ->rule(new DestinationExists($this->currentPath)),
+                    ->rules([
+                        new DestinationExists($this->currentPath),
+                        new AllowedFilename()
+                    ]),
             ])
             ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
                 'name' => $arguments['directory']['name'],
@@ -101,7 +105,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return Action::make('renameAttachment')
             ->color('gray')
             ->form([
-                TextInput::make('name')->rule(new DestinationExists($this->currentPath)),
+                TextInput::make('name')->rules([
+                    new DestinationExists($this->currentPath),
+                    new AllowedFilename()
+                ]),
             ])
             ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
                 'name' => Attachment::find($arguments['attachment_id'])->name,
@@ -128,7 +135,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->form([
                 FileUpload::make('attachment')
                     ->multiple()
-                    ->rule(new DestinationExists($this->currentPath))
+                    ->rules([
+                        new DestinationExists($this->currentPath),
+                        new AllowedFilename()
+                    ])
                     ->fetchFileInformation()
                     ->saveUploadedFileUsing(
                         function (BaseFileUpload $component, TemporaryUploadedFile $file) {
@@ -147,7 +157,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->form([
                 TextInput::make('name')
                     ->alphaDash()
-                    ->rules([new DestinationExists($this->currentPath)]),
+                    ->rules([
+                        new DestinationExists($this->currentPath),
+                        new AllowedFilename()
+                    ]),
             ])
             ->outlined()
             ->icon('heroicon-o-folder-plus')

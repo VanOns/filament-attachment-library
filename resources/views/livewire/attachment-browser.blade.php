@@ -2,7 +2,7 @@
      data-dispatch="attachment-browser-loaded"
      {{-- Load attachment browser javascript --}}
      x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser'))]"
-     x-data="{droppingFile: false}" x-on:dragover.prevent="droppingFile = true">
+     x-on:dragover.prevent="$dispatch('mount-action', {name: 'uploadAttachment', arguments: {}});">
 
     <div class="flex justify-between align-center mb-4 items-center flex-wrap">
         {{-- Breadcrumbs --}}
