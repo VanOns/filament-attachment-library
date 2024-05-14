@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
+use VanOns\LaravelAttachmentLibrary\Enums\AttachmentTypes;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentSynth extends Synth
@@ -24,7 +25,7 @@ class AttachmentSynth extends Synth
             'created_at' => $target->created_at,
             'mime_type' => $target->mime_type,
             'type' => 'attachment',
-            'hasThumbnail' => in_array($target->mime_type, ['image/jpeg', 'image/png']),
+            'previewable' => $target->isType(AttachmentTypes::PREVIEWABLE),
             'size' => round(($target->size / 1024 / 1024), 2),
         ], []];
     }

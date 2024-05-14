@@ -5,14 +5,14 @@
                  x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle').parentNode.click(); return false;"
                  :class="{'dark:bg-white bg-black dark:text-black text-white': (attachment?.type === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath))}"
                  class="cursor-pointer relative flex flex-col dark:bg-gray-900 hover:bg-black hover:dark:bg-white hover:text-white hover:dark:text-black transition ease-in-out bg-white rounded-lg box-border basis-3/12 grow min-w-56 h-32">
-                <template x-if="attachment?.type === 'attachment' && attachment.hasThumbnail">
+                <template x-if="attachment?.type === 'attachment' && attachment.previewable">
                     <img alt="" loading="lazy" width="auto" height="100%" :src="attachment.url" class="relative rounded-lg overflow-hidden h-full w-full object-center opacity-30 object-cover">
                 </template>
 
                 <div class="absolute p-6">
                     <template x-if="attachment?.type === 'directory'"><x-filament::icon icon="heroicon-o-folder" class="w-8 h-8 m-0" /></template>
-                    <template x-if="attachment?.type === 'attachment' && attachment.hasThumbnail"><x-filament::icon icon="heroicon-o-photo" class="w-8 h-8 m-0" /></template>
-                    <template x-if="attachment?.type === 'attachment' && !attachment.hasThumbnail"><x-filament::icon icon="heroicon-o-document" class="w-8 h-8 m-0" /></template>
+                    <template x-if="attachment?.type === 'attachment' && attachment.previewable"><x-filament::icon icon="heroicon-o-photo" class="w-8 h-8 m-0" /></template>
+                    <template x-if="attachment?.type === 'attachment' && !attachment.previewable"><x-filament::icon icon="heroicon-o-document" class="w-8 h-8 m-0" /></template>
 
                     <p class="max-w-48 overflow-hidden box line-clamp-1 mt-2" x-text="attachment.name"></p>
 
