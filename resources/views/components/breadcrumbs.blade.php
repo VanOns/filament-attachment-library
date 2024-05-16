@@ -21,6 +21,14 @@
                 </li>
             @endforeach
 
+            <li class="fi-breadcrumbs-item flex gap-x-2">
+                <x-filament::icon-button
+                        icon="heroicon-o-folder-plus"
+                        x-on:click="$dispatch('mount-action', {name: 'createDirectory', arguments: {}});"
+                        label="{{__('filament-attachment-library::views.actions.directory.create')}}"
+                />
+            </li>
+
         </ol>
     </nav>
 </div>

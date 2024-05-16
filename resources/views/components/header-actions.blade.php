@@ -44,20 +44,6 @@
 
     </x-filament::dropdown>
 
-    {{-- Attachment actions --}}
-    <template x-if="$store.attachmentBrowser?.showActions()">
-        <x-filament-actions::group
-            :actions="[
-                $this->uploadAttachmentAction,
-                $this->createDirectoryAction,
-            ]"
-            label="{{ __('filament-attachment-library::views.header-actions.actions')  }}"
-            :icon='false'
-            :button='true'
-            color="primary"
-            size="md"
-            dropdown-placement="bottom-start"
-        />
-    </template>
+    {{ $this->uploadAttachmentAction }}
 
 </div>
