@@ -73,7 +73,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 TextInput::make('name')
                     ->rules([
                         new DestinationExists($this->currentPath),
-                        new AllowedFilename()
+                        new AllowedFilename(),
                     ]),
             ])
             ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
@@ -105,7 +105,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->form([
                 TextInput::make('name')->rules([
                     new DestinationExists($this->currentPath),
-                    new AllowedFilename()
+                    new AllowedFilename(),
                 ]),
             ])
             ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
@@ -134,7 +134,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     ->multiple()
                     ->rules([
                         new DestinationExists($this->currentPath),
-                        new AllowedFilename()
+                        new AllowedFilename(),
                     ])
                     ->fetchFileInformation()
                     ->saveUploadedFileUsing(
@@ -156,7 +156,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     ->alphaDash()
                     ->rules([
                         new DestinationExists($this->currentPath),
-                        new AllowedFilename()
+                        new AllowedFilename(),
                     ]),
             ])
             ->outlined()
@@ -180,7 +180,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Reset page on search query update
      */
-    public function updatingSearch(){
+    public function updatingSearch()
+    {
         $this->resetPage();
     }
 

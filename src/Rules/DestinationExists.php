@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
+use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Filename;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
 class DestinationExists implements ValidationRule
@@ -18,10 +19,7 @@ class DestinationExists implements ValidationRule
         $path = "{$this->path}/";
 
         if ($value instanceof UploadedFile) {
-            $filename = $value->getClientOriginalName();
-            $name = pathinfo($filename, PATHINFO_FILENAME);
-            $extension = $value->guessExtension() ?? pathinfo($filename, PATHINFO_EXTENSION);
-            $path .= "{$name}.{$extension}";
+            $path .= new Filename($value);
         }
 
         if (is_string($value)) {

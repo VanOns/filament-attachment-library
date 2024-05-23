@@ -3,7 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
-use VanOns\LaravelAttachmentLibrary\Directory;
+use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
 
 class DirectorySynth extends Synth
 {
