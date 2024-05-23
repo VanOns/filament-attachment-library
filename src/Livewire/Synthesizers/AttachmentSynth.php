@@ -25,7 +25,8 @@ class AttachmentSynth extends Synth
             'created_at' => $target->created_at,
             'mime_type' => $target->mime_type,
             'type' => 'attachment',
-            'previewable' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
+            'isImage' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
+            'isVideo' => $target->isType(AttachmentType::PREVIEWABLE_VIDEO),
             'size' => round(($target->size / 1024 / 1024), 2),
         ], []];
     }

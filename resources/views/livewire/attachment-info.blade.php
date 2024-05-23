@@ -18,11 +18,16 @@
         <div>
 
             {{-- Preview/icon --}}
-            <template x-if="attachment.previewable">
+            <template x-if="attachment.isImage">
                 <img loading="lazy" :src="attachment?.url" class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
             </template>
 
-            <template x-if="!attachment.previewable">
+            <template x-if="attachment.isVideo">
+                <video :src="attachment?.url" controls class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
+                </video>
+            </template>
+
+            <template x-if="!attachment.isImage && !attachment.isVideo">
                 <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
             </template>
 
