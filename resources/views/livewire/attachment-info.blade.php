@@ -19,7 +19,7 @@
 
             {{-- Preview/icon --}}
             <template x-if="attachment.isImage">
-                <img loading="lazy" :src="attachment?.url" class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
+                <img loading="lazy" :src="attachment?.url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
             </template>
 
             <template x-if="attachment.isVideo">
