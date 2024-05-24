@@ -103,7 +103,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ]))
             ->action(function (array $data, array $arguments) {
                 $attachment = Attachment::find($arguments['attachment_id']);
+
                 AttachmentManager::rename($attachment, $data['name']);
+
+                $this->dispatch('highlight-attachment', $arguments['attachment_id']);
             });
     }
 
