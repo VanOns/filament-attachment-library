@@ -39,21 +39,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
-    public ?bool $showActions;
-
-    public ?bool $multiple;
-
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
     public function render()
     {
         return view($this->view);
-    }
-
-    public function mount(bool $multiple = false, bool $showActions = false): void
-    {
-        $this->multiple = $multiple;
-        $this->showActions = $showActions;
     }
 
     public function deleteDirectoryAction(): Action
