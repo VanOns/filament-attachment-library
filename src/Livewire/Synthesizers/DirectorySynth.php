@@ -20,7 +20,7 @@ class DirectorySynth extends Synth
             'path' => $target->path,
             'name' => $target->name,
             'fullPath' => $target->fullPath,
-            'type' => 'directory',
+            'class' => 'directory',
         ], []];
     }
 

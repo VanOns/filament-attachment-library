@@ -90,7 +90,7 @@ Alpine.store('attachmentBrowser', {
     handleItemClick(item, alternativeStatePath = null){
         const statePath = alternativeStatePath ?? this.currentStatePath;
 
-        switch (item.type) {
+        switch (item.class) {
             case 'attachment':
                 this.isSelected(item.id, statePath)
                     ? this.deselect(item.id, statePath)
