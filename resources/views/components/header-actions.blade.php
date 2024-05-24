@@ -44,6 +44,7 @@
 
     </x-filament::dropdown>
 
+    {{ $this->createDirectoryAction }}
     {{ $this->uploadAttachmentAction }}
 
 </div>
