@@ -10,7 +10,7 @@
 
         <x-slot name="footer">
             <x-filament::button color="gray" x-on:click="$dispatch('close-modal', {id: 'attachment-modal'})">
-                {{__('filament-attachment-library::views.attachment-browser-modal.close')}}
+                {{__('filament-attachment-library::views.close')}}
             </x-filament::button>
         </x-slot>
 

@@ -1,0 +1,25 @@
+<?php
+
+namespace VanOns\FilamentAttachmentLibrary\Actions;
+
+use Filament\Actions\Action;
+use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
+use VanOns\LaravelAttachmentLibrary\Models\Attachment;
+
+final class DeleteAttachmentAction extends Action
+{
+    protected function setUp(): void
+    {
+        $this->label(__('filament-attachment-library::views.actions.attachment.delete'));
+
+        $this->requiresConfirmation();
+
+        $this->color('danger');
+
+        $this->action(function (array $arguments) {
+            $this->getLivewire()->dispatch('dehighlight-attachment', $arguments['attachment_id']);
+
+            AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
+        });
+    }
+}

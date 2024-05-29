@@ -4,12 +4,13 @@ namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -18,11 +19,15 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
+use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\DeleteDirectoryAction;
+use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\RenameAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
-use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
@@ -33,13 +38,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Url(history: true, keep: true)]
     public ?string $currentPath = null;
 
+    #[Url(history: true, keep: true)]
     public string $sortBy = 'name_ascending';
 
+    #[Url(history: true, keep: true)]
     public int $pageSize = 25;
 
     public string $search = '';
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
+
+    public ?array $createDirectoryFormState = [];
+
+    public ?array $uploadFormState = ['attachment' => []];
 
     public function render()
     {
@@ -48,116 +59,105 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function deleteDirectoryAction(): Action
     {
-        return Action::make('deleteDirectory')->requiresConfirmation()->color('danger')->action(
-            function (array $arguments) {
-                AttachmentManager::deleteDirectory($arguments['directory']['fullPath']);
-            }
-        );
+        return DeleteDirectoryAction::make('renameDirectory');
     }
 
     public function renameDirectoryAction(): Action
     {
-        return Action::make('renameDirectory')
-            ->outlined()
-            ->form([
-                TextInput::make('name')
-                    ->rules([
-                        new DestinationExists($this->currentPath),
-                        new AllowedFilename(),
-                    ]),
-            ])
-            ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
-                'name' => $arguments['directory']['name'],
-            ]))
-            ->action(function (array $data, array $arguments) {
-                AttachmentManager::renameDirectory($arguments['directory']['fullPath'], $data['name']);
-            });
+        return RenameDirectoryAction::make('renameDirectory')->setCurrentPath($this->currentPath);
     }
 
     public function deleteAttachmentAction(): Action
     {
-        return Action::make('deleteAttachment')
-            ->requiresConfirmation()
-            ->color('danger')
-            ->action(
-                function (array $arguments) {
-                    $this->dispatch('dehighlight-attachment', $arguments['attachment_id']);
-
-                    AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
-                }
-            );
+        return DeleteAttachmentAction::make('deleteAttachment');
     }
 
     public function renameAttachmentAction(): Action
     {
-        return Action::make('renameAttachment')
-            ->color('gray')
-            ->form([
-                TextInput::make('name')->rules([
-                    new DestinationExists($this->currentPath),
-                    new AllowedFilename(),
-                ]),
-            ])
-            ->mountUsing(fn (ComponentContainer $form, array $arguments) => $form->fill([
-                'name' => Attachment::find($arguments['attachment_id'])->name,
-            ]))
-            ->action(function (array $data, array $arguments) {
-                $attachment = Attachment::find($arguments['attachment_id']);
-
-                AttachmentManager::rename($attachment, $data['name']);
-
-                $this->dispatch('highlight-attachment', $arguments['attachment_id']);
-            });
+        return RenameAttachmentAction::make('renameAttachment')->setCurrentPath($this->currentPath);
     }
 
     public function openAttachmentAction(): Action
     {
-        return Action::make('openAttachment')->color('gray')->url(
-            fn (array $arguments) => Attachment::find($arguments['attachment_id'])->url
-        )->openUrlInNewTab();
+        return OpenAttachmentAction::make('openAttachment');
     }
 
-    public function uploadAttachmentAction(): Action
+    protected function getForms(): array
     {
-        return Action::make('uploadAttachment')
-            ->label(__('filament-attachment-library::views.actions.attachment.upload'))
-            ->icon('heroicon-o-arrow-up-tray')
-            ->form([
-                FileUpload::make('attachment')
-                    ->multiple()
-                    ->rules([
-                        new DestinationExists($this->currentPath),
-                        new AllowedFilename(),
-                    ])
-                    ->fetchFileInformation()
-                    ->saveUploadedFileUsing(
-                        function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-                            $attachment = AttachmentManager::upload($file, $this->currentPath);
-                            $this->dispatch('highlight-attachment', $attachment->id);
-                            $file->delete();
-                        }
-                    ),
-            ]);
+        return [
+            'uploadAttachmentForm',
+            'createDirectoryForm',
+        ];
     }
 
-    public function createDirectoryAction(): Action
+    public function uploadAttachmentForm(Form $form): Form
     {
-        return Action::make('createDirectory')
-            ->label(__('filament-attachment-library::views.actions.directory.create'))
-            ->form([
-                TextInput::make('name')
-                    ->alphaDash()
-                    ->rules([
-                        new DestinationExists($this->currentPath),
-                        new AllowedFilename(),
-                    ]),
-            ])
-            ->outlined()
-            ->icon('heroicon-o-folder-plus')
-            ->action(function (array $data) {
-                $path = implode('/', (array_filter([$this->currentPath, $data['name']])));
-                AttachmentManager::createDirectory($path);
-            });
+        return $form->schema([
+            FileUpload::make('attachment')
+                ->rules([new AllowedFilename(), new DestinationExists($this->currentPath)])
+                ->multiple()
+                ->required()
+                ->label(__('filament-attachment-library::forms.upload-attachment.name'))
+                ->fetchFileInformation()
+                ->saveUploadedFileUsing(
+                    function (BaseFileUpload $component, TemporaryUploadedFile $file) {
+                        $attachment = AttachmentManager::upload($file, $this->currentPath);
+                        $this->dispatch('highlight-attachment', $attachment->id);
+                        $component->removeUploadedFile($file);
+                    }
+                )->validationMessages([
+                    DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
+                    AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
+                ]),
+        ])->statePath('uploadFormState');
+    }
+
+    /**
+     * Submit handler for Create
+     */
+    public function createDirectoryForm(Form $form): Form
+    {
+        return $form->schema([
+            TextInput::make('name')
+                ->rules([
+                    new DestinationExists($this->currentPath),
+                    new AllowedFilename(),
+                ])->required()
+                ->label(__('filament-attachment-library::forms.create-directory.name')),
+        ])->statePath('createDirectoryFormState');
+    }
+
+    /**
+     * Submit handler for UploadAttachmentForm
+     */
+    public function saveUploadAttachmentForm()
+    {
+        $this->uploadAttachmentForm->getState();
+
+        Notification::make()
+            ->title(__('filament-attachment-library::notifications.attachment.created'))
+            ->success()
+            ->send();
+        $this->dispatch('hide-form', form: 'uploadAttachment');
+    }
+
+    /**
+     * Submit handler for CreateDirectoryForm
+     */
+    public function saveCreateDirectoryForm()
+    {
+        $state = $this->createDirectoryForm->getState();
+        $path = implode('/', (array_filter([$this->currentPath, $state['name']])));
+
+        AttachmentManager::createDirectory($path);
+
+        $this->createDirectoryForm->fill();
+
+        Notification::make()
+            ->title(__('filament-attachment-library::notifications.directory.created'))
+            ->success()
+            ->send();
+        $this->dispatch('hide-form', form: 'createDirectory');
     }
 
     /**

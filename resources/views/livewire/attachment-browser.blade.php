@@ -2,7 +2,10 @@
      data-dispatch="attachment-browser-loaded"
      {{-- Load attachment browser javascript --}}
      x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser'))]"
-     x-on:dragover.prevent="$dispatch('mount-action', {name: 'uploadAttachment', arguments: {}});">
+     x-data="{forms: {'uploadAttachment': false, 'createDirectory': false}}"
+     x-on:dragover.prevent="forms.uploadAttachment = true"
+     x-on:show-form.window="forms[$event.detail.form] = true"
+     x-on:hide-form.window="forms[$event.detail.form] = false;">
 
     <div class="flex justify-between align-center mb-4 items-center flex-wrap">
         {{-- Breadcrumbs --}}
@@ -10,8 +13,10 @@
 
         {{-- Filtering, sorting and header actions --}}
         @include('filament-attachment-library::components.header-actions')
-
     </div>
+
+    {{-- Popout forms for global actions --}}
+    @include('filament-attachment-library::components.forms')
 
     {{-- Main attachment browser content --}}
     <div class="flex flex-row gap-4 mt-4 flex-wrap">

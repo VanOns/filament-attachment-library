@@ -11,7 +11,7 @@
 
         <x-slot name="trigger">
             <x-filament::button color="gray">
-                <h1>Filters</h1>
+                <h1>{{ __('filament-attachment-library::views.header-actions.options')  }}</h1>
             </x-filament::button>
         </x-slot>
 
@@ -44,7 +44,11 @@
 
     </x-filament::dropdown>
 
-    {{ $this->createDirectoryAction }}
-    {{ $this->uploadAttachmentAction }}
+    <x-filament::button color="gray" x-on:click="$dispatch('show-form', {form: 'createDirectory'})" icon="heroicon-o-folder-plus">
+        <h1>{{ __('filament-attachment-library::views.actions.directory.create')  }}</h1>
+    </x-filament::button>
 
+    <x-filament::button color="primary" x-on:click="$dispatch('show-form', {form: 'uploadAttachment'})" icon="heroicon-o-arrow-up-tray">
+        <h1>{{ __('filament-attachment-library::views.actions.attachment.upload')  }}</h1>
+    </x-filament::button>
 </div>

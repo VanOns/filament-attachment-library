@@ -5,6 +5,7 @@
                  x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle').parentNode.click(); return false;"
                  :class="{'bg-black dark:bg-white dark:text-black text-white': (attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath))}"
                  class="cursor-pointer relative flex flex-col dark:bg-gray-900 hover:bg-black hover:dark:bg-white hover:text-white hover:dark:text-black transition ease-in-out dark:bg-white rounded-lg box-border basis-3/12 grow min-w-[10rem] h-32">
+
                 <template x-if="attachment?.class === 'attachment' && attachment.isImage">
                     <img alt="" loading="lazy" width="auto" height="100%" :src="attachment.url" class="relative rounded-lg overflow-hidden h-full w-full object-center opacity-30 object-cover">
                 </template>

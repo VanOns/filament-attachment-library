@@ -22,7 +22,7 @@ class AllowedFilename implements ValidationRule
         try {
             AttachmentManager::validateBasename($filename);
         } catch (DisallowedCharacterException $e) {
-            $fail(__('filament-attachment-library::exceptions.allowed_filename'));
+            $fail('filament-attachment-library::validation.allowed_filename')->translate();
         }
     }
 }
