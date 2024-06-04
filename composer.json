@@ -28,11 +28,11 @@
     "van-ons/laravel-attachment-library": "@dev"
   },
   "require-dev": {
+    "filament/filament": "^3.0-stable",
     "larastan/larastan": "^2.9",
     "laravel/pint": "^1.14",
     "orchestra/testbench": "^8.21",
-    "phpunit/phpunit": "^10.1",
-    "filament/filament": "^3.0-stable"
+    "phpunit/phpunit": "^10.1"
   },
   "scripts" : {
     "analyse": "./vendor/bin/phpstan analyse",
