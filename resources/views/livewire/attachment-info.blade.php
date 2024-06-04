@@ -39,7 +39,7 @@
                     <p><span x-text="attachment.size"></span> MB</p>
 
                     <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.created_at') }}</p>
-                    <p x-text="new Date(attachment.created_at).toLocaleString()"></p>
+                    <p x-text="attachment.created_at"></p>
 
                     <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.mime_type') }}</p>
                     <p x-text="attachment.mime_type"></p>
