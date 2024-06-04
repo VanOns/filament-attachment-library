@@ -2,8 +2,8 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Actions;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Actions\Action;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
@@ -28,13 +28,13 @@ final class RenameDirectoryAction extends Action
                 ]),
         ]);
 
-        $this->mountUsing(function(ComponentContainer $form, array $arguments){
+        $this->mountUsing(function (ComponentContainer $form, array $arguments) {
             $form->fill([
                 'name' => $arguments['directory']['name'],
             ]);
         });
 
-        $this->action(function(array $arguments, array $data){
+        $this->action(function (array $arguments, array $data) {
             AttachmentManager::renameDirectory($arguments['directory']['fullPath'], $data['name']);
         });
     }

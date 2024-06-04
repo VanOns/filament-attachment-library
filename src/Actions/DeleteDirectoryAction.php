@@ -16,7 +16,7 @@ final class DeleteDirectoryAction extends Action
         $this->color('danger');
 
         $this->action(
-            fn(array $arguments) => AttachmentManager::deleteDirectory($arguments['directory']['fullPath'])
+            fn (array $arguments) => AttachmentManager::deleteDirectory($arguments['directory']['fullPath'])
         );
     }
 }

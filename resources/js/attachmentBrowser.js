@@ -11,13 +11,13 @@ Alpine.store('attachmentBrowser', {
     init() {
         window.addEventListener('open-modal', $event => {
             this._onModalOpened($event);
-        })
+        });
         window.addEventListener('close-modal', $event => {
             this._onModalClosed($event);
-        })
+        });
         window.addEventListener('attachment-browser-add-state-path', $event => {
             this.addStatePath($event);
-        })
+        });
     },
 
     /**
