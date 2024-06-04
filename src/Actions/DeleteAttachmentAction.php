@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-final class DeleteAttachmentAction extends Action
+class DeleteAttachmentAction extends Action
 {
     protected function setUp(): void
     {

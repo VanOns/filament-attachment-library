@@ -22,11 +22,11 @@ class AttachmentSynth extends Synth
             'path' => $target->path,
             'name' => $target->name,
             'url' => $target->url,
-            'created_at' => $target->created_at,
+            'created_at' => $target->created_at->translatedFormat('d F Y'),
             'mime_type' => $target->mime_type,
             'class' => 'attachment',
-            'isImage' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
-            'isVideo' => $target->isType(AttachmentType::PREVIEWABLE_VIDEO),
+            'is_image' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
+            'is_video' => $target->isType(AttachmentType::PREVIEWABLE_VIDEO),
             'size' => round(($target->size / 1024 / 1024), 2),
         ], []];
     }

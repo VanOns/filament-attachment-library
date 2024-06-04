@@ -1,7 +1,7 @@
 <x-dynamic-component
         x-data="{ state: $wire.$entangle('{{ $getStatePath() }}').live }"
         x-on:selected-attachments-updated.window="$event.detail.statePath === '{{$getStatePath()}}' ? $wire.$set('{{$getStatePath()}}', $event.detail.attachments) : ''"
-        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: false});"
+        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: false})"
         :component="$getFieldWrapperView()"
         :field="$field">
     <div>
@@ -11,7 +11,7 @@
         </div>
 
         <x-filament::button
-                x-on:click="$dispatch('open-modal', {id: 'attachment-modal', statePath: '{{ $getStatePath() }}'});"
+                x-on:click="$dispatch('open-modal', {id: 'attachment-modal', statePath: '{{ $getStatePath() }}'})"
                 x-on:selected-attachments-updated.window="$event.detail.statePath === '{{$getStatePath()}}' ? $wire.$set('{{$getStatePath()}}', $event.detail.attachments) : ''"
                 class="mt-2"
                 icon="heroicon-o-document">

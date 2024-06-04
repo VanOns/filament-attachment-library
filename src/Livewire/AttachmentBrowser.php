@@ -90,6 +90,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         ];
     }
 
+    /**
+     * Form schema for UploadAttachmentForm.
+     */
     public function uploadAttachmentForm(Form $form): Form
     {
         return $form->schema([
@@ -113,7 +116,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Submit handler for Create
+     * Form schema for CreateDirectoryForm.
      */
     public function createDirectoryForm(Form $form): Form
     {
@@ -128,7 +131,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Submit handler for UploadAttachmentForm
+     * Submit handler for UploadAttachmentForm.
      */
     public function saveUploadAttachmentForm()
     {
@@ -142,7 +145,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Submit handler for CreateDirectoryForm
+     * Submit handler for CreateDirectoryForm.
      */
     public function saveCreateDirectoryForm()
     {
@@ -161,7 +164,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Open directory
+     * Set current path.
      */
     #[On('open-path')]
     public function openPath(?string $path): void
@@ -171,7 +174,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Reset page on search query update
+     * Reset page on search query update.
      */
     public function updatingSearch()
     {
@@ -179,7 +182,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return current path in parts (breadcrumbs)
+     * Return current path in parts (breadcrumbs).
      */
     #[Computed]
     public function breadcrumbs(): array
@@ -196,7 +199,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return sorted and filtered attachments as paginator
+     * Return sorted and filtered attachments as paginator.
      */
     #[Computed]
     protected function paginator(): LengthAwarePaginator
@@ -230,7 +233,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return filtered attachments
+     * Return filtered attachments.
      */
     private function applyFiltering(Collection $items): Collection
     {
@@ -242,7 +245,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return sorted attachments
+     * Return sorted attachments.
      */
     private function applySorting(Collection $items): Collection
     {

@@ -11,7 +11,7 @@ return [
     'info' => [
         'empty' => [
             'title' => 'Selecteer een map of bestand',
-            'description' => 'Selecteer een bestand om de informatie te bekijken. ',
+            'description' => 'Selecteer een bestand om de informatie te bekijken.',
         ],
         'details' => [
             'size' => 'Bestandsgrootte',

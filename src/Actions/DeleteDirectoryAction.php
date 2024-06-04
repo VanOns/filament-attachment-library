@@ -5,7 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Actions;
 use Filament\Actions\Action;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
-final class DeleteDirectoryAction extends Action
+class DeleteDirectoryAction extends Action
 {
     protected function setUp(): void
     {

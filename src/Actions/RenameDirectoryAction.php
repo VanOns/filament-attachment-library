@@ -10,7 +10,7 @@ use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
-final class RenameDirectoryAction extends Action
+class RenameDirectoryAction extends Action
 {
     use HasCurrentPath;
 

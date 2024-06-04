@@ -5,7 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Actions;
 use Filament\Actions\Action;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-final class OpenAttachmentAction extends Action
+class OpenAttachmentAction extends Action
 {
     protected function setUp(): void
     {

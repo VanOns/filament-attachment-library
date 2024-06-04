@@ -5,7 +5,7 @@
      x-data="{forms: {'uploadAttachment': false, 'createDirectory': false}}"
      x-on:dragover.prevent="forms.uploadAttachment = true"
      x-on:show-form.window="forms[$event.detail.form] = true"
-     x-on:hide-form.window="forms[$event.detail.form] = false;">
+     x-on:hide-form.window="forms[$event.detail.form] = false">
 
     <div class="flex justify-between align-center mb-4 items-center flex-wrap">
         {{-- Breadcrumbs --}}

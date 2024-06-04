@@ -11,7 +11,7 @@ use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-final class RenameAttachmentAction extends Action
+class RenameAttachmentAction extends Action
 {
     use HasCurrentPath;
 

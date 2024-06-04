@@ -3,14 +3,14 @@
     <x-filament::modal width="7xl" id="attachment-modal" sticky-footer>
 
         <x-slot name="heading">
-            {{__('filament-attachment-library::views.title')}}
+            {{ __('filament-attachment-library::views.title') }}
         </x-slot>
 
         <livewire:attachment-browser />
 
         <x-slot name="footer">
             <x-filament::button color="gray" x-on:click="$dispatch('close-modal', {id: 'attachment-modal'})">
-                {{__('filament-attachment-library::views.close')}}
+                {{ __('filament-attachment-library::views.close') }}
             </x-filament::button>
         </x-slot>
 
