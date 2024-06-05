@@ -5,7 +5,7 @@
             {{-- Home breadcrumb --}}
             <li class="fi-breadcrumbs-item flex gap-x-2">
                 <a href="#" wire:click="openPath(null)" class="text-sm font-medium text-gray-500 transition duration-75 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                    {{ __('filament-attachment-library::views.home')  }}
+                    {{ __('filament-attachment-library::views.home') }}
                 </a>
             </li>
 
