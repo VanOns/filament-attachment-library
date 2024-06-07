@@ -63,6 +63,27 @@ ATTACHMENTS_DISK=disk_name_here
 
 You may need to run `php artisan storage:link` to be able to preview attachments. See [the Laravel documentation](https://laravel.com/docs/11.x/filesystem) for more information.
 
+#### Install Glide
+
+This package depends on the [ampedweb/laravel-glide-in-a-box](https://github.com/ampedweb/laravel-glide-in-a-box) package for handling image manipulation.
+
+Run the command below to publish the configuration file.
+```env
+$ php artisan vendor:publish --tag=glideinabox
+```
+
+Make sure that the `source` matches the disk of the attachments.
+```php
+// baceinabox.php
+<?php
+
+return [
+    // ...
+    'source' => storage_path('app/media'),
+];
+
+```
+
 ### Usage
 
 In your form schema, add the AttachmentField:
