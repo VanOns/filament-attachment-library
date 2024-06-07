@@ -19,12 +19,17 @@ return [
             'mime_type' => 'MIME-type',
             'path' => 'Pad',
             'url' => 'Link',
+            'title' => 'Titel',
+            'description' => 'Beschrijving',
+            'alt' => 'Alt-tekst',
+            'caption' => 'Onderschrift',
+            'meta' => 'Meta velden',
         ],
     ],
     'actions' => [
         'attachment' => [
             'open' => 'Open bestand',
-            'rename' => 'Hernoem bestand',
+            'edit' => 'Bewerk bestand',
             'delete' => 'Verwijder bestand',
             'upload' => 'Upload bestand',
         ],
