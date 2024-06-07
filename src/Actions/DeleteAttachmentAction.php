@@ -19,7 +19,10 @@ class DeleteAttachmentAction extends Action
         $this->action(function (array $arguments) {
             $this->getLivewire()->dispatch('dehighlight-attachment', $arguments['attachment_id']);
 
-            AttachmentManager::delete(Attachment::find($arguments['attachment_id']));
+            /** @var Attachment $attachment */
+            $attachment = Attachment::find($arguments['attachment_id']);
+
+            AttachmentManager::delete($attachment);
         });
     }
 }

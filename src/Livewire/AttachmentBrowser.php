@@ -29,6 +29,10 @@ use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
+/**
+ * @property Form $uploadAttachmentForm
+ * @property Form $createDirectoryForm
+ */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
     use InteractsWithActionsUsingAlpineJS;

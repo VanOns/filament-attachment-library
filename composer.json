@@ -25,6 +25,7 @@
   ],
   "require": {
     "php": "^8.2",
+    "ampedweb/laravel-glide-in-a-box": "^0.7.0",
     "van-ons/laravel-attachment-library": "@dev"
   },
   "require-dev": {

@@ -31,12 +31,16 @@ class RenameAttachmentAction extends Action
         });
 
         $this->mountUsing(function (ComponentContainer $form, array $arguments) {
+            /** @var Attachment $attachment */
+            $attachment = Attachment::find($arguments['attachment_id']);
+
             $form->fill([
-                'name' => Attachment::find($arguments['attachment_id'])->name,
+                'name' => $attachment->name,
             ]);
         });
 
         $this->action(function (array $arguments, array $data) {
+            /** @var Attachment $attachment */
             $attachment = Attachment::find($arguments['attachment_id']);
 
             AttachmentManager::rename($attachment, $data['name']);

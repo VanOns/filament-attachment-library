@@ -19,7 +19,7 @@
 
             {{-- Preview/icon --}}
             <template x-if="attachment.is_image">
-                <img loading="lazy" :src="attachment?.url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
+                <img loading="lazy" :src="attachment?.thumb_url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
             </template>
 
             <template x-if="attachment.is_video">
@@ -27,7 +27,11 @@
                 </video>
             </template>
 
-            <template x-if="!attachment.is_image && !attachment.is_video">
+            <template x-if="attachment.is_audio">
+                <audio :src="attachment?.url" controls class="relative object-cover object-center rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"></audio>
+            </template>
+
+            <template x-if="!attachment.is_image && !attachment.is_video && !attachment.is_audio">
                 <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
             </template>
 
@@ -59,7 +63,7 @@
             <template x-if="$store.attachmentBrowser?.showActions()">
                 <div class="mt-6">
                     <div class="grid grid-cols-1 gap-2 mt-2">
-                        <x-filament::button color="gray" x-on:click="window.open(attachment.url)">
+                        <x-filament::button color="gray" x-on:click="window.open(attachment.url)" x-show="attachment?.is_renderable">
                             {{ __('filament-attachment-library::views.actions.attachment.open') }}
                         </x-filament::button>
 

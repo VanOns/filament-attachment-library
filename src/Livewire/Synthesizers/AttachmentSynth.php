@@ -17,16 +17,23 @@ class AttachmentSynth extends Synth
 
     public function dehydrate($target)
     {
+        $thumbnailUrl = $target->isType(AttachmentType::PREVIEWABLE_IMAGE)
+            ? glide_url($target->full_path)->preset('small')->url()
+            : null;
+
         return [[
             'id' => $target->id,
             'path' => $target->path,
             'name' => $target->name,
+            'thumb_url' => $thumbnailUrl,
             'url' => $target->url,
             'created_at' => $target->created_at->translatedFormat('d F Y'),
             'mime_type' => $target->mime_type,
             'class' => 'attachment',
             'is_image' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
             'is_video' => $target->isType(AttachmentType::PREVIEWABLE_VIDEO),
+            'is_audio' => $target->isType(AttachmentType::PREVIEWABLE_AUDIO),
+            'is_renderable' => AttachmentType::isRenderable($target->type),
             'size' => round(($target->size / 1024 / 1024), 2),
         ], []];
     }
