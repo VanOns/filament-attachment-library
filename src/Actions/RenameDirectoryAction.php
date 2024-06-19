@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
@@ -36,6 +37,11 @@ class RenameDirectoryAction extends Action
 
         $this->action(function (array $arguments, array $data) {
             AttachmentManager::renameDirectory($arguments['directory']['fullPath'], $data['name']);
+
+            Notification::make()
+                ->title(__('filament-attachment-library::notifications.directory.renamed'))
+                ->success()
+                ->send();
         });
     }
 }

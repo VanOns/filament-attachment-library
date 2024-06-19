@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
@@ -67,6 +68,11 @@ class EditAttachmentAction extends Action
             $attachment->save();
 
             $this->getLivewire()->dispatch('highlight-attachment', $arguments['attachment_id']);
+
+            Notification::make()
+                ->title(__('filament-attachment-library::notifications.attachment.updated'))
+                ->success()
+                ->send();
         });
     }
 }

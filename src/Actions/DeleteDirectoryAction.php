@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Actions;
 
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
 class DeleteDirectoryAction extends Action
@@ -16,7 +17,14 @@ class DeleteDirectoryAction extends Action
         $this->color('danger');
 
         $this->action(
-            fn (array $arguments) => AttachmentManager::deleteDirectory($arguments['directory']['fullPath'])
+            function(array $arguments){
+                AttachmentManager::deleteDirectory($arguments['directory']['fullPath']);
+
+                Notification::make()
+                    ->title(__('filament-attachment-library::notifications.directory.deleted'))
+                    ->success()
+                    ->send();
+            }
         );
     }
 }
