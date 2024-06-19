@@ -77,7 +77,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return OpenAttachmentAction::make('openAttachment');
     }
 
-    public function editAttributeAttachmentAction(): Action
+    public function editAttachmentAction(): Action
     {
         return EditAttachmentAction::make('editAttributeAttachmentAction');
     }

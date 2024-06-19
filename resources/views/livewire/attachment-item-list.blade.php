@@ -38,8 +38,8 @@
                                 {{ __('filament-attachment-library::views.actions.attachment.open') }}
                             </x-filament::dropdown.list.item>
 
-                            <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameAttachment', arguments: {'attachment_id': attachment.id}})">
-                                {{ __('filament-attachment-library::views.actions.attachment.rename') }}
+                            <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'editAttachmentAction', arguments: {'attachment_id': attachment.id}})">
+                                {{ __('filament-attachment-library::views.actions.attachment.edit') }}
                             </x-filament::dropdown.list.item>
 
                             <x-filament::dropdown.list.item color="danger" x-on:click="$dispatch('mount-action', {name: 'deleteAttachment', arguments: {'attachment_id': attachment.id}})">

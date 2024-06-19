@@ -15,7 +15,10 @@ return [
         ],
         'details' => [
             'size' => 'Bestandsgrootte',
+            'created_by' => 'Geüpload door',
             'created_at' => 'Geüpload op',
+            'updated_by' => 'Gewijzigd door',
+            'updated_at' => 'Gewijzigd op',
             'mime_type' => 'MIME-type',
             'path' => 'Pad',
             'url' => 'Link',
@@ -24,6 +27,10 @@ return [
             'alt' => 'Alt-tekst',
             'caption' => 'Onderschrift',
             'meta' => 'Meta velden',
+            'image' => 'Afbeelding velden',
+            'dimensions' => 'Afmetingen',
+            'bits' => 'Bits',
+            'channels' => 'Kanalen',
         ],
     ],
     'actions' => [
