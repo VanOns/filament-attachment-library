@@ -2,7 +2,6 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Foundation\Auth\User;
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
@@ -19,7 +18,7 @@ class AttachmentSynth extends Synth
 
     public function dehydrate($target)
     {
-        return [[
+        $fields = [
             'id' => $target->id,
             'path' => $target->path,
             'name' => $target->name,
@@ -29,9 +28,6 @@ class AttachmentSynth extends Synth
             'updated_at' => $target->updated_at->translatedFormat('d F Y'),
             'updated_by' => User::find($target->updated_by)?->name,
             'mime_type' => $target->mime_type,
-            'bits' => $target->bits,
-            'channels' => $target->channels,
-            'dimensions' => $target->dimensions,
             'alt' => $target->alt,
             'title' => $target->title,
             'description' => $target->description,
@@ -40,7 +36,17 @@ class AttachmentSynth extends Synth
             'is_image' => $target->isType(AttachmentType::PREVIEWABLE_IMAGE),
             'is_video' => $target->isType(AttachmentType::PREVIEWABLE_VIDEO),
             'size' => round(($target->size / 1024 / 1024), 2),
-        ], []];
+        ];
+
+        $metadata = $target->metadata;
+
+        if ($metadata && $target->isType(AttachmentType::PREVIEWABLE_IMAGE)){
+            $fields['bits'] = $metadata->bits;
+            $fields['channels'] = $metadata->channels;
+            $fields['dimensions'] = "{$metadata->width}x{$metadata->height}";
+        }
+
+        return [$fields, []];
     }
 
     public function hydrate($value)

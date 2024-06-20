@@ -29,6 +29,7 @@ return [
             'meta' => 'Meta velden',
             'image' => 'Afbeelding velden',
             'dimensions' => 'Afmetingen',
+            'dates' => 'Datums',
             'bits' => 'Bits',
             'channels' => 'Kanalen',
         ],
