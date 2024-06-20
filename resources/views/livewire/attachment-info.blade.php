@@ -96,19 +96,17 @@
                         {{ __('filament-attachment-library::views.info.details.sections.meta.header') }}
                     </x-slot>
 
-                    <div class="grid mt-2 grid-cols-2 gap-y-2">
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.title') }}</p>
-                        <p x-text="attachment.title ?? '-'"></p>
+                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.title') }}</p>
+                    <p x-text="attachment.title ?? '-'" class="break-all"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.description') }}</p>
-                        <p x-text="attachment.description ?? '-'"></p>
+                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.description') }}</p>
+                    <p x-text="attachment.description ?? '-'" class="break-all"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.alt') }}</p>
-                        <p x-text="attachment.alt ?? '-'" x-show="attachment.is_image"></p>
+                    <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.alt') }}</p>
+                    <p x-text="attachment.alt ?? '-'" x-show="attachment.is_image" class="break-all"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.caption') }}</p>
-                        <p x-text="attachment.caption ?? '-'" x-show="attachment.is_image"></p>
-                    </div>
+                    <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.caption') }}</p>
+                    <p x-text="attachment.caption ?? '-'" x-show="attachment.is_image" class="break-all"></p>
                 </x-filament::section>
 
             </div>
