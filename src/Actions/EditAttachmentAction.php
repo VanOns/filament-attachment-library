@@ -28,20 +28,19 @@ class EditAttachmentAction extends Action
 
             return [
                 TextInput::make('name')
-                    ->label(new HtmlString(__('filament-attachment-library::forms.edit-attachment.name'))),
+                    ->label(__('filament-attachment-library::forms.edit-attachment.name')),
                 TextInput::make('title')
-                    ->label(new HtmlString(__('filament-attachment-library::forms.edit-attachment.title'))),
+                    ->label(__('filament-attachment-library::forms.edit-attachment.title')),
                 Textarea::make('description')
                     ->label(__('filament-attachment-library::forms.edit-attachment.description')),
                 TextInput::make('alt')
                     ->hidden(! $isImage)
-                    ->label(new HtmlString(__('filament-attachment-library::forms.edit-attachment.alt'))),
+                    ->label(__('filament-attachment-library::forms.edit-attachment.alt')),
                 Textarea::make('caption')
                     ->hidden(! $isImage)
                     ->label(__('filament-attachment-library::forms.edit-attachment.caption')),
             ];
         });
-
 
         $this->mountUsing(function (ComponentContainer $form, array $arguments) {
             /** @var Attachment $attachment */

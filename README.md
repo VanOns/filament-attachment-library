@@ -61,8 +61,6 @@ By default, this package uses the `public` disk defined in `filesystems.php`. Th
 ATTACHMENTS_DISK=disk_name_here
 ```
 
-You may need to run `php artisan storage:link` to be able to preview attachments. See [the Laravel documentation](https://laravel.com/docs/11.x/filesystem) for more information.
-
 ### Usage
 
 In your form schema, add the AttachmentField:

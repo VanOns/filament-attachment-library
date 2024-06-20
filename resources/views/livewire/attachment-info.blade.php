@@ -51,59 +51,62 @@
                     </p>
                 </div>
 
+                {{-- Date fields --}}
                 <x-filament::section collapsible collapsed class="mt-4">
                     <x-slot name="heading">
-                        {{ __('filament-attachment-library::views.info.details.dates') }}
+                        {{ __('filament-attachment-library::views.info.details.sections.date.header') }}
                     </x-slot>
 
                     <div class="grid mt-2 grid-cols-2 gap-y-2">
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.created_by') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.date.created_by') }}</p>
                         <p x-text="attachment.created_by ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.created_at') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.date.created_at') }}</p>
                         <p x-text="attachment.created_at ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.updated_by') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.date.updated_by') }}</p>
                         <p x-text="attachment.updated_by ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.updated_at') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.date.updated_at') }}</p>
                         <p x-text="attachment.updated_at ?? '-'"></p>
                     </div>
                 </x-filament::section>
 
+                {{-- Image fields --}}
                 <x-filament::section collapsible collapsed class="mt-4" x-show="attachment.is_image">
                     <x-slot name="heading">
-                        {{ __('filament-attachment-library::views.info.details.image') }}
+                        {{ __('filament-attachment-library::views.info.details.sections.image.header') }}
                     </x-slot>
 
                     <div class="grid mt-2 grid-cols-2 gap-y-2">
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.dimensions') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.image.dimensions') }}</p>
                         <p x-text="attachment.dimensions ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.channels">{{ __('filament-attachment-library::views.info.details.channels') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.channels">{{ __('filament-attachment-library::views.info.details.sections.image.channels') }}</p>
                         <p x-text="attachment.channels" x-show="attachment.channels"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.bits">{{ __('filament-attachment-library::views.info.details.bits') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.bits">{{ __('filament-attachment-library::views.info.details.sections.image.bits') }}</p>
                         <p x-text="attachment.bits" x-show="attachment.bits"></p>
                     </div>
                 </x-filament::section>
 
+                {{-- Meta fields --}}
                 <x-filament::section collapsible collapsed class="mt-4">
                     <x-slot name="heading">
-                        {{ __('filament-attachment-library::views.info.details.meta') }}
+                        {{ __('filament-attachment-library::views.info.details.sections.meta.header') }}
                     </x-slot>
 
                     <div class="grid mt-2 grid-cols-2 gap-y-2">
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.title') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.title') }}</p>
                         <p x-text="attachment.title ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.description') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.description') }}</p>
                         <p x-text="attachment.description ?? '-'"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.alt') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.alt') }}</p>
                         <p x-text="attachment.alt ?? '-'" x-show="attachment.is_image"></p>
 
-                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.caption') }}</p>
+                        <p class="text-gray-500 dark:text-gray-400" x-show="attachment.is_image">{{ __('filament-attachment-library::views.info.details.sections.meta.caption') }}</p>
                         <p x-text="attachment.caption ?? '-'" x-show="attachment.is_image"></p>
                     </div>
                 </x-filament::section>
