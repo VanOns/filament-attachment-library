@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -28,6 +29,7 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
+use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
@@ -39,12 +41,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
-    public string $sortBy = 'name_ascending';
+    public string $sortBy = 'name';
 
     #[Url(history: true, keep: true)]
     public int $pageSize = 25;
 
     public string $search = '';
+    public string $mime = '';
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
@@ -173,6 +176,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $this->dispatch('highlight-attachment', null);
     }
 
+    #[On('set-mime')]
+    public function setMime(?string $mime): void
+    {
+        $this->mime = $mime;
+    }
+
     /**
      * Reset page on search query update.
      */
@@ -211,8 +220,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $path = null;
         }
 
-        $attachments = AttachmentManager::files($path);
-        $attachments = $this->applyFiltering($attachments);
+        $attachments = Attachment::all();
+        $attachments = $this->applyFiltering($attachments, true);
         $attachments = $this->applySorting($attachments);
 
         $directories = AttachmentManager::directories($path);
@@ -233,27 +242,32 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return filtered attachments.
+     * Return filtered attachments or directories.
      */
-    private function applyFiltering(Collection $items): Collection
+    private function applyFiltering(Collection $items, bool $attachment = false): Collection
     {
         if ($this->search) {
             $items = $items->filter(fn ($item) => str_contains(strtolower($item->name), strtolower($this->search)));
+        } else {
+            $items = $items->filter(fn ($item) => $item->path === $this->currentPath);
+        }
+
+        if ($this->mime && $attachment) {
+            $items = $items->filter(fn ($item) => fnmatch($this->mime, $item->mime_type));
         }
 
         return $items;
     }
 
     /**
-     * Return sorted attachments.
+     * Return sorted attachments or directories.
      */
     private function applySorting(Collection $items): Collection
     {
-        return match ($this->sortBy) {
-            'created_at_ascending' => $items->sortBy('created_at'),
-            'created_at_descending' => $items->sortByDesc('created_at'),
-            'name_descending' => $items->sortByDesc('name'),
-            default => $items->sortBy('name')
-        };
+        if(str_starts_with($this->sortBy, '!')) {
+            return $items->sortByDesc(ltrim($this->sortBy, '!'));
+        }
+
+        return $items->sortBy($this->sortBy);
     }
 }
