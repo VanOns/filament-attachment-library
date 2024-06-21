@@ -3,8 +3,11 @@
         <template x-for="(attachment, index) in attachments">
             <div @click="$store.attachmentBrowser?.handleItemClick(attachment, statePath)"
                  x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle').parentNode.click(); return false"
-                 :class="{'bg-black dark:bg-white dark:text-black text-white': (attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath))}"
-                 class="cursor-pointer relative flex flex-col dark:bg-gray-900 hover:bg-black hover:dark:bg-white hover:text-white hover:dark:text-black transition ease-in-out dark:bg-white rounded-lg box-border basis-3/12 grow min-w-[10rem] h-32">
+                 :class="{
+                    'bg-black dark:bg-gray-300 dark:text-black text-white hover:dark:bg-red-400 hover:dark:text-white': (attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)),
+                    'dark:bg-gray-900 hover:bg-gray-900 hover:dark:bg-gray-300 hover:text-white hover:dark:text-black': !(attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath))
+                 }"
+                 class="cursor-pointer relative flex flex-col transition ease-in-out rounded-lg box-border basis-3/12 grow min-w-[10rem] h-32 group">
 
                 <template x-if="attachment?.class === 'attachment' && attachment.is_image">
                     <img alt="" loading="lazy" width="auto" height="100%" :src="attachment.url" class="relative rounded-lg overflow-hidden h-full w-full object-center opacity-30 object-cover">
@@ -61,8 +64,13 @@
 
                     <x-filament::icon
                         icon="heroicon-o-check"
-                        class="w-8 h-8 m-0"
+                        class="w-8 h-8 m-0 block group-hover:hidden"
                         x-show="attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)"
+                    />
+                    <x-filament::icon
+                            icon="heroicon-o-x-circle"
+                            class="w-8 h-8 m-0 hidden group-hover:block"
+                            x-show="attachment?.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)"
                     />
                 </div>
             </div>
