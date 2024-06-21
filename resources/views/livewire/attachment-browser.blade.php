@@ -2,7 +2,7 @@
      data-dispatch="attachment-browser-loaded"
      {{-- Load attachment browser javascript --}}
      x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser'))]"
-     x-data="{forms: {'uploadAttachment': false, 'createDirectory': false}}"
+     x-data="{forms: {'uploadAttachment': false, 'createDirectory': false}, search: $wire.entangle('search').live}"
      x-on:dragover.prevent="forms.uploadAttachment = true"
      x-on:show-form.window="forms[$event.detail.form] = true"
      x-on:hide-form.window="forms[$event.detail.form] = false">
@@ -18,6 +18,11 @@
     {{-- Popout forms for global actions --}}
     @include('filament-attachment-library::components.forms')
 
+    {{-- Search result indicator --}}
+    <div x-show="search">
+        <h1>Zoekresultaten voor: <span x-text="search"></span></h1>
+    </div>
+
     {{-- Main attachment browser content --}}
     <div class="flex flex-row gap-4 mt-4 flex-wrap">
 
@@ -29,7 +34,6 @@
         {{-- Attachment list & pagination --}}
         @if(! $this->paginator->isEmpty())
             <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" />
-
         @endif
 
         {{-- Show selected attachment metadata --}}
