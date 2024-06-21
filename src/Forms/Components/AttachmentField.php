@@ -13,6 +13,7 @@ class AttachmentField extends Field
     public bool $multiple = false;
 
     public bool $showActions = false;
+    public string $mime = '';
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
@@ -57,6 +58,18 @@ class AttachmentField extends Field
     public function getMultiple(): bool
     {
         return $this->evaluate($this->multiple);
+    }
+
+    public function mime(string $mimeType): Field
+    {
+        $this->mime = $mimeType;
+
+        return $this;
+    }
+
+    public function getMime(): string
+    {
+        return $this->evaluate($this->mime);
     }
 
     public function render(): View

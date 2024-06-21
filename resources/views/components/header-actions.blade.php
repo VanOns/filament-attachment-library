@@ -1,4 +1,4 @@
-<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]">
+<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]" x-data="{showMimeOption: false}" x-on:attachment-browser-loaded-js.window="showMimeOption = $store.attachmentBrowser?.showMime()">
 
     {{-- Filtering & sorting  --}}
 
@@ -42,9 +42,10 @@
             </x-filament::dropdown.list.item>
 
             {{-- MIME_TYPE --}}
-            <x-filament::dropdown.list.item>
+            <x-filament::dropdown.list.item x-show="showMimeOption">
                 <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                     <x-filament::input.select wire:model.live="mime">
+                        <option value="">Alle</option>
                         <option value="application/pdf">PDF</option>
                         <option value="image/*">Afbeeldingen</option>
                         <option value="video/*">Video</option>
