@@ -1,7 +1,7 @@
 <x-dynamic-component
         x-data="{ state: $wire.$entangle('{{ $getStatePath() }}').live }"
         x-on:selected-attachments-updated.window="$event.detail.statePath === '{{$getStatePath()}}' ? $wire.$set('{{$getStatePath()}}', $event.detail.attachments) : ''"
-        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: false})"
+        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: false, showMime: false, mime: '{{$getMime()}}'})"
         :component="$getFieldWrapperView()"
         :field="$field">
     <div>
