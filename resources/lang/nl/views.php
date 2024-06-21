@@ -67,4 +67,5 @@ return [
     'search' => 'Zoeken...',
     'home' => 'Hoofdmap',
     'close' => 'Sluiten',
+    'submit' => 'Opslaan',
 ];

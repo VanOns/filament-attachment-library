@@ -46,10 +46,10 @@
                 <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                     <x-filament::input.select wire:model.live="mime">
                         <option value="">Alle</option>
-                        <option value="application/pdf">PDF</option>
                         <option value="image/*">Afbeeldingen</option>
-                        <option value="video/*">Video</option>
                         <option value="audio/*">Audio</option>
+                        <option value="application/pdf">PDF</option>
+                        <option value="video/*">Video</option>
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </x-filament::dropdown.list.item>

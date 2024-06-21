@@ -50,6 +50,14 @@ Alpine.store('attachmentBrowser', {
         return this.states[statePath].showActions;
     },
 
+    showMime(alternativeStatePath = null) {
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._statePathAbsentOrNull(statePath)) return false;
+
+        return this.states[statePath].showMime;
+    },
+
     /**
      * Helper methods and callbacks.
      */
@@ -57,12 +65,16 @@ Alpine.store('attachmentBrowser', {
         if ($event.detail.id !== 'attachment-modal') return;
 
         this.currentStatePath = $event.detail.statePath;
+
+        Livewire.dispatch('set-mime', {
+            mime: this.states[this.currentStatePath]['mime'] ?? ''
+        });
     },
 
     _onModalClosed($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
-        this._dispatchUpdatedAttachments();
+        if ($event.detail.save) this._dispatchUpdatedAttachments();
 
         this.currentStatePath = null;
     },
@@ -118,8 +130,6 @@ Alpine.store('attachmentBrowser', {
             ? this.states[statePath].state.push(id)
             : this.states[statePath].state = id;
 
-        this._dispatchUpdatedAttachments();
-
         Livewire.dispatch('highlight-attachment', {id: id});
     },
 
@@ -131,8 +141,6 @@ Alpine.store('attachmentBrowser', {
         this.states[statePath].state = this._isMultiple(statePath)
             ? this.states[statePath].state.filter(e => e !== id)
             : null;
-
-        this._dispatchUpdatedAttachments(statePath);
 
         Livewire.dispatch('highlight-attachment', {id: null});
     }
