@@ -21,8 +21,8 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteDirectoryAction;
+use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
-use VanOns\FilamentAttachmentLibrary\Actions\RenameAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
@@ -72,14 +72,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return DeleteAttachmentAction::make('deleteAttachment');
     }
 
-    public function renameAttachmentAction(): Action
-    {
-        return RenameAttachmentAction::make('renameAttachment')->setCurrentPath($this->currentPath);
-    }
-
     public function openAttachmentAction(): Action
     {
         return OpenAttachmentAction::make('openAttachment');
+    }
+
+    public function editAttachmentAction(): Action
+    {
+        return EditAttachmentAction::make('editAttributeAttachmentAction');
     }
 
     protected function getForms(): array

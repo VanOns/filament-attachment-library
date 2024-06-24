@@ -14,8 +14,29 @@ return [
             'description' => 'Selecteer een bestand om de informatie te bekijken.',
         ],
         'details' => [
+            'sections' => [
+                'meta' => [
+                    'header' => 'Metavelden',
+                    'alt' => 'Alt-tekst',
+                    'caption' => 'Onderschrift',
+                    'title' => 'Titel',
+                    'description' => 'Beschrijving'
+                ],
+                'image' => [
+                    'header' => 'Afbeelding velden',
+                    'dimensions' => 'Afmetingen',
+                    'bits' => 'Bits',
+                    'channels' => 'Kanalen',
+                ],
+                'date' => [
+                    'header' => 'Data',
+                    'created_by' => 'Geüpload door',
+                    'created_at' => 'Geüpload op',
+                    'updated_by' => 'Gewijzigd door',
+                    'updated_at' => 'Gewijzigd op',
+                ],
+            ],
             'size' => 'Bestandsgrootte',
-            'created_at' => 'Geüpload op',
             'mime_type' => 'MIME-type',
             'path' => 'Pad',
             'url' => 'Link',
@@ -24,7 +45,7 @@ return [
     'actions' => [
         'attachment' => [
             'open' => 'Open bestand',
-            'rename' => 'Hernoem bestand',
+            'edit' => 'Bewerk bestand',
             'delete' => 'Verwijder bestand',
             'upload' => 'Upload bestand',
         ],
