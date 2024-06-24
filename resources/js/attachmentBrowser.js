@@ -3,6 +3,7 @@ Alpine.store('attachmentBrowser', {
      * Properties.
      */
     states: {},
+    originalState: null,
     currentStatePath: null,
 
     /**
@@ -65,6 +66,7 @@ Alpine.store('attachmentBrowser', {
         if ($event.detail.id !== 'attachment-modal') return;
 
         this.currentStatePath = $event.detail.statePath;
+        this.originalState = this.states[$event.detail.statePath].state;
 
         Livewire.dispatch('set-mime', {
             mime: this.states[this.currentStatePath]['mime'] ?? ''
@@ -74,7 +76,15 @@ Alpine.store('attachmentBrowser', {
     _onModalClosed($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
-        if ($event.detail.save) this._dispatchUpdatedAttachments();
+        if ($event.detail.save){
+            this._dispatchUpdatedAttachments();
+            this.currentStatePath = null;
+            return;
+        }
+
+        if (!(this.originalState === this.states[this.currentStatePath].state)) {
+            this.states[this.currentStatePath].state = this.originalState;
+        }
 
         this.currentStatePath = null;
     },
@@ -107,6 +117,11 @@ Alpine.store('attachmentBrowser', {
                 this.isSelected(item.id, statePath)
                     ? this.deselect(item.id, statePath)
                     : this.select(item.id, statePath);
+
+                if (alternativeStatePath !== null) {
+                    this._dispatchUpdatedAttachments(statePath);
+                }
+
                 break;
             case 'directory':
                 this.openPath(item.fullPath, statePath);
