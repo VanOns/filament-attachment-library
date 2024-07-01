@@ -20,7 +20,7 @@
 
     {{-- Search result indicator --}}
     <div x-show="search">
-        <h1>Zoekresultaten voor: <span x-text="search"></span></h1>
+        <h1>{{ __('filament-attachment-library::views.browser.search_results') }} <span x-text="search"></span></h1>
     </div>
 
     {{-- Main attachment browser content --}}

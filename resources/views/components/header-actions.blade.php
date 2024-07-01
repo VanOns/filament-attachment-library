@@ -1,10 +1,13 @@
-<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]" x-data="{showMimeOption: false}" x-on:attachment-browser-loaded-js.window="showMimeOption = $store.attachmentBrowser?.showMime()">
+<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]"
+     x-data="{showMimeOptions: false}"
+     x-on:attachment-browser-loaded-js.window="showMimeOptions = $store.attachmentBrowser?.showMime()">
 
     {{-- Filtering & sorting  --}}
 
     {{-- Search --}}
     <x-filament::input.wrapper class="flex-1 min-w-full sm:min-w-[initial]">
-        <x-filament::input type="text" wire:model.live="search" placeholder="{{ __('filament-attachment-library::views.search') }}" />
+        <x-filament::input type="text" wire:model.live="search"
+                           placeholder="{{ __('filament-attachment-library::views.search') }}"/>
     </x-filament::input.wrapper>
 
     <x-filament::dropdown placement="bottom-start">
@@ -21,10 +24,12 @@
             <x-filament::dropdown.list.item>
                 <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                     <x-filament::input.select wire:model.live="sortBy">
-                        <option value="created_at">{{ __('filament-attachment-library::views.header-actions.created_at_ascending') }}</option>
-                        <option value="!created_at">{{ __('filament-attachment-library::views.header-actions.created_at_descending') }}</option>
-                        <option value="name">{{ __('filament-attachment-library::views.header-actions.name_ascending') }}</option>
-                        <option value="!name">{{ __('filament-attachment-library::views.header-actions.name_descending') }}</option>
+
+                        @foreach(\VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser::SORTABLE_FIELDS as $field)
+                            <option value="{{$field}}">{{ __("filament-attachment-library::views.header-actions.sort.{$field}_ascending") }}</option>
+                            <option value="!{{$field}}">{{ __("filament-attachment-library::views.header-actions.sort.{$field}_descending") }}</option>
+                        @endforeach
+
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </x-filament::dropdown.list.item>
@@ -33,23 +38,24 @@
             <x-filament::dropdown.list.item>
                 <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                     <x-filament::input.select wire:model.live="pageSize">
-                        <option value="5">5</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+
+                        @foreach(\VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser::PAGE_SIZES as $size)
+                            <option value="{{$size}}">{{$size}}</option>
+                        @endforeach
+
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </x-filament::dropdown.list.item>
 
             {{-- MIME_TYPE --}}
-            <x-filament::dropdown.list.item x-show="showMimeOption">
+            <x-filament::dropdown.list.item x-show="showMimeOptions">
                 <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                     <x-filament::input.select wire:model.live="mime">
-                        <option value="">Alle</option>
-                        <option value="image/*">Afbeeldingen</option>
-                        <option value="audio/*">Audio</option>
-                        <option value="application/pdf">PDF</option>
-                        <option value="video/*">Video</option>
+
+                        @foreach(\VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser::FILTERABLE_FILE_TYPES as $type => $mime)
+                            <option value="{{$mime}}">{{__("filament-attachment-library::views.header-actions.filters.{$type}")}}</option>
+                        @endforeach
+
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </x-filament::dropdown.list.item>

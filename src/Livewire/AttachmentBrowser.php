@@ -13,7 +13,6 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -31,6 +30,10 @@ use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
+/**
+ * @property Form $uploadAttachmentForm
+ * @property Form $createDirectoryForm
+ */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
     use InteractsWithActionsUsingAlpineJS;
@@ -55,6 +58,22 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?array $uploadFormState = ['attachment' => []];
 
+    const SORTABLE_FIELDS = [
+        'name',
+        'created_at',
+        'updated_at',
+    ];
+
+    const PAGE_SIZES = [5, 25, 50, 100];
+
+    const FILTERABLE_FILE_TYPES = [
+        'all' => '',
+        'image' => 'image/*',
+        'audio' => 'audio/*',
+        'video' => 'video/*',
+        'pdf' => 'application/pdf',
+    ];
+
     public function render()
     {
         return view($this->view);
@@ -67,7 +86,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function renameDirectoryAction(): Action
     {
-        return RenameDirectoryAction::make('renameDirectory')->setCurrentPath($this->currentPath);
+        return RenameDirectoryAction::make('renameDirectory')
+            ->setCurrentPath($this->currentPath);
     }
 
     public function deleteAttachmentAction(): Action
@@ -82,7 +102,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function editAttachmentAction(): Action
     {
-        return EditAttachmentAction::make('editAttributeAttachmentAction');
+        return EditAttachmentAction::make('editAttributeAttachmentAction')
+            ->setCurrentPath($this->currentPath);
     }
 
     protected function getForms(): array
@@ -213,18 +234,17 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Computed]
     protected function paginator(): LengthAwarePaginator
     {
-        $path = empty($this->currentPath) ? null : $this->currentPath;
+        $this->currentPath = empty($this->currentPath) ? null : $this->currentPath;
 
-        if ($path !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
+        if ($this->currentPath !== null && !AttachmentManager::destinationExists($this->currentPath)) {
             $this->currentPath = null;
-            $path = null;
         }
 
         $attachments = Attachment::all();
         $attachments = $this->applyFiltering($attachments, true);
         $attachments = $this->applySorting($attachments);
 
-        $directories = AttachmentManager::directories($path);
+        $directories = AttachmentManager::directories($this->currentPath);
         $directories = $this->applyFiltering($directories);
         $directories = $this->applySorting($directories);
 
@@ -264,10 +284,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     private function applySorting(Collection $items): Collection
     {
-        if(str_starts_with($this->sortBy, '!')) {
-            return $items->sortByDesc(ltrim($this->sortBy, '!'));
+        $descending = str_starts_with($this->sortBy, '!');
+        $sortKey = $descending ? ltrim($this->sortBy, '!') : $this->sortBy;
+
+        // Return unsorted collection if sort key is not found.
+        if (!in_array($sortKey, $this::SORTABLE_FIELDS)) {
+            return $items;
         }
 
-        return $items->sortBy($this->sortBy);
+        return $descending
+            ? $items->sortByDesc($sortKey)
+            : $items->sortBy($sortKey);
     }
 }

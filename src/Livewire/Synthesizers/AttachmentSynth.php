@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 use Illuminate\Foundation\Auth\User;
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
+use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentSynth extends Synth
@@ -39,6 +40,10 @@ class AttachmentSynth extends Synth
         ];
 
         $metadata = $target->metadata;
+
+        if ($target->isType(AttachmentType::PREVIEWABLE_IMAGE)) {
+            $fields['thumbnail_url'] = Resizer::src($target)->height(200)->resize()['url'];
+        }
 
         if ($metadata && $target->isType(AttachmentType::PREVIEWABLE_IMAGE)){
             $fields['bits'] = $metadata->bits;

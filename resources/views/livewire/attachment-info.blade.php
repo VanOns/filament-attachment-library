@@ -1,5 +1,4 @@
-<div x-data="{ attachment: $wire.$entangle('attachment').live }"
-    class="p-6 flex-1 sticky top-20 w-full min-w-[400px] flex-grow-0 self-start rounded-l-xl bg-white dark:bg-gray-900 rounded-lg hidden md:block max-w-md max-h-[51rem] overflow-y-scroll">
+<div x-data="{ attachment: $wire.$entangle('attachment').live }" class="p-6 flex-1 sticky top-20 w-full min-w-[400px] flex-grow-0 self-start rounded-l-xl bg-white dark:bg-gray-900 rounded-lg hidden md:block max-w-md max-h-[51rem] overflow-y-auto">
 
     {{-- No attachment selected --}}
     <template x-if="typeof attachment !== 'undefined' && attachment === null">
@@ -19,7 +18,7 @@
 
             {{-- Preview/icon --}}
             <template x-if="attachment.is_image">
-                <img loading="lazy" :src="attachment?.url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
+                <img loading="lazy" :src="attachment?.thumbnail_url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
             </template>
 
             <template x-if="attachment.is_video">

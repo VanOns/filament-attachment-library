@@ -8,12 +8,18 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
+use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
+use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
+use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class EditAttachmentAction extends Action
 {
+    use HasCurrentPath;
+
     protected function setUp(): void
     {
         $this->label(__('filament-attachment-library::views.actions.attachment.edit'));
@@ -29,6 +35,10 @@ class EditAttachmentAction extends Action
             return [
                 TextInput::make('name')
                     ->label(__('filament-attachment-library::forms.edit-attachment.name'))
+                    ->rules([
+                        new DestinationExists($this->currentPath, $arguments['attachment_id']),
+                        new AllowedFilename(),
+                    ])
                     ->maxLength(255),
                 TextInput::make('title')
                     ->label(__('filament-attachment-library::forms.edit-attachment.title'))
