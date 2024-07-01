@@ -32,7 +32,7 @@
         @endif
 
         {{-- Include sidebar cards --}}
-        @include('filament-attachment-library::components.sidebar-cards')
+        @include('filament-attachment-library::components.sidebar')
 
         {{-- Pagination --}}
         <div class="mt-4 w-full">
