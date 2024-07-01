@@ -45,7 +45,7 @@ class AttachmentSynth extends Synth
             $fields['thumbnail_url'] = Resizer::src($target)->height(200)->resize()['url'];
         }
 
-        if ($metadata && $target->isType(AttachmentType::PREVIEWABLE_IMAGE)){
+        if ($metadata && $target->isType(AttachmentType::PREVIEWABLE_IMAGE)) {
             $fields['bits'] = $metadata->bits;
             $fields['channels'] = $metadata->channels;
             $fields['dimensions'] = "{$metadata->width}x{$metadata->height}";

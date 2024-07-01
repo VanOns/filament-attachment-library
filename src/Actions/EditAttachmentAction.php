@@ -7,12 +7,10 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Illuminate\Support\HtmlString;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
-use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -26,7 +24,7 @@ class EditAttachmentAction extends Action
 
         $this->color('gray');
 
-        $this->form(function(array $arguments){
+        $this->form(function (array $arguments) {
             /** @var Attachment $attachment */
             $attachment = Attachment::find($arguments['attachment_id']);
 

@@ -13,6 +13,7 @@ class AttachmentField extends Field
     public bool $multiple = false;
 
     public bool $showActions = false;
+
     public string $mime = '';
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';

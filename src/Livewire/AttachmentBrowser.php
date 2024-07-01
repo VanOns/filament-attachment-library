@@ -50,6 +50,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public int $pageSize = 25;
 
     public string $search = '';
+
     public string $mime = '';
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
@@ -64,7 +65,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'updated_at',
     ];
 
-    const PAGE_SIZES = [5, 25, 50, 100];
+    const PAGE_SIZES = [5, 10, 25, 50];
 
     const FILTERABLE_FILE_TYPES = [
         'all' => '',
@@ -150,6 +151,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     new DestinationExists($this->currentPath),
                     new AllowedFilename(),
                 ])->required()
+                ->autocomplete(false)
                 ->label(__('filament-attachment-library::forms.create-directory.name')),
         ])->statePath('createDirectoryFormState');
     }
@@ -165,7 +167,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->title(__('filament-attachment-library::notifications.attachment.created'))
             ->success()
             ->send();
-        $this->dispatch('hide-form', form: 'uploadAttachment');
     }
 
     /**
@@ -184,7 +185,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->title(__('filament-attachment-library::notifications.directory.created'))
             ->success()
             ->send();
-        $this->dispatch('hide-form', form: 'createDirectory');
     }
 
     /**
@@ -236,7 +236,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         $this->currentPath = empty($this->currentPath) ? null : $this->currentPath;
 
-        if ($this->currentPath !== null && !AttachmentManager::destinationExists($this->currentPath)) {
+        if ($this->currentPath !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
             $this->currentPath = null;
         }
 
@@ -288,7 +288,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $sortKey = $descending ? ltrim($this->sortBy, '!') : $this->sortBy;
 
         // Return unsorted collection if sort key is not found.
-        if (!in_array($sortKey, $this::SORTABLE_FIELDS)) {
+        if (! in_array($sortKey, $this::SORTABLE_FIELDS)) {
             return $items;
         }
 

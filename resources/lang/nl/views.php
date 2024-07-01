@@ -7,7 +7,7 @@ return [
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
             'button' => 'Terug naar hoofdmap',
         ],
-        'search_results' => 'Zoekresultaten voor: '
+        'search_results' => 'Zoekresultaten voor: ',
     ],
     'info' => [
         'empty' => [
@@ -21,7 +21,7 @@ return [
                     'alt' => 'Alt-tekst',
                     'caption' => 'Onderschrift',
                     'title' => 'Titel',
-                    'description' => 'Beschrijving'
+                    'description' => 'Beschrijving',
                 ],
                 'image' => [
                     'header' => 'Afbeelding velden',
@@ -66,13 +66,19 @@ return [
             'name_ascending' => 'Naam oplopend',
             'name_descending' => 'Naam aflopend',
         ],
-        'filters' => [
+    ],
+    'sidebar-cards' => [
+        'filters' => 'Filters',
+        'mime_type' => [
             'all' => 'Alle',
             'image' => 'Afbeelding',
             'video' => 'Video',
             'audio' => 'Audio',
             'pdf' => 'PDF',
         ],
+    ],
+    'field' => [
+        'pick' => 'Kies bestand(en)',
     ],
     'title' => 'Bestandsbeheer',
     'group' => 'Bestanden',
