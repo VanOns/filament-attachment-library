@@ -14,6 +14,9 @@ class AttachmentItemList extends Component
     #[Reactive]
     public Collection|Attachment $attachments;
 
+    #[Reactive]
+    public ?string $currentPath;
+
     public ?string $statePath;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-item-list';

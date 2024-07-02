@@ -12,15 +12,17 @@
             {{ __('filament-attachment-library::forms.upload-attachment.heading') }}
         </x-slot>
 
-        {{$this->uploadAttachmentForm}}
+        <form wire:submit.prevent="saveUploadAttachmentForm">
+            {{$this->uploadAttachmentForm}}
 
-        <x-filament::button type="submit" class="mt-4">
-            {{ __('filament-attachment-library::views.actions.attachment.upload') }}
-        </x-filament::button>
+            <x-filament::button type="submit" class="mt-4">
+                {{ __('filament-attachment-library::views.actions.attachment.upload') }}
+            </x-filament::button>
 
-        <x-filament::button color="gray" class="mt-4" x-on:click="$dispatch('collapse-section', {id: 'upload-attachment-form'})">
-            {{ __('filament-attachment-library::views.close') }}
-        </x-filament::button>
+            <x-filament::button color="gray" class="mt-4" x-on:click="$dispatch('collapse-section', {id: 'upload-attachment-form'})">
+                {{ __('filament-attachment-library::views.close') }}
+            </x-filament::button>
+        </form>
 
     </x-filament::section>
 
@@ -60,10 +62,11 @@
                     icon="heroicon-o-funnel"
                     tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
-            {{ __('filament-attachment-library::views.sidebar-cards.filters') }}
+            {{ __('filament-attachment-library::views.sidebar-cards.filters.header') }}
         </x-slot>
 
-        <x-filament-forms::field-wrapper label="Bestandstype">
+        {{-- Mime-type --}}
+        <x-filament-forms::field-wrapper label="{{ __('filament-attachment-library::views.sidebar-cards.filters.mime') }}">
             <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                 <x-filament::input.select wire:model.live="mime">
 

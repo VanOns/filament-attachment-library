@@ -9,12 +9,15 @@
         <livewire:attachment-browser />
 
         <x-slot name="footer">
+
             <x-filament::button color="primary" x-on:click="$dispatch('close-modal', {id: 'attachment-modal', save: true})">
                 {{ __('filament-attachment-library::views.submit') }}
             </x-filament::button>
+
             <x-filament::button color="gray" x-on:click="$dispatch('close-modal', {id: 'attachment-modal'})">
                 {{ __('filament-attachment-library::views.close') }}
             </x-filament::button>
+
         </x-slot>
 
     </x-filament::modal>

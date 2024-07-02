@@ -68,7 +68,10 @@ return [
         ],
     ],
     'sidebar-cards' => [
-        'filters' => 'Filters',
+        'filters' => [
+            'header' => 'Filters',
+            'mime' => 'Bestandstype',
+        ],
         'mime_type' => [
             'all' => 'Alle',
             'image' => 'Afbeelding',

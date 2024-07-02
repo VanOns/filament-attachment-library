@@ -21,15 +21,8 @@
     {{-- Main attachment browser content --}}
     <div class="flex flex-row gap-6 mt-4 flex-wrap">
 
-        {{-- Empty directory notice --}}
-        @if($this->paginator->isEmpty())
-            @include('filament-attachment-library::components.empty-path-notice')
-        @endif
-
-        {{-- Attachment list & pagination --}}
-        @if(! $this->paginator->isEmpty())
-            <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" />
-        @endif
+        {{-- Attachment list --}}
+        <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" :$currentPath />
 
         {{-- Include sidebar cards --}}
         @include('filament-attachment-library::components.sidebar')
