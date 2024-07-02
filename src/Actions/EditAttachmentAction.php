@@ -32,25 +32,25 @@ class EditAttachmentAction extends Action
 
             return [
                 TextInput::make('name')
-                    ->label(__('filament-attachment-library::forms.edit-attachment.name'))
+                    ->label(__('filament-attachment-library::forms.edit_attachment.name'))
                     ->rules([
                         new DestinationExists($this->currentPath, $arguments['attachment_id']),
                         new AllowedFilename(),
                     ])
                     ->maxLength(255),
                 TextInput::make('title')
-                    ->label(__('filament-attachment-library::forms.edit-attachment.title'))
+                    ->label(__('filament-attachment-library::forms.edit_attachment.title'))
                     ->maxLength(255),
                 Textarea::make('description')
-                    ->label(__('filament-attachment-library::forms.edit-attachment.description'))
+                    ->label(__('filament-attachment-library::forms.edit_attachment.description'))
                     ->maxLength(255),
                 TextInput::make('alt')
                     ->hidden(! $isImage)
-                    ->label(__('filament-attachment-library::forms.edit-attachment.alt'))
+                    ->label(__('filament-attachment-library::forms.edit_attachment.alt'))
                     ->maxLength(255),
                 Textarea::make('caption')
                     ->hidden(! $isImage)
-                    ->label(__('filament-attachment-library::forms.edit-attachment.caption'))
+                    ->label(__('filament-attachment-library::forms.edit_attachment.caption'))
                     ->maxLength(255),
             ];
         });

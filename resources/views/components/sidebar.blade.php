@@ -9,7 +9,7 @@
                     icon="heroicon-o-document-plus"
                     tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
-            {{ __('filament-attachment-library::forms.upload-attachment.heading') }}
+            {{ __('filament-attachment-library::forms.upload_attachment.heading') }}
         </x-slot>
 
         <form wire:submit.prevent="saveUploadAttachmentForm">
@@ -35,7 +35,7 @@
                     icon="heroicon-o-folder-plus"
                     tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
-            {{ __('filament-attachment-library::forms.create-directory.heading') }}
+            {{ __('filament-attachment-library::forms.create_directory.heading') }}
         </x-slot>
 
         <form wire:submit.prevent="saveCreateDirectoryForm">
@@ -62,16 +62,16 @@
                     icon="heroicon-o-funnel"
                     tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
-            {{ __('filament-attachment-library::views.sidebar-cards.filters.header') }}
+            {{ __('filament-attachment-library::views.sidebar.filters.header') }}
         </x-slot>
 
         {{-- Mime-type --}}
-        <x-filament-forms::field-wrapper label="{{ __('filament-attachment-library::views.sidebar-cards.filters.mime') }}">
+        <x-filament-forms::field-wrapper label="{{ __('filament-attachment-library::views.sidebar.filters.mime') }}">
             <x-filament::input.wrapper class="flex-1 min-w-full md:min-w-[initial]">
                 <x-filament::input.select wire:model.live="mime">
 
                     @foreach(\VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser::FILTERABLE_FILE_TYPES as $type => $mime)
-                        <option value="{{$mime}}">{{__("filament-attachment-library::views.sidebar-cards.mime_type.{$type}")}}</option>
+                        <option value="{{$mime}}">{{__("filament-attachment-library::views.sidebar.mime_type.{$type}")}}</option>
                     @endforeach
 
                 </x-filament::input.select>

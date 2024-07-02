@@ -56,7 +56,7 @@ return [
             'create' => 'Maak map',
         ],
     ],
-    'header-actions' => [
+    'header_actions' => [
         'options' => 'Opties',
         'sort' => [
             'updated_at_ascending' => 'Datum bijgewerkt oplopend',
@@ -67,7 +67,7 @@ return [
             'name_descending' => 'Naam aflopend',
         ],
     ],
-    'sidebar-cards' => [
+    'sidebar' => [
         'filters' => [
             'header' => 'Filters',
             'mime' => 'Bestandstype',
