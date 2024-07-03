@@ -44,7 +44,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
-    public string $sortBy = 'name';
+    public string $sortBy = 'name_ascending';
 
     #[Url(history: true, keep: true)]
     public int $pageSize = 25;
@@ -284,16 +284,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     private function applySorting(Collection $items): Collection
     {
-        $descending = str_starts_with($this->sortBy, '!');
-        $sortKey = $descending ? ltrim($this->sortBy, '!') : $this->sortBy;
+        [$sortColumn, $sortDirection] = explode('_', $this->sortBy);
+        $descending = $sortDirection === 'descending';
 
         // Return unsorted collection if sort key is not found.
-        if (! in_array($sortKey, $this::SORTABLE_FIELDS)) {
+        if (! in_array($sortColumn, $this::SORTABLE_FIELDS)) {
             return $items;
         }
 
         return $descending
-            ? $items->sortByDesc($sortKey)
-            : $items->sortBy($sortKey);
+            ? $items->sortByDesc($sortColumn)
+            : $items->sortBy($sortColumn);
     }
 }
