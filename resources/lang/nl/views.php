@@ -7,7 +7,7 @@ return [
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
             'button' => 'Terug naar hoofdmap',
         ],
-        'search_results' => 'Zoekresultaten voor: ',
+        'search_results' => 'Zoekresultaten voor:',
     ],
     'info' => [
         'empty' => [
