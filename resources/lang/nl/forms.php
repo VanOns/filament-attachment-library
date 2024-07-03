@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'create-directory' => [
+    'create_directory' => [
         'name' => 'Naam',
         'heading' => 'Map aanmaken',
     ],
-    'edit-attachment' => [
+    'edit_attachment' => [
         'alt' => 'Alt-tekst',
         'title' => 'Titel',
         'name' => 'Naam',
         'description' => 'Beschrijving',
         'caption' => 'Onderschrift',
     ],
-    'upload-attachment' => [
+    'upload_attachment' => [
         'name' => 'Bestand(en)',
         'heading' => 'Uploaden',
     ],

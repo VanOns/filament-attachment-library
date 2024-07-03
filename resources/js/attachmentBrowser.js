@@ -3,6 +3,7 @@ Alpine.store('attachmentBrowser', {
      * Properties.
      */
     states: {},
+    originalState: null,
     currentStatePath: null,
 
     /**
@@ -50,6 +51,14 @@ Alpine.store('attachmentBrowser', {
         return this.states[statePath].showActions;
     },
 
+    showMime(alternativeStatePath = null) {
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._statePathAbsentOrNull(statePath)) return false;
+
+        return this.states[statePath].showMime;
+    },
+
     /**
      * Helper methods and callbacks.
      */
@@ -57,12 +66,25 @@ Alpine.store('attachmentBrowser', {
         if ($event.detail.id !== 'attachment-modal') return;
 
         this.currentStatePath = $event.detail.statePath;
+        this.originalState = this.states[$event.detail.statePath].state;
+
+        Livewire.dispatch('set-mime', {
+            mime: this.states[this.currentStatePath]['mime'] ?? ''
+        });
     },
 
     _onModalClosed($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
-        this._dispatchUpdatedAttachments();
+        if ($event.detail.save){
+            this._dispatchUpdatedAttachments();
+            this.currentStatePath = null;
+            return;
+        }
+
+        if (!(this.originalState === this.states[this.currentStatePath].state)) {
+            this.states[this.currentStatePath].state = this.originalState;
+        }
 
         this.currentStatePath = null;
     },
@@ -95,6 +117,11 @@ Alpine.store('attachmentBrowser', {
                 this.isSelected(item.id, statePath)
                     ? this.deselect(item.id, statePath)
                     : this.select(item.id, statePath);
+
+                if (alternativeStatePath !== null) {
+                    this._dispatchUpdatedAttachments(statePath);
+                }
+
                 break;
             case 'directory':
                 this.openPath(item.fullPath, statePath);
@@ -118,8 +145,6 @@ Alpine.store('attachmentBrowser', {
             ? this.states[statePath].state.push(id)
             : this.states[statePath].state = id;
 
-        this._dispatchUpdatedAttachments();
-
         Livewire.dispatch('highlight-attachment', {id: id});
     },
 
@@ -131,8 +156,6 @@ Alpine.store('attachmentBrowser', {
         this.states[statePath].state = this._isMultiple(statePath)
             ? this.states[statePath].state.filter(e => e !== id)
             : null;
-
-        this._dispatchUpdatedAttachments(statePath);
 
         Livewire.dispatch('highlight-attachment', {id: null});
     }

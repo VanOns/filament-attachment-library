@@ -1,7 +1,7 @@
 <x-dynamic-component
         x-data="{ state: $wire.$entangle('{{ $getStatePath() }}').live }"
         x-on:selected-attachments-updated.window="$event.detail.statePath === '{{$getStatePath()}}' ? $wire.$set('{{$getStatePath()}}', $event.detail.attachments) : ''"
-        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: false})"
+        x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{$getStatePath()}}', {state: state ?? [], multiple: '{{$getMultiple()}}', showActions: true, showMime: false, mime: '{{$getMime()}}'})"
         :component="$getFieldWrapperView()"
         :field="$field">
     <div>
@@ -15,7 +15,7 @@
                 x-on:selected-attachments-updated.window="$event.detail.statePath === '{{$getStatePath()}}' ? $wire.$set('{{$getStatePath()}}', $event.detail.attachments) : ''"
                 class="mt-2"
                 icon="heroicon-o-document">
-            Kies bestand(en)
+            {{ __('filament-attachment-library::views.field.pick') }}
         </x-filament::button>
 
     </div>

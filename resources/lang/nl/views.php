@@ -7,6 +7,7 @@ return [
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
             'button' => 'Terug naar hoofdmap',
         ],
+        'search_results' => 'Zoekresultaten voor:',
     ],
     'info' => [
         'empty' => [
@@ -20,7 +21,7 @@ return [
                     'alt' => 'Alt-tekst',
                     'caption' => 'Onderschrift',
                     'title' => 'Titel',
-                    'description' => 'Beschrijving'
+                    'description' => 'Beschrijving',
                 ],
                 'image' => [
                     'header' => 'Afbeelding velden',
@@ -55,16 +56,37 @@ return [
             'create' => 'Maak map',
         ],
     ],
-    'header-actions' => [
-        'created_at_ascending' => 'Uploaddatum oplopend',
-        'created_at_descending' => 'Uploaddatum aflopend',
-        'name_ascending' => 'Naam oplopend',
-        'name_descending' => 'Naam aflopend',
+    'header_actions' => [
         'options' => 'Opties',
+        'sort' => [
+            'updated_at_ascending' => 'Datum bijgewerkt oplopend',
+            'updated_at_descending' => 'Datum bijgewerkt aflopend',
+            'created_at_ascending' => 'Uploaddatum oplopend',
+            'created_at_descending' => 'Uploaddatum aflopend',
+            'name_ascending' => 'Naam oplopend',
+            'name_descending' => 'Naam aflopend',
+        ],
+    ],
+    'sidebar' => [
+        'filters' => [
+            'header' => 'Filters',
+            'mime' => 'Bestandstype',
+        ],
+        'mime_type' => [
+            'all' => 'Alle',
+            'image' => 'Afbeelding',
+            'video' => 'Video',
+            'audio' => 'Audio',
+            'pdf' => 'PDF',
+        ],
+    ],
+    'field' => [
+        'pick' => 'Kies bestand(en)',
     ],
     'title' => 'Bestandsbeheer',
     'group' => 'Bestanden',
     'search' => 'Zoeken...',
     'home' => 'Hoofdmap',
     'close' => 'Sluiten',
+    'submit' => 'Opslaan',
 ];

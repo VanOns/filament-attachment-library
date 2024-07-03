@@ -28,7 +28,12 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
+use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
+/**
+ * @property Form $uploadAttachmentForm
+ * @property Form $createDirectoryForm
+ */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
     use InteractsWithActionsUsingAlpineJS;
@@ -46,11 +51,29 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
+    public string $mime = '';
+
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
     public ?array $createDirectoryFormState = [];
 
     public ?array $uploadFormState = ['attachment' => []];
+
+    const SORTABLE_FIELDS = [
+        'name',
+        'created_at',
+        'updated_at',
+    ];
+
+    const PAGE_SIZES = [5, 10, 25, 50];
+
+    const FILTERABLE_FILE_TYPES = [
+        'all' => '',
+        'image' => 'image/*',
+        'audio' => 'audio/*',
+        'video' => 'video/*',
+        'pdf' => 'application/pdf',
+    ];
 
     public function render()
     {
@@ -64,7 +87,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function renameDirectoryAction(): Action
     {
-        return RenameDirectoryAction::make('renameDirectory')->setCurrentPath($this->currentPath);
+        return RenameDirectoryAction::make('renameDirectory')
+            ->setCurrentPath($this->currentPath);
     }
 
     public function deleteAttachmentAction(): Action
@@ -79,7 +103,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function editAttachmentAction(): Action
     {
-        return EditAttachmentAction::make('editAttributeAttachmentAction');
+        return EditAttachmentAction::make('editAttributeAttachmentAction')
+            ->setCurrentPath($this->currentPath);
     }
 
     protected function getForms(): array
@@ -100,7 +125,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->rules([new AllowedFilename(), new DestinationExists($this->currentPath)])
                 ->multiple()
                 ->required()
-                ->label(__('filament-attachment-library::forms.upload-attachment.name'))
+                ->label(__('filament-attachment-library::forms.upload_attachment.name'))
                 ->fetchFileInformation()
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
@@ -126,7 +151,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     new DestinationExists($this->currentPath),
                     new AllowedFilename(),
                 ])->required()
-                ->label(__('filament-attachment-library::forms.create-directory.name')),
+                ->autocomplete(false)
+                ->label(__('filament-attachment-library::forms.create_directory.name')),
         ])->statePath('createDirectoryFormState');
     }
 
@@ -141,7 +167,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->title(__('filament-attachment-library::notifications.attachment.created'))
             ->success()
             ->send();
-        $this->dispatch('hide-form', form: 'uploadAttachment');
     }
 
     /**
@@ -160,7 +185,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->title(__('filament-attachment-library::notifications.directory.created'))
             ->success()
             ->send();
-        $this->dispatch('hide-form', form: 'createDirectory');
     }
 
     /**
@@ -171,6 +195,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         $this->currentPath = $path;
         $this->dispatch('highlight-attachment', null);
+    }
+
+    #[On('set-mime')]
+    public function setMime(?string $mime): void
+    {
+        $this->mime = $mime;
     }
 
     /**
@@ -204,18 +234,17 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Computed]
     protected function paginator(): LengthAwarePaginator
     {
-        $path = empty($this->currentPath) ? null : $this->currentPath;
+        $this->currentPath = empty($this->currentPath) ? null : $this->currentPath;
 
-        if ($path !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
+        if ($this->currentPath !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
             $this->currentPath = null;
-            $path = null;
         }
 
-        $attachments = AttachmentManager::files($path);
-        $attachments = $this->applyFiltering($attachments);
+        $attachments = Attachment::all();
+        $attachments = $this->applyFiltering($attachments, true);
         $attachments = $this->applySorting($attachments);
 
-        $directories = AttachmentManager::directories($path);
+        $directories = AttachmentManager::directories($this->currentPath);
         $directories = $this->applyFiltering($directories);
         $directories = $this->applySorting($directories);
 
@@ -233,27 +262,38 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Return filtered attachments.
+     * Return filtered attachments or directories.
      */
-    private function applyFiltering(Collection $items): Collection
+    private function applyFiltering(Collection $items, bool $attachment = false): Collection
     {
         if ($this->search) {
             $items = $items->filter(fn ($item) => str_contains(strtolower($item->name), strtolower($this->search)));
+        } else {
+            $items = $items->filter(fn ($item) => $item->path === $this->currentPath);
+        }
+
+        if ($this->mime && $attachment) {
+            $items = $items->filter(fn ($item) => fnmatch($this->mime, $item->mime_type));
         }
 
         return $items;
     }
 
     /**
-     * Return sorted attachments.
+     * Return sorted attachments or directories.
      */
     private function applySorting(Collection $items): Collection
     {
-        return match ($this->sortBy) {
-            'created_at_ascending' => $items->sortBy('created_at'),
-            'created_at_descending' => $items->sortByDesc('created_at'),
-            'name_descending' => $items->sortByDesc('name'),
-            default => $items->sortBy('name')
-        };
+        [$sortColumn, $sortDirection] = explode('_', $this->sortBy);
+        $descending = $sortDirection === 'descending';
+
+        // Return unsorted collection if sort key is not found.
+        if (! in_array($sortColumn, $this::SORTABLE_FIELDS)) {
+            return $items;
+        }
+
+        return $descending
+            ? $items->sortByDesc($sortColumn)
+            : $items->sortBy($sortColumn);
     }
 }

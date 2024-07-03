@@ -25,7 +25,7 @@
                 <x-filament::icon-button
                         icon="heroicon-o-folder-plus"
                         tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
-                        x-on:click="$dispatch('show-form', {form: 'createDirectory'})"
+                        x-on:click="$dispatch('open-section', {id: 'create-directory-form'})"
                 />
             </li>
 
