@@ -7,6 +7,7 @@ return [
             'description' => 'Upload a new file or navigate to a different path.',
             'button' => 'Back to home',
         ],
+        'search_results' => 'Search results for:',
     ],
     'info' => [
         'empty' => [
@@ -20,7 +21,7 @@ return [
                     'alt' => 'Alt-text',
                     'caption' => 'Caption',
                     'title' => 'Title',
-                    'description' => 'Description'
+                    'description' => 'Description',
                 ],
                 'image' => [
                     'header' => 'Image metadata',
@@ -55,16 +56,37 @@ return [
             'create' => 'Create directory',
         ],
     ],
-    'header-actions' => [
-        'created_at_ascending' => 'Upload date ascending',
-        'created_at_descending' => 'Upload date descending',
-        'name_ascending' => 'Name ascending',
-        'name_descending' => 'Name descending',
+    'header_actions' => [
         'options' => 'Options',
+        'sort' => [
+            'updated_at_ascending' => 'Upload date ascending',
+            'updated_at_descending' => 'Upload date descending',
+            'created_at_ascending' => 'Upload date ascending',
+            'created_at_descending' => 'Upload date descending',
+            'name_ascending' => 'Name ascending',
+            'name_descending' => 'Name descending',
+        ],
+    ],
+    'sidebar' => [
+        'filters' => [
+            'header' => 'Filters',
+            'mime' => 'File type',
+        ],
+        'mime_type' => [
+            'all' => 'All',
+            'image' => 'Image',
+            'video' => 'Video',
+            'audio' => 'Audio',
+            'pdf' => 'PDF',
+        ],
+    ],
+    'field' => [
+        'pick' => 'Choose files',
     ],
     'title' => 'File manager',
     'group' => 'Files',
     'search' => 'Search...',
     'home' => 'Home',
     'close' => 'Close',
+    'submit' => 'Submit',
 ];
