@@ -55,12 +55,6 @@ class ExamplePanelProvider extends PanelProvider
 }
 ```
 
-By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following to the project's `.env` file:
-
-```env
-ATTACHMENTS_DISK=disk_name_here
-```
-
 ### Usage
 
 In your form schema, add the AttachmentField:
@@ -114,7 +108,7 @@ The scripts and documentation in this project are released under the [MIT Licens
 
 <p align="center"><a href="https://van-ons.nl/" target="_blank"><img src="https://opensource.van-ons.nl/files/cow.png" width="50" alt="Logo of Van Ons"></a></p>
 
-[documentation]: docs
+[documentation]: docs/README.md#contents
 [contributing]: CONTRIBUTING.md
 [changelog]: CHANGELOG.md
 [upgrading]: UPGRADING.md

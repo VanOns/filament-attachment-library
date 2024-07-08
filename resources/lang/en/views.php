@@ -20,7 +20,7 @@ return [
                     'alt' => 'Alt-text',
                     'caption' => 'Caption',
                     'title' => 'Title',
-                    'description' => 'Description'
+                    'description' => 'Description',
                 ],
                 'image' => [
                     'header' => 'Image metadata',
