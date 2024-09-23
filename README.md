@@ -1,6 +1,6 @@
 <p align="center"><img src="art/social-card.png" alt="Social card of Filament attachment library"></p>
 
-# Filament attachment library
+# Filament Attachment Library
 
 <!-- BADGES -->
 
@@ -10,7 +10,7 @@ Filament package for easy attachment uploading and browsing.
 
 ### Installation
 
-The Filament Attachment Library can be installed using composer by running the following command:
+The Filament Attachment Library can be installed using Composer by running the following command:
 
 ```bash
 $ composer require van-ons/filament-attachment-library
@@ -22,7 +22,8 @@ An installation command is available that ensures that the migrations and assets
 $ php artisan filament-attachment-library:install
 ```
 
-The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js` file should be extended with the following:
+The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js`
+file should be extended with the following:
 
 ```javascript
 // tailwind.config.js
@@ -55,15 +56,9 @@ class ExamplePanelProvider extends PanelProvider
 }
 ```
 
-By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following to the project's `.env` file:
-
-```env
-ATTACHMENTS_DISK=disk_name_here
-```
-
 ### Usage
 
-In your form schema, add the AttachmentField:
+In your form schema, add the `AttachmentField`:
 
 ```php
 use Filament\Forms;
@@ -114,7 +109,7 @@ The scripts and documentation in this project are released under the [MIT Licens
 
 <p align="center"><a href="https://van-ons.nl/" target="_blank"><img src="https://opensource.van-ons.nl/files/cow.png" width="50" alt="Logo of Van Ons"></a></p>
 
-[documentation]: docs
+[documentation]: docs/README.md#contents
 [contributing]: CONTRIBUTING.md
 [changelog]: CHANGELOG.md
 [upgrading]: UPGRADING.md
