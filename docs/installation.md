@@ -1,10 +1,11 @@
 # Installation
 
-To get started with the Filament Attachment Library, you will need to follow a few steps. This guide will walk you through the process of installing the package and setting it up in your Filament application.
+To get started with the Filament Attachment Library, you will need to follow a few steps. This guide will walk you through
+the process of installing the package and setting it up in your Filament application.
 
 ## Composer
 
-The Filament Attachment Library can be installed using composer by running the following command:
+The Filament Attachment Library can be installed using Composer by running the following command:
 ```bash
 $ composer require van-ons/filament-attachment-library
 ```
@@ -19,7 +20,8 @@ $ php artisan filament-attachment-library:install
 
 ## TailwindCSS
 
-The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js` file should be extended with the following:
+The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js`
+file should be extended with the following:
 
 ```javascript
 // tailwind.config.js
@@ -54,7 +56,8 @@ class ExamplePanelProvider extends PanelProvider
 }
 ```
 
-By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following to the project's `.env` file:
+By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following
+to the project's `.env` file:
 
 > [!NOTE]
 > It is advised to use a disk without any other files. This prevents file conflicts.

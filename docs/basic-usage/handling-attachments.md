@@ -1,6 +1,6 @@
 # Handling attachments
 
-Firstly, add the `HasAttachments` trait to your desired model.
+First, add the `HasAttachments` trait to your desired model:
 
 ```php
 namespace App\Models;
@@ -16,7 +16,7 @@ class ModelName extends Model
 }
 ```
 
-Then add the `AttachmentField` to your resource.
+Then, add the `AttachmentField` to your resource:
 
 ```php
 namespace App\Filament\Resources;
