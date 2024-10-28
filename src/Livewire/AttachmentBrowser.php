@@ -80,6 +80,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return view($this->view);
     }
 
+    public function mount(): void
+    {
+        if (!in_array($this->pageSize, self::PAGE_SIZES)) $this->pageSize = 1;
+    }
+
     public function deleteDirectoryAction(): Action
     {
         return DeleteDirectoryAction::make('renameDirectory');
