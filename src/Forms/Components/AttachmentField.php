@@ -73,6 +73,42 @@ class AttachmentField extends Field
         return $this->evaluate($this->mime);
     }
 
+    /**
+     * Wrapper methods to stay compliant with commonly used FileUpload methods.
+     */
+    public function minFiles(int $min): Field
+    {
+        return $this->minItems($min);
+    }
+
+    public function maxFiles(int $max): Field
+    {
+        return $this->maxItems($max);
+    }
+
+    /**
+     * Helper methods for restricting mime types.
+     */
+    public function image(): Field
+    {
+        return $this->mime('image/*');
+    }
+
+    public function audio(): Field
+    {
+        return $this->mime('audio/*');
+    }
+
+    public function video(): Field
+    {
+        return $this->mime('video/*');
+    }
+
+    public function text(): Field
+    {
+        return $this->mime('text/*');
+    }
+
     public function render(): View
     {
         // Activate render of browser modal
