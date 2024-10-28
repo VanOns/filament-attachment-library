@@ -14,10 +14,27 @@ The `AttachmentField` can be restricted to specific MIME-types by calling the `m
 AttachmentField::make('featured_image')->mime('image/png')
 ```
 
+### MIME-specific
+
+The `AttachmentField` also has MIME-specific methods for readability:
+
+```php
+AttachmentField::make('featured_image')->image()
+AttachmentField::make('featured_image')->video()
+AttachmentField::make('featured_image')->text()
+```
+
 ## Multiple attachments
 
 The `AttachmentField` can accept multiple attachments by calling the `multiple` method:
 
 ```php
 AttachmentField::make('featured_image')->multiple()
+```
+
+It is also possible to specify the minimum and maximum amount of allowed files:
+
+```php
+AttachmentField::make('featured_image')->minFiles(5)
+AttachmentField::make('featured_image')->maxFiles(10)
 ```

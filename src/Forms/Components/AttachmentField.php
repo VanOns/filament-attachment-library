@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 
+use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -10,6 +11,8 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentField extends Field
 {
+    use CanLimitItemsLength;
+
     public bool $multiple = false;
 
     public bool $showActions = false;
@@ -86,14 +89,14 @@ class AttachmentField extends Field
         return $this->maxItems($max);
     }
 
-    /**
-     * Helper methods for restricting mime types.
-     */
     public function image(): Field
     {
         return $this->mime('image/*');
     }
 
+    /**
+     * Wrapper methods for restricting mime types.
+     */
     public function audio(): Field
     {
         return $this->mime('audio/*');
