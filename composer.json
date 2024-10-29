@@ -27,15 +27,14 @@
   },
   "require-dev": {
     "filament/filament": "^3.0-stable",
+    "friendsofphp/php-cs-fixer": "^3.64",
     "larastan/larastan": "^2.9",
-    "laravel/pint": "^1.14",
-    "orchestra/testbench": "^8.21",
-    "phpunit/phpunit": "^10.1"
+    "orchestra/testbench": "^8.21"
   },
   "scripts" : {
     "analyse": "./vendor/bin/phpstan analyse",
-    "format": "./vendor/bin/pint",
-    "test": "./vendor/bin/phpunit"
+    "format:check": "./vendor/bin/php-cs-fixer check",
+    "format:fix": "./vendor/bin/php-cs-fixer fix"
   },
   "autoload": {
     "psr-4": {

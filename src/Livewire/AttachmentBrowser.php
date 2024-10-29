@@ -59,15 +59,15 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?array $uploadFormState = ['attachment' => []];
 
-    const SORTABLE_FIELDS = [
+    public const SORTABLE_FIELDS = [
         'name',
         'created_at',
         'updated_at',
     ];
 
-    const PAGE_SIZES = [5, 10, 25, 50];
+    public const PAGE_SIZES = [5, 10, 25, 50];
 
-    const FILTERABLE_FILE_TYPES = [
+    public const FILTERABLE_FILE_TYPES = [
         'all' => '',
         'image' => 'image/*',
         'audio' => 'audio/*',
