@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: ⬇️Install Composer dependencies
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress --no-ansi --no-interaction --optimize-autoloader --no-dev
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress --no-ansi --no-interaction --optimize-autoloader
 
       - name: 🕵️Run PHPStan
         run: composer run analyse
