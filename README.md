@@ -10,20 +10,23 @@ Filament package for easy attachment uploading and browsing.
 
 ### Installation
 
-The Filament Attachment Library can be installed using Composer by running the following command:
+The Filament Attachment Library can be installed using Composer by running
+the following command:
 
 ```bash
-$ composer require van-ons/filament-attachment-library
+composer require van-ons/filament-attachment-library
 ```
 
-An installation command is available that ensures that the migrations and assets are installed:
+An installation command is available that ensures that the migrations and
+assets are installed:
 
 ```bash
-$ php artisan filament-attachment-library:install
+php artisan filament-attachment-library:install
 ```
 
-The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js`
-file should be extended with the following:
+The templates in this package use TailwindCSS. To ensure that the styling is
+rendered correctly, the `tailwind.config.js` file should be extended with the
+following:
 
 ```javascript
 // tailwind.config.js
@@ -36,7 +39,21 @@ export default {
 }
 ```
 
-Then, register the plugin in the desired Filament panel:
+By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following
+to the project's `.env` file:
+
+> [!NOTE]
+> It is advised to use a disk without any other files. This prevents file conflicts.
+
+```env
+ATTACHMENTS_DISK=disk_name_here
+```
+
+The `glide.php` and `attachment-library.php` files contain more configuration options.
+
+#### Prepare model
+
+Register the plugin in the desired Filament panel:
 
 ```php
 <?php
@@ -56,7 +73,26 @@ class ExamplePanelProvider extends PanelProvider
 }
 ```
 
+This will add the `attachments()` relationship which links one or more
+attachments to your model.
+
 ### Usage
+
+First, add the `HasAttachments` trait to your desired model:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use VanOns\LaravelAttachmentLibrary\Concerns\HasAttachments;
+
+class ModelName extends Model
+{
+    use HasAttachments;
+
+    // ...
+}
+```
 
 In your form schema, add the `AttachmentField`:
 
@@ -64,13 +100,13 @@ In your form schema, add the `AttachmentField`:
 use Filament\Forms;
 use Filament\Forms\Form;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
- 
+
 public static function form(Form $form): Form
 {
     return $form
         ->schema([
             // ...
-            AttachmentField::make('attachment'),
+            AttachmentField::make('attachments'),
         ]);
 }
 ```
@@ -97,7 +133,8 @@ Please see [security] for more information about how we deal with security.
 
 ## Credits
 
-We would like to thank the following contributors for their contributions to this project:
+We would like to thank the following contributors for their contributions to
+this project:
 
 * [All Contributors][all-contributors]
 
