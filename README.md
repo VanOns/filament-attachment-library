@@ -64,16 +64,36 @@ In your form schema, add the `AttachmentField`:
 use Filament\Forms;
 use Filament\Forms\Form;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
- 
+
 public static function form(Form $form): Form
 {
     return $form
         ->schema([
             // ...
-            AttachmentField::make('attachment'),
+            AttachmentField::make('attachments'),
         ]);
 }
 ```
+
+Import the `HandlesFormAttachments` trait on your filament
+resource create and edit pages:
+
+```php
+App\Filament\Resources\ModelResource\Pages
+
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
+VanOns\FilamentAttachmentLibrary\Forms\Traits\HandlesFormAttachments;
+
+class CreateModel extends CreateRecord
+{
+    use HandlesFormAttachments;
+}
+```
+
+Note: If you plan to overwrite the `handleRecordCreation()`, `handleRecordUpdate()`,
+or `mutateFormDataBeforeFill()` methods, please check out the trait's code and
+re-use the `retrieveAttachments()` and `syncAttachments()` methods.
 
 ## Documentation
 
