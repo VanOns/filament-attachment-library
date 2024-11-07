@@ -17,6 +17,11 @@ class DestinationExists implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        /**
+         * @var Attachment $attachment
+         */
+        $attachment = Attachment::find($this->attachmentId);
+
         $path = "{$this->path}/";
 
         if ($value instanceof UploadedFile) {
@@ -24,7 +29,7 @@ class DestinationExists implements ValidationRule
         }
 
         if (is_string($value) && $this->attachmentId !== null) {
-            $extension = Attachment::find($this->attachmentId)->extension;
+            $extension = $attachment->extension;
             $path .= implode('.', array_filter([$value, $extension]));
         }
 
