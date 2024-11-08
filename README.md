@@ -39,8 +39,6 @@ export default {
 Then, register the plugin in the desired Filament panel:
 
 ```php
-<?php
-
 namespace App\Providers\Filament;
 
 use VanOns\FilamentAttachmentLibrary\FilamentAttachmentLibrary;
@@ -61,6 +59,8 @@ class ExamplePanelProvider extends PanelProvider
 In your form schema, add the `AttachmentField`:
 
 ```php
+namespace App\Filament\Resources;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
@@ -75,15 +75,13 @@ public static function form(Form $form): Form
 }
 ```
 
-Import the `HandlesFormAttachments` trait on your filament
-resource create and edit pages:
+Import the `HandlesFormAttachments` trait in your Filament resource `create` and `edit` pages:
 
 ```php
-App\Filament\Resources\ModelResource\Pages
+namespace App\Filament\Resources\ModelResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
-VanOns\FilamentAttachmentLibrary\Forms\Traits\HandlesFormAttachments;
+use VanOns\FilamentAttachmentLibrary\Forms\Traits\HandlesFormAttachments;
 
 class CreateModel extends CreateRecord
 {
