@@ -6,9 +6,9 @@ use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
-use VanOns\FilamentAttachmentLibrary\Traits\HasCurrentPath;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
 class RenameDirectoryAction extends Action
