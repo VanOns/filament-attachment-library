@@ -1,67 +1,67 @@
 {
-  "name": "van-ons/filament-attachment-library",
-  "description": "A Filament library for attaching files to Eloquent models.",
-  "keywords": [
-    "van ons",
-    "filament",
-    "filament-attachment-library",
-    "attachments",
-    "library",
-    "eloquent"
-  ],
-  "homepage": "https://github.com/VanOns/filament-attachment-library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Dangelo Brusorio",
-      "email": "dangelo@van-ons.nl"
+    "name": "van-ons/filament-attachment-library",
+    "description": "A Filament library for attaching files to Eloquent models.",
+    "keywords": [
+        "van ons",
+        "filament",
+        "filament-attachment-library",
+        "attachments",
+        "library",
+        "eloquent"
+    ],
+    "homepage": "https://github.com/VanOns/filament-attachment-library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dangelo Brusorio",
+            "email": "dangelo@van-ons.nl"
+        },
+        {
+            "name": "Danique Wijnalda",
+            "email": "danique@van-ons.nl"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "van-ons/laravel-attachment-library": "^0.0.2"
     },
-    {
-      "name": "Danique Wijnalda",
-      "email": "danique@van-ons.nl"
-    }
-  ],
-  "require": {
-    "php": "^8.2",
-    "van-ons/laravel-attachment-library": "^0.0.1"
-  },
-  "require-dev": {
-    "filament/filament": "^3.0-stable",
-    "friendsofphp/php-cs-fixer": "^3.64",
-    "larastan/larastan": "^2.9",
-    "orchestra/testbench": "^8.21"
-  },
-  "scripts" : {
-    "analyse": "./vendor/bin/phpstan analyse",
-    "format:check": "./vendor/bin/php-cs-fixer check",
-    "format:fix": "./vendor/bin/php-cs-fixer fix"
-  },
-  "autoload": {
-    "psr-4": {
-      "VanOns\\FilamentAttachmentLibrary\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "VanOns\\FilamentAttachmentLibrary\\Test\\": "tests"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "VanOns\\FilamentAttachmentLibrary\\FilamentAttachmentLibraryServiceProvider"
-      ]
-    }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:VanOns/laravel-attachment-library.git"
-    }
-  ],
-  "config" : {
-    "sort-packages": true
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "require-dev": {
+        "filament/filament": "^3.0-stable",
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "larastan/larastan": "^2.9",
+        "orchestra/testbench": "^8.21"
+    },
+    "scripts": {
+        "analyse": "./vendor/bin/phpstan analyse",
+        "format:check": "./vendor/bin/php-cs-fixer check",
+        "format:fix": "./vendor/bin/php-cs-fixer fix"
+    },
+    "autoload": {
+        "psr-4": {
+            "VanOns\\FilamentAttachmentLibrary\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VanOns\\FilamentAttachmentLibrary\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VanOns\\FilamentAttachmentLibrary\\FilamentAttachmentLibraryServiceProvider"
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:VanOns/laravel-attachment-library.git"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

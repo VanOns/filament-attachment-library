@@ -25,9 +25,9 @@ class AttachmentSynth extends Synth
             'name' => $target->name,
             'url' => $target->url,
             'created_at' => $target->created_at->translatedFormat('d F Y'),
-            'created_by' => User::find($target->created_by)?->name,
+            'created_by' => User::find($target->created_by)?->name, //@phpstan-ignore property.notFound
             'updated_at' => $target->updated_at->translatedFormat('d F Y'),
-            'updated_by' => User::find($target->updated_by)?->name,
+            'updated_by' => User::find($target->updated_by)?->name, //@phpstan-ignore property.notFound
             'mime_type' => $target->mime_type,
             'alt' => $target->alt,
             'title' => $target->title,
