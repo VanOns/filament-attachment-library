@@ -19,7 +19,7 @@ class AttachmentField extends Field
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
     /**
-     * Return all selected attachments modals from state
+     * Return all selected attachments modals from state.
      */
     public function getAttachments(): Collection|Attachment
     {
@@ -33,7 +33,7 @@ class AttachmentField extends Field
     }
 
     /**
-     * Return selected attachments and return first if multiple is false
+     * Return selected attachments and return first if multiple is false.
      */
     public function getState(): mixed
     {
@@ -47,7 +47,7 @@ class AttachmentField extends Field
     }
 
     /**
-     * Allow the selection of multiple attachments
+     * Allow the selection of multiple attachments.
      */
     public function multiple(): Field
     {
@@ -75,7 +75,7 @@ class AttachmentField extends Field
 
     public function render(): View
     {
-        // Activate render of browser modal
+        // Activate render of browser modal.
         LaravelView::share('renderAttachmentBrowserModal', true);
 
         return parent::render();
