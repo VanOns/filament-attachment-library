@@ -25,24 +25,24 @@ trait HandlesFormAttachments
         return $this->retrieveAttachments($data);
     }
 
+    protected function syncAttachments(
+        Model   $record,
+        array   $data,
+        string  $relationship = 'attachments',
+        ?string $fieldName = null
+    ): Model {
+        return $record->{$relationship}()->sync($data[$fieldName ?? $relationship]);
+    }
+
     protected function retrieveAttachments(
-        array $data,
-        string $relationShip = 'attachments',
+        array  $data,
+        string $relationship = 'attachments',
     ): array {
         return array_merge($data, [
-            $relationShip => static::getModel()::find($data['id'])
-                ->{$relationShip}
+            $relationship => static::getModel()::find($data['id'])
+                ->{$relationship}
                 ->pluck('id')
                 ->toArray(),
         ]);
-    }
-
-    protected function syncAttachments(
-        Model $record,
-        array $data,
-        string $relationShip = 'attachments',
-        ?string $fieldName = null
-    ): Model {
-        return $record->{$relationShip}()->sync($data[$fieldName ?? $relationShip]);
     }
 }
