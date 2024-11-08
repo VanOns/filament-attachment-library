@@ -9,16 +9,9 @@ class OpenAttachmentAction extends Action
 {
     protected function setUp(): void
     {
-        $arguments = $this->getArguments();
-
-        /**
-         * @var Attachment $attachment
-         */
-        $attachment = Attachment::find($arguments['attachment_id']);
-
         $this->color('gray');
 
-        $this->url(fn (array $arguments) => $attachment->url);
+        $this->url(fn (array $arguments) => Attachment::find($arguments['attachment_id']));
 
         $this->openUrlInNewTab();
     }
