@@ -31,7 +31,9 @@ trait HandlesFormAttachments
         string  $relationship = 'attachments',
         ?string $fieldName = null
     ): Model {
-        return $record->{$relationship}()->sync($data[$fieldName ?? $relationship]);
+        $record->{$relationship}()->sync($data[$fieldName ?? $relationship]);
+
+        return $record;
     }
 
     protected function retrieveAttachments(
