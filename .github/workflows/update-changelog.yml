@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
+          token: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Update changelog
         uses: stefanzweifel/changelog-updater-action@v1
@@ -27,5 +28,5 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: master
-          commit_message: "[Chore] Update CHANGELOG.md"
+          commit_message: "chore: update CHANGELOG.md"
           file_pattern: CHANGELOG.md
