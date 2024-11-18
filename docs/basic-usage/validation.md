@@ -16,13 +16,15 @@ AttachmentField::make('featured_image')->mime('image/png')
 
 ### MIME-specific
 
-The `AttachmentField` also has MIME-specific methods for readability:
+The `AttachmentField` provides the ability to filter by different file types by using the following methods:
 
 ```php
 AttachmentField::make('featured_image')->image()
 AttachmentField::make('featured_image')->video()
 AttachmentField::make('featured_image')->text()
 ```
+
+By using these methods, you can increase readability and make it easier to oversee the use of specific file types.
 
 ## Multiple attachments
 
