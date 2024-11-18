@@ -35,7 +35,7 @@ class EditAttachmentAction extends Action
                     ->label(__('filament-attachment-library::forms.edit_attachment.name'))
                     ->rules([
                         new DestinationExists($this->currentPath, $arguments['attachment_id']),
-                        new AllowedFilename(),
+                        new AllowedFilename,
                     ], fn (?string $state) => $state !== $attachment->name)
                     ->maxLength(255),
                 TextInput::make('title')

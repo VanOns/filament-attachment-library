@@ -82,7 +82,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function mount(): void
     {
-        if (!in_array($this->pageSize, self::PAGE_SIZES)) $this->pageSize = 1;
+        if (! in_array($this->pageSize, self::PAGE_SIZES)) {
+            $this->pageSize = 1;
+        }
     }
 
     public function deleteDirectoryAction(): Action
@@ -127,7 +129,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         return $form->schema([
             FileUpload::make('attachment')
-                ->rules([new AllowedFilename(), new DestinationExists($this->currentPath)])
+                ->rules([new AllowedFilename, new DestinationExists($this->currentPath)])
                 ->multiple()
                 ->required()
                 ->label(__('filament-attachment-library::forms.upload_attachment.name'))
@@ -154,7 +156,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
-                    new AllowedFilename(),
+                    new AllowedFilename,
                 ])->required()
                 ->autocomplete(false)
                 ->label(__('filament-attachment-library::forms.create_directory.name')),
