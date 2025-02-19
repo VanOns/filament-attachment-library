@@ -25,7 +25,7 @@ class RenameDirectoryAction extends Action
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
-                    new AllowedFilename,
+                    new AllowedFilename(),
                 ]),
         ]);
 

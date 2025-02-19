@@ -56,7 +56,23 @@ class ExamplePanelProvider extends PanelProvider
 
 ### Usage
 
-In your form schema, add the `AttachmentField`:
+First, add the `HasAttachments` trait to your desired model:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use VanOns\LaravelAttachmentLibrary\Concerns\HasAttachments;
+
+class ModelName extends Model
+{
+    use HasAttachments;
+
+    // ...
+}
+```
+
+Then, in your form schema, add the `AttachmentField`:
 
 ```php
 namespace App\Filament\Resources;
