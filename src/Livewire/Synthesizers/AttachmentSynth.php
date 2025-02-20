@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Config;
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
@@ -19,11 +20,8 @@ class AttachmentSynth extends Synth
 
     public function dehydrate($target)
     {
-        /* @var ?User $userCreated */
-        $userCreated = User::find($target->created_by);
-
-        /* @var ?User $userUpdated */
-        $userUpdated = User::find($target->created_by);
+        $userModel = Config::get('filament-attachment-library.user_model', User::class);
+        $usernameProperty = Config::get('filament-attachment-library.username_property', ['id']);
 
         $fields = [
             'id' => $target->id,
@@ -31,9 +29,9 @@ class AttachmentSynth extends Synth
             'name' => $target->name,
             'url' => $target->url,
             'created_at' => $target->created_at->translatedFormat('d F Y'),
-            'created_by' => $userCreated?->name,
+            'created_by' => $userModel::find($target->created_by)?->{$usernameProperty},
             'updated_at' => $target->updated_at->translatedFormat('d F Y'),
-            'updated_by' => $userUpdated?->name,
+            'updated_by' => $userModel::find($target->updated_by)?->{$usernameProperty},
             'mime_type' => $target->mime_type,
             'alt' => $target->alt,
             'title' => $target->title,
