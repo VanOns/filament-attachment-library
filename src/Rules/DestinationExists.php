@@ -24,8 +24,10 @@ class DestinationExists implements ValidationRule
         }
 
         if (is_string($value) && $this->attachmentId !== null) {
-            $extension = Attachment::find($this->attachmentId)->extension;
-            $path .= implode('.', array_filter([$value, $extension]));
+            /** @var Attachment $attachment */
+            $attachment = Attachment::find($this->attachmentId);
+
+            $path .= implode('.', array_filter([$value, $attachment->extension]));
         }
 
         if (is_string($value) && $this->attachmentId === null) {
