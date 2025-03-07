@@ -137,6 +137,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
                         $attachment = AttachmentManager::upload($file, $this->currentPath);
+                        $this->dispatch('select-attachment', $attachment->id, $this->currentPath);
                         $this->dispatch('highlight-attachment', $attachment->id);
                         $component->removeUploadedFile($file);
                     }
@@ -224,7 +225,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Computed]
     public function breadcrumbs(): array
     {
-        $crumbs = array_filter(explode('/', $this->currentPath));
+        $crumbs = array_filter(explode('/', $this->currentPath ?? ''));
         $breadcrumbs = [];
 
         foreach ($crumbs as $index => $crumb) {
