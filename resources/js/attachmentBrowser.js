@@ -20,7 +20,7 @@ Alpine.store('attachmentBrowser', {
             this.addStatePath($event);
         });
         Livewire.on('select-attachment', ([id, statePath]) => {
-            this.select(id, statePath)
+            this.select(id, statePath);
         })
     },
 
