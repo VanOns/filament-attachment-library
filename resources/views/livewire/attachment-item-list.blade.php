@@ -17,7 +17,7 @@
                      class="cursor-pointer relative flex flex-col transition ease-in-out rounded-lg box-border basis-3/12 grow min-w-[10rem] h-32 group">
                     {{-- Preview image if attachment is image --}}
                     <template x-if="attachment.class === 'attachment' && attachment.is_image">
-                        <img alt="attachment.alt" loading="lazy" width="auto" height="100%" :src="attachment.thumbnail_url" class="relative rounded-lg overflow-hidden h-full w-full object-center opacity-30 object-cover">
+                        <img alt="attachment.alt" loading="lazy" width="auto" height="100%" :src="attachment.thumbnail_url" class="relative rounded-lg overflow-hidden h-full w-full object-center opacity-60 object-cover">
                     </template>
 
                     {{-- Attachment item icon --}}
