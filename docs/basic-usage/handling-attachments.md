@@ -11,7 +11,7 @@ use VanOns\LaravelAttachmentLibrary\Concerns\HasAttachments;
 class ModelName extends Model
 {
     use HasAttachments;
-    
+
     // ...
 }
 ```
@@ -30,7 +30,7 @@ class ModelNameResource extends Resource
     {
         return $form
             ->schema([
-                AttachmentField::make('featured_image'),
+                AttachmentField::make('attachments'),
             ]);
     }
     // ...

@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 
+use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -10,6 +11,8 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentField extends Field
 {
+    use CanLimitItemsLength;
+
     public bool $multiple = false;
 
     public bool $showActions = false;
@@ -19,7 +22,7 @@ class AttachmentField extends Field
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
     /**
-     * Return all selected attachments modals from state
+     * Return all selected attachments modals from state.
      */
     public function getAttachments(): Collection|Attachment
     {
@@ -33,7 +36,7 @@ class AttachmentField extends Field
     }
 
     /**
-     * Return selected attachments and return first if multiple is false
+     * Return selected attachments and return first if multiple is false.
      */
     public function getState(): mixed
     {
@@ -47,7 +50,7 @@ class AttachmentField extends Field
     }
 
     /**
-     * Allow the selection of multiple attachments
+     * Allow the selection of multiple attachments.
      */
     public function multiple(): Field
     {
@@ -73,9 +76,45 @@ class AttachmentField extends Field
         return $this->evaluate($this->mime);
     }
 
+    /**
+     * Wrapper methods to stay compliant with commonly used FileUpload methods.
+     */
+    public function minFiles(int $min): Field
+    {
+        return $this->minItems($min);
+    }
+
+    public function maxFiles(int $max): Field
+    {
+        return $this->maxItems($max);
+    }
+
+    public function image(): Field
+    {
+        return $this->mime('image/*');
+    }
+
+    /**
+     * Wrapper methods for restricting mime types.
+     */
+    public function audio(): Field
+    {
+        return $this->mime('audio/*');
+    }
+
+    public function video(): Field
+    {
+        return $this->mime('video/*');
+    }
+
+    public function text(): Field
+    {
+        return $this->mime('text/*');
+    }
+
     public function render(): View
     {
-        // Activate render of browser modal
+        // Activate render of browser modal.
         LaravelView::share('renderAttachmentBrowserModal', true);
 
         return parent::render();

@@ -59,15 +59,15 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?array $uploadFormState = ['attachment' => []];
 
-    const SORTABLE_FIELDS = [
+    public const SORTABLE_FIELDS = [
         'name',
         'created_at',
         'updated_at',
     ];
 
-    const PAGE_SIZES = [5, 10, 25, 50];
+    public const PAGE_SIZES = [5, 10, 25, 50];
 
-    const FILTERABLE_FILE_TYPES = [
+    public const FILTERABLE_FILE_TYPES = [
         'all' => '',
         'image' => 'image/*',
         'audio' => 'audio/*',
@@ -78,6 +78,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function render()
     {
         return view($this->view);
+    }
+
+    public function mount(): void
+    {
+        if (! in_array($this->pageSize, self::PAGE_SIZES)) {
+            $this->pageSize = 1;
+        }
     }
 
     public function deleteDirectoryAction(): Action
@@ -130,6 +137,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
                         $attachment = AttachmentManager::upload($file, $this->currentPath);
+                        $this->dispatch('select-attachment', $attachment->id, $this->currentPath);
                         $this->dispatch('highlight-attachment', $attachment->id);
                         $component->removeUploadedFile($file);
                     }
@@ -217,7 +225,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Computed]
     public function breadcrumbs(): array
     {
-        $crumbs = array_filter(explode('/', $this->currentPath));
+        $crumbs = array_filter(explode('/', $this->currentPath ?? ''));
         $breadcrumbs = [];
 
         foreach ($crumbs as $index => $crumb) {

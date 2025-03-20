@@ -11,7 +11,9 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class DestinationExists implements ValidationRule
 {
-    public function __construct(private ?string $path, private ?int $attachmentId = null) {}
+    public function __construct(private ?string $path, private ?int $attachmentId = null)
+    {
+    }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
