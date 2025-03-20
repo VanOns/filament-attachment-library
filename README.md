@@ -22,10 +22,10 @@ An installation command is available that ensures that the migrations and assets
 $ php artisan filament-attachment-library:install
 ```
 
-The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, a custom filament theme must be setup and the `tailwind.config.js`
-file should be extended.
+The templates in this package use TailwindCSS. To ensure the styling is rendered correctly, a custom Filament
+theme must be set up, and the `tailwind.config.js` file should be extended.
 
-Create the custom filament theme and follow the instructions in the terminal to setup the custom filament theme:
+Create the custom Filament theme and follow the instructions in the terminal to set it up:
 
 ```bash
 php artisan make:filament-theme [PANEL_NAME]
