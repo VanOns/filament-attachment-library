@@ -36,3 +36,12 @@ class ModelNameResource extends Resource
     // ...
 }
 ```
+
+At the front end, the `laravel-attachment-library-image` Blade component can be used to display attachments as image. 
+Glide is used to scale the image up or down. The `src` argument may be an Attachment instance, or the id as string/integer.
+
+```html
+<x-laravel-attachment-library-image :src="$image" />
+```
+
+For more information refer to the [Laravel Attachment Library documentation](https://github.com/VanOns/laravel-attachment-library).
