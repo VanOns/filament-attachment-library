@@ -17,7 +17,10 @@ class AttachmentInfo extends Component
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {
-        $this->attachment = Attachment::find($id);
+        /** @var Attachment $attachment */
+        $attachment = Attachment::find($id);
+
+        $this->attachment = $attachment;
     }
 
     #[On('dehighlight-attachment')]

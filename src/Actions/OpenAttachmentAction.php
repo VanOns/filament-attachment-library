@@ -11,7 +11,12 @@ class OpenAttachmentAction extends Action
     {
         $this->color('gray');
 
-        $this->url(fn (array $arguments) => Attachment::find($arguments['attachment_id'])->url);
+        $this->url(function (array $arguments) {
+            /** @var Attachment $attachment */
+            $attachment = Attachment::find($arguments['attachment_id']);
+
+            return $attachment->url;
+        });
 
         $this->openUrlInNewTab();
     }

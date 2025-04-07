@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers;
 
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Config;
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
@@ -19,15 +20,18 @@ class AttachmentSynth extends Synth
 
     public function dehydrate($target)
     {
+        $userModel = Config::get('filament-attachment-library.user_model', User::class);
+        $usernameProperty = Config::get('filament-attachment-library.username_property', 'name');
+
         $fields = [
             'id' => $target->id,
             'path' => $target->path,
             'name' => $target->name,
             'url' => $target->url,
             'created_at' => $target->created_at->translatedFormat('d F Y'),
-            'created_by' => User::find($target->created_by)?->name, //@phpstan-ignore property.notFound
+            'created_by' => $userModel::find($target->created_by)?->{$usernameProperty},
             'updated_at' => $target->updated_at->translatedFormat('d F Y'),
-            'updated_by' => User::find($target->updated_by)?->name, //@phpstan-ignore property.notFound
+            'updated_by' => $userModel::find($target->updated_by)?->{$usernameProperty},
             'mime_type' => $target->mime_type,
             'alt' => $target->alt,
             'title' => $target->title,

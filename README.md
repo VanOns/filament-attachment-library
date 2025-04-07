@@ -10,19 +10,22 @@ Filament package for easy attachment uploading and browsing.
 
 ### Installation
 
-The Filament Attachment Library can be installed using Composer by running the following command:
+The Filament Attachment Library can be installed using Composer by running
+the following command:
 
 ```bash
-$ composer require van-ons/filament-attachment-library
+composer require van-ons/filament-attachment-library
 ```
 
-An installation command is available that ensures that the migrations and assets are installed:
+An installation command is available that ensures that the migrations and
+assets are installed:
 
 ```bash
-$ php artisan filament-attachment-library:install
+php artisan filament-attachment-library:install
 ```
 
-The templates in this package use TailwindCSS. To ensure the styling is rendered correctly, a custom Filament
+The templates in this package use TailwindCSS. To ensure the styling is
+rendered correctly, a custom Filament
 theme must be set up, and the `tailwind.config.js` file should be extended.
 
 Create the custom Filament theme and follow the instructions in the terminal to set it up:
@@ -31,7 +34,8 @@ Create the custom Filament theme and follow the instructions in the terminal to 
 php artisan make:filament-theme [PANEL_NAME]
 ```
 
-Add the following to the `tailwind.config.js` file:
+Add the
+following to the `tailwind.config.js` file:
 
 ```javascript
 // resources/css/filament/[PANEL_NAME]/tailwind.config.js
@@ -44,7 +48,21 @@ export default {
 }
 ```
 
-Then, register the plugin in the desired Filament panel:
+By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following
+to the project's `.env` file:
+
+> [!NOTE]
+> It is advised to use a disk without any other files. This prevents file conflicts.
+
+```env
+ATTACHMENTS_DISK=disk_name_here
+```
+
+The `glide.php` and `attachment-library.php` files contain more configuration options.
+
+#### Prepare model
+
+Register the plugin in the desired Filament panel:
 
 ```php
 namespace App\Providers\Filament;
@@ -61,6 +79,9 @@ class ExamplePanelProvider extends PanelProvider
 
 }
 ```
+
+This will add the `attachments()` relationship which links one or more
+attachments to your model.
 
 ### Usage
 
@@ -148,7 +169,8 @@ Please see [security] for more information about how we deal with security.
 
 ## Credits
 
-We would like to thank the following contributors for their contributions to this project:
+We would like to thank the following contributors for their contributions to
+this project:
 
 * [All Contributors][all-contributors]
 
