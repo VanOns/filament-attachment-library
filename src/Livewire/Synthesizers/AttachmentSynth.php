@@ -21,7 +21,7 @@ class AttachmentSynth extends Synth
     public function dehydrate($target)
     {
         $userModel = Config::get('filament-attachment-library.user_model', User::class);
-        $usernameProperty = Config::get('filament-attachment-library.username_property', ['id']);
+        $usernameProperty = Config::get('filament-attachment-library.username_property', 'name');
 
         $fields = [
             'id' => $target->id,
