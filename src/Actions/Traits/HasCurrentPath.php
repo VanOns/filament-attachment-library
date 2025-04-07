@@ -1,12 +1,12 @@
 <?php
 
-namespace VanOns\FilamentAttachmentLibrary\Traits;
+namespace VanOns\FilamentAttachmentLibrary\Actions\Traits;
 
 trait HasCurrentPath
 {
     public ?string $currentPath = null;
 
-    public function setCurrentPath(?string $path)
+    public function setCurrentPath(?string $path): static
     {
         $this->currentPath = $path;
 

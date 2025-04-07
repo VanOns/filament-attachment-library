@@ -24,12 +24,21 @@ assets are installed:
 php artisan filament-attachment-library:install
 ```
 
-The templates in this package use TailwindCSS. To ensure that the styling is
-rendered correctly, the `tailwind.config.js` file should be extended with the
-following:
+The templates in this package use TailwindCSS. To ensure the styling is
+rendered correctly, a custom Filament
+theme must be set up, and the `tailwind.config.js` file should be extended.
+
+Create the custom Filament theme and follow the instructions in the terminal to set it up:
+
+```bash
+php artisan make:filament-theme [PANEL_NAME]
+```
+
+Add the
+following to the `tailwind.config.js` file:
 
 ```javascript
-// tailwind.config.js
+// resources/css/filament/[PANEL_NAME]/tailwind.config.js
 export default {
     presets: '',
     content: [
@@ -56,8 +65,6 @@ The `glide.php` and `attachment-library.php` files contain more configuration op
 Register the plugin in the desired Filament panel:
 
 ```php
-<?php
-
 namespace App\Providers\Filament;
 
 use VanOns\FilamentAttachmentLibrary\FilamentAttachmentLibrary;
@@ -94,9 +101,11 @@ class ModelName extends Model
 }
 ```
 
-In your form schema, add the `AttachmentField`:
+Then, in your form schema, add the `AttachmentField`:
 
 ```php
+namespace App\Filament\Resources;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
@@ -110,6 +119,33 @@ public static function form(Form $form): Form
         ]);
 }
 ```
+
+Import the `HandlesFormAttachments` trait in your Filament resource `create` and `edit` pages:
+
+```php
+namespace App\Filament\Resources\ModelResource\Pages;
+
+use Filament\Resources\Pages\CreateRecord;
+use VanOns\FilamentAttachmentLibrary\Forms\Traits\HandlesFormAttachments;
+
+class CreateModel extends CreateRecord
+{
+    use HandlesFormAttachments;
+}
+```
+
+Note: If you plan to overwrite the `handleRecordCreation()`, `handleRecordUpdate()`,
+or `mutateFormDataBeforeFill()` methods, please check out the trait's code and
+re-use the `retrieveAttachments()` and `syncAttachments()` methods.
+
+Finally, at the front end, the `laravel-attachment-library-image` Blade component can be used to display attachments as image. 
+Glide is used to scale the image up or down. The `src` argument may be an Attachment instance, or the id as string/integer.
+
+```html
+<x-laravel-attachment-library-image :src="$image" />
+```
+
+For more information refer to the [Laravel Attachment Library documentation](https://github.com/VanOns/laravel-attachment-library).
 
 ## Documentation
 
