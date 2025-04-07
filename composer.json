@@ -33,17 +33,12 @@
   },
   "scripts" : {
     "analyse": "./vendor/bin/phpstan analyse",
-    "format:check": "./vendor/bin/php-cs-fixer check",
-    "format:fix": "./vendor/bin/php-cs-fixer fix"
+    "format": "./vendor/bin/php-cs-fixer fix",
+    "format:check": "./vendor/bin/php-cs-fixer check"
   },
   "autoload": {
     "psr-4": {
       "VanOns\\FilamentAttachmentLibrary\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "VanOns\\FilamentAttachmentLibrary\\Test\\": "tests"
     }
   },
   "extra": {
