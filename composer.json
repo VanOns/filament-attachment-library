@@ -32,7 +32,7 @@
     "orchestra/testbench": "^8.21"
   },
   "scripts" : {
-    "analyse": "./vendor/bin/phpstan analyse",
+    "analyse": "./vendor/bin/phpstan analyse --memory-limit=1G",
     "format": "./vendor/bin/php-cs-fixer fix",
     "format:check": "./vendor/bin/php-cs-fixer check"
   },
