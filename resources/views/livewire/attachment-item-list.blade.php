@@ -36,6 +36,7 @@
 
                 {{-- Attachment item actions & hover indicator --}}
                 <div class="absolute top-4 right-4">
+                    @if($withContextMenu)
                         <x-filament::dropdown
                             placement="bottom-end"
                             x-show="$store.attachmentBrowser?.showActions(statePath)"
@@ -76,6 +77,7 @@
                                 </x-filament::dropdown.list.item>
                             </x-filament::dropdown.list>
                         </x-filament::dropdown>
+                    @endif
 
                     <x-filament::icon
                         icon="heroicon-o-check"
