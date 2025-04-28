@@ -79,6 +79,7 @@ class AttachmentField extends Field
     /**
      * Wrapper methods to stay compliant with commonly used FileUpload methods.
      */
+
     public function minFiles(int $min): Field
     {
         return $this->minItems($min);

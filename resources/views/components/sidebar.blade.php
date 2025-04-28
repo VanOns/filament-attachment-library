@@ -15,13 +15,15 @@
         <form wire:submit.prevent="saveUploadAttachmentForm">
             {{$this->uploadAttachmentForm}}
 
-            <x-filament::button type="submit" class="mt-4">
-                {{ __('filament-attachment-library::views.actions.attachment.upload') }}
-            </x-filament::button>
+            <div class="flex gap-4 mt-4">
+                <x-filament::button type="submit">
+                    {{ __('filament-attachment-library::views.actions.attachment.upload') }}
+                </x-filament::button>
 
-            <x-filament::button color="gray" class="mt-4" x-on:click="$dispatch('collapse-section', {id: 'upload-attachment-form'})">
-                {{ __('filament-attachment-library::views.close') }}
-            </x-filament::button>
+                <x-filament::button color="gray" x-on:click="$dispatch('collapse-section', {id: 'upload-attachment-form'})">
+                    {{ __('filament-attachment-library::views.close') }}
+                </x-filament::button>
+            </div>
         </form>
 
     </x-filament::section>
@@ -42,13 +44,15 @@
 
             {{$this->createDirectoryForm}}
 
-            <x-filament::button type="submit" class="mt-4">
-                {{ __('filament-attachment-library::views.actions.directory.create') }}
-            </x-filament::button>
+            <div class="flex gap-4 mt-4">
+                <x-filament::button type="submit">
+                    {{ __('filament-attachment-library::views.actions.directory.create') }}
+                </x-filament::button>
 
-            <x-filament::button color="gray" class="mt-4" x-on:click="$dispatch('collapse-section', {id: 'create-directory-form'})">
-                {{ __('filament-attachment-library::views.close') }}
-            </x-filament::button>
+                <x-filament::button color="gray" x-on:click="$dispatch('collapse-section', {id: 'create-directory-form'})">
+                    {{ __('filament-attachment-library::views.close') }}
+                </x-filament::button>
+            </div>
 
         </form>
     </x-filament::section>
