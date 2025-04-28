@@ -19,6 +19,8 @@ class AttachmentItemList extends Component
 
     public ?string $statePath;
 
+    public bool $withContextMenu = true;
+
     protected string $view = 'filament-attachment-library::livewire.attachment-item-list';
 
     public function placeholder()

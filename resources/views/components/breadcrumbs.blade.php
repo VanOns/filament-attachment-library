@@ -23,9 +23,9 @@
 
             <li class="fi-breadcrumbs-item flex gap-x-2">
                 <x-filament::icon-button
-                        icon="heroicon-o-folder-plus"
-                        tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
-                        x-on:click="$dispatch('open-section', {id: 'create-directory-form'})"
+                    icon="heroicon-o-folder-plus"
+                    tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
+                    x-on:click="$dispatch('open-section', {id: 'create-directory-form'})"
                 />
             </li>
 
