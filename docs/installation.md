@@ -20,11 +20,19 @@ $ php artisan filament-attachment-library:install
 
 ## TailwindCSS
 
-The templates in this package use TailwindCSS. To ensure that the styling is rendered correctly, the `tailwind.config.js`
-file should be extended with the following:
+The templates in this package use TailwindCSS. To ensure the styling is rendered correctly, a custom Filament
+theme must be set up, and the `tailwind.config.js` file should be extended.
+
+Create the custom Filament theme and follow the instructions in the terminal to set it up:
+
+```bash
+php artisan make:filament-theme [PANEL_NAME]
+```
+
+Add the following to the generated `tailwind.config.js` file:
 
 ```javascript
-// tailwind.config.js
+// resources/css/filament/[PANEL_NAME]/tailwind.config.js
 export default {
     presets: '',
     content: [
@@ -33,6 +41,12 @@ export default {
     ],
 }
 ```
+
+> [!NOTE]
+> Make sure to follow the instructions in the terminal to register your custom Filament theme in the admin panel.
+>
+> If your project is using Vite, you may have to register the custom theme as follows:
+> `->viteTheme('resources/css/filament/[PANEL_NAME]/theme.css', 'build')`
 
 ## Register plugin
 
@@ -59,11 +73,11 @@ class ExamplePanelProvider extends PanelProvider
 By default, this package uses the `public` disk defined in `filesystems.php`. This can be overridden by adding the following
 to the project's `.env` file:
 
-> [!NOTE]
-> It is advised to use a disk without any other files. This prevents file conflicts.
-
 ```env
 ATTACHMENTS_DISK=disk_name_here
 ```
+
+> [!NOTE]
+> It is advised to use a disk without any other files. This prevents file conflicts.
 
 The `glide.php` and `attachment-library.php` files contain more configuration options.
