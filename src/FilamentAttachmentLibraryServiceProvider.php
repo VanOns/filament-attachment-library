@@ -2,6 +2,8 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -30,5 +32,9 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
                     }
                 })->setHidden(false);
             });
+
+        FilamentAsset::register([
+            Css::make('stylesheet', __DIR__ . '/../dist/plugin.css'),
+        ], package: 'van-ons/filament-attachment-library');
     }
 }
