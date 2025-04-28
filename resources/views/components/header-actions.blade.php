@@ -2,8 +2,11 @@
 
     {{-- Search --}}
     <x-filament::input.wrapper>
-        <x-filament::input type="text" wire:model.live="search"
-                           placeholder="{{ __('filament-attachment-library::views.search') }}"/>
+        <x-filament::input
+            type="text"
+            wire:model.live="search"
+            placeholder="{{ __('filament-attachment-library::views.search') }}"
+        />
     </x-filament::input.wrapper>
 
     {{-- Sort --}}

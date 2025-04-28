@@ -5,9 +5,9 @@
 
         <x-slot name="heading">
             <x-filament::icon
-                    class="inline w-6 h-6 text-primary-400 mr-2"
-                    icon="heroicon-o-document-plus"
-                    tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
+                class="inline w-6 h-6 text-primary-400 mr-2"
+                icon="heroicon-o-document-plus"
+                tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
             {{ __('filament-attachment-library::forms.upload_attachment.heading') }}
         </x-slot>
@@ -33,9 +33,9 @@
 
         <x-slot name="heading">
             <x-filament::icon
-                    class="inline w-6 h-6 text-primary-400 mr-2"
-                    icon="heroicon-o-folder-plus"
-                    tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
+                class="inline w-6 h-6 text-primary-400 mr-2"
+                icon="heroicon-o-folder-plus"
+                tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
             {{ __('filament-attachment-library::forms.create_directory.heading') }}
         </x-slot>
@@ -62,9 +62,9 @@
 
         <x-slot name="heading">
             <x-filament::icon
-                    class="inline w-6 h-6 text-primary-400 mr-2"
-                    icon="heroicon-o-funnel"
-                    tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
+                class="inline w-6 h-6 text-primary-400 mr-2"
+                icon="heroicon-o-funnel"
+                tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
             />
             {{ __('filament-attachment-library::views.sidebar.filters.header') }}
         </x-slot>
