@@ -5,6 +5,7 @@ Alpine.store('attachmentBrowser', {
     states: {},
     originalState: null,
     currentStatePath: null,
+    disabled: false,
 
     /**
      * Constructor.
@@ -79,7 +80,7 @@ Alpine.store('attachmentBrowser', {
     _onModalClosed($event) {
         if ($event.detail.id !== 'attachment-modal') return;
 
-        if ($event.detail.save){
+        if ($event.detail.save) {
             this._dispatchUpdatedAttachments();
             this.currentStatePath = null;
             return;
@@ -97,7 +98,11 @@ Alpine.store('attachmentBrowser', {
     },
 
     _isMultiple(statePath) {
-        return this.states[statePath].multiple;
+        return this.states[statePath].multiple || false;
+    },
+
+    _isDisabled(statePath) {
+        return this.states[statePath].disabled || false;
     },
 
     _dispatchUpdatedAttachments(alternativeStatePath = null) {
@@ -112,8 +117,10 @@ Alpine.store('attachmentBrowser', {
         );
     },
 
-    handleItemClick(item, alternativeStatePath = null){
+    handleItemClick(item, alternativeStatePath = null) {
         const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._isDisabled(statePath)) return;
 
         switch (item.class) {
             case 'attachment':
@@ -136,6 +143,8 @@ Alpine.store('attachmentBrowser', {
      * Attachment and directory actions
      */
     openPath(path) {
+        if (this._isDisabled(this.currentStatePath)) return;
+
         this.states[this.currentStatePath].state = [];
 
         Livewire.dispatch('open-path', {path: path});
@@ -143,6 +152,8 @@ Alpine.store('attachmentBrowser', {
 
     select(id, alternativeStatePath = null) {
         let statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._isDisabled(statePath)) return;
 
         this._isMultiple(statePath)
             ? this.states[statePath].state.push(id)
@@ -154,7 +165,9 @@ Alpine.store('attachmentBrowser', {
     deselect(id, alternativeStatePath = null) {
         let statePath = alternativeStatePath ?? this.currentStatePath;
 
-        if (this._statePathAbsentOrNull(statePath)) return false;
+        if (this._isDisabled(statePath)) return;
+
+        if (this._statePathAbsentOrNull(statePath)) return;
 
         this.states[statePath].state = this._isMultiple(statePath)
             ? this.states[statePath].state.filter(e => e !== id)

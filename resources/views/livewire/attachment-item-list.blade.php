@@ -1,4 +1,10 @@
-<div class="flex-1 flex flex-wrap gap-4 content-start w-full" x-data="{ attachments: $wire.$entangle('attachments'), statePath: $wire.statePath }">
+<div
+    x-data="{ attachments: $wire.$entangle('attachments'), statePath: $wire.statePath }"
+    @class([
+        'flex-1 flex flex-wrap gap-4 content-start w-full',
+        'opacity-50 pointer-events-none' => $disabled,
+    ])
+>
 
     {{-- Empty directory notice --}}
     <template x-if="attachments?.length === 0">
