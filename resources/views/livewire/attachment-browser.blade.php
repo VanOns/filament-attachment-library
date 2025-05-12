@@ -24,7 +24,7 @@
     <div class="flex flex-row gap-6 mt-4 flex-wrap">
 
         {{-- Attachment list --}}
-        <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" :$currentPath />
+        <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" :$currentPath :$layout :$inModal />
 
         {{-- Include sidebar cards --}}
         @include('filament-attachment-library::components.sidebar')

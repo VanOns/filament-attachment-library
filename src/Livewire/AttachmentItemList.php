@@ -17,11 +17,16 @@ class AttachmentItemList extends Component
     #[Reactive]
     public ?string $currentPath;
 
+    #[Reactive]
+    public string $layout = 'grid';
+
     public ?string $statePath;
 
     public bool $withContextMenu = true;
 
     public bool $disabled = false;
+
+    public bool $inModal = false;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-item-list';
 

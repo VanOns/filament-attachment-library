@@ -32,4 +32,21 @@
         </x-filament::input.select>
     </x-filament::input.wrapper>
 
+    {{-- Layout --}}
+    <div class="flex flex-row gap-x-4 items-center">
+        <x-filament::icon-button
+            icon="heroicon-m-squares-2x2"
+            wire:click="$set('layout', 'grid')"
+            tooltip="{{ __('filament-attachment-library::views.header_actions.layout.grid') }}"
+            @class(['border border-custom-600 dark:border-custom-400' => $layout === 'grid'])
+        />
+
+        <x-filament::icon-button
+            icon="heroicon-m-queue-list"
+            wire:click="$set('layout', 'list')"
+            tooltip="{{ __('filament-attachment-library::views.header_actions.layout.list') }}"
+            @class(['border border-custom-600 dark:border-custom-400' => $layout === 'list'])
+        />
+    </div>
+
 </div>

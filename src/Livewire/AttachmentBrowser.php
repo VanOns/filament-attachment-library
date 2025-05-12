@@ -49,9 +49,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Url(history: true, keep: true)]
     public int $pageSize = 25;
 
+    #[Url(history: true, keep: true)]
+    public string $layout = 'grid';
+
     public string $search = '';
 
     public string $mime = '';
+
+    public bool $inModal = false;
 
     protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
@@ -66,6 +71,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     ];
 
     public const PAGE_SIZES = [5, 10, 25, 50];
+
+    public const LAYOUT_TYPES = ['grid', 'list'];
 
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
@@ -84,6 +91,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         if (! in_array($this->pageSize, self::PAGE_SIZES)) {
             $this->pageSize = 1;
+        }
+
+        if (! in_array($this->layout, self::LAYOUT_TYPES)) {
+            $this->layout = 'grid';
         }
     }
 

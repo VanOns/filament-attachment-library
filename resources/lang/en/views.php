@@ -57,6 +57,10 @@ return [
         ],
     ],
     'header_actions' => [
+        'layout' => [
+            'grid' => 'Grid view',
+            'list' => 'List view',
+        ],
         'options' => 'Options',
         'sort' => [
             'updated_at_ascending' => 'Upload date ascending',

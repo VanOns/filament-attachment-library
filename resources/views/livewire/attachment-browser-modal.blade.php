@@ -6,7 +6,7 @@
             {{ __('filament-attachment-library::views.title') }}
         </x-slot>
 
-        <livewire:attachment-browser />
+        <livewire:attachment-browser :inModal="true" />
 
         <x-slot name="footer">
 
