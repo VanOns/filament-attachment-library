@@ -9,10 +9,10 @@
 
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
         {{-- Breadcrumbs --}}
-        @include('filament-attachment-library::components.breadcrumbs')
+        <x-filament-attachment-library::breadcrumbs />
 
         {{-- Filtering, sorting and header actions --}}
-        @include('filament-attachment-library::components.header-actions')
+        <x-filament-attachment-library::header-actions :$layout />
     </div>
 
     {{-- Search result indicator --}}
@@ -27,7 +27,7 @@
         <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" :$currentPath :$layout :$inModal />
 
         {{-- Include sidebar cards --}}
-        @include('filament-attachment-library::components.sidebar')
+        <x-filament-attachment-library::sidebar class="order-1 md:order-2" />
 
         {{-- Pagination --}}
         <div class="mt-4 w-full">
