@@ -7,6 +7,7 @@
     @class([
         'flex-1 flex flex-wrap gap-4 content-start w-full',
         'opacity-50 pointer-events-none' => $disabled,
+        $class,
     ])
 >
 

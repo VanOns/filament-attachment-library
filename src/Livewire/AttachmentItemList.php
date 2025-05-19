@@ -28,6 +28,8 @@ class AttachmentItemList extends Component
 
     public bool $inModal = false;
 
+    public string $class = '';
+
     protected string $view = 'filament-attachment-library::livewire.attachment-item-list';
 
     public function placeholder()

@@ -1,4 +1,4 @@
-<div class="flex gap-4 justify-end mb-2 flex-wrap mt-2 md:mt-0 min-w-full md:min-w-[initial]">
+<div class="hidden flex-col gap-4 justify-end mb-2 flex-wrap mt-2 md:flex md:mt-0 min-w-full md:min-w-[initial] md:flex-row">
 
     {{-- Search --}}
     <x-filament::input.wrapper>
@@ -6,6 +6,7 @@
             type="text"
             wire:model.live="search"
             placeholder="{{ __('filament-attachment-library::views.search') }}"
+            class="w-full"
         />
     </x-filament::input.wrapper>
 
@@ -38,14 +39,20 @@
             icon="heroicon-m-squares-2x2"
             wire:click="$set('layout', 'grid')"
             tooltip="{{ __('filament-attachment-library::views.header_actions.layout.grid') }}"
-            @class(['border border-custom-600 dark:border-custom-400' => $layout === 'grid'])
+            @class([
+                'max-sm:m-0',
+                'border border-custom-600 dark:border-custom-400' => $layout === 'grid'
+            ])
         />
 
         <x-filament::icon-button
             icon="heroicon-m-queue-list"
             wire:click="$set('layout', 'list')"
             tooltip="{{ __('filament-attachment-library::views.header_actions.layout.list') }}"
-            @class(['border border-custom-600 dark:border-custom-400' => $layout === 'list'])
+            @class([
+                'max-sm:m-0',
+                'border border-custom-600 dark:border-custom-400' => $layout === 'list'
+            ])
         />
     </div>
 
