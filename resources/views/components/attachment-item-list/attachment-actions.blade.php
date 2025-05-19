@@ -21,6 +21,10 @@
             </x-slot>
 
             <x-filament::dropdown.list x-show="attachment.class === 'attachment'">
+                <x-filament::dropdown.list.item x-on:click="$dispatch('show-attachment-info', {attachment: attachment})" class="flex md:hidden">
+                    {{ __('filament-attachment-library::views.actions.attachment.view') }}
+                </x-filament::dropdown.list.item>
+
                 <x-filament::dropdown.list.item x-on:click="window.open(attachment.url)">
                     {{ __('filament-attachment-library::views.actions.attachment.open') }}
                 </x-filament::dropdown.list.item>
@@ -35,6 +39,10 @@
             </x-filament::dropdown.list>
 
             <x-filament::dropdown.list x-show="attachment.class === 'directory'">
+                <x-filament::dropdown.list.item x-on:click="$dispatch('show-attachment-info', {attachment: attachment})" class="flex md:hidden">
+                    {{ __('filament-attachment-library::views.actions.attachment.view') }}
+                </x-filament::dropdown.list.item>
+
                 <x-filament::dropdown.list.item x-on:click="$dispatch('mount-action', {name: 'renameDirectory', arguments: {'directory': attachment}})">
                     {{ __('filament-attachment-library::views.actions.directory.rename') }}
                 </x-filament::dropdown.list.item>

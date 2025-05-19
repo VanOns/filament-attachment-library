@@ -100,5 +100,6 @@
     </x-filament::section>
 
     {{-- Attachment info section --}}
-    <livewire:attachment-info />
+    <livewire:attachment-info class="hidden md:block" />
+    <livewire:attachment-info-modal />
 </div>

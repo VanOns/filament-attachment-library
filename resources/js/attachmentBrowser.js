@@ -22,7 +22,10 @@ Alpine.store('attachmentBrowser', {
         });
         Livewire.on('select-attachment', ([id, statePath]) => {
             this.select(id, statePath);
-        })
+        });
+        window.addEventListener('show-attachment-info', $event => {
+            this.showAttachmentInfoModal($event);
+        });
     },
 
     /**
@@ -174,5 +177,13 @@ Alpine.store('attachmentBrowser', {
             : null;
 
         Livewire.dispatch('highlight-attachment', {id: null});
+    },
+
+    showAttachmentInfoModal($event) {
+        const attachment = $event.detail.attachment;
+        if (!attachment) return;
+
+        Livewire.dispatch('highlight-attachment', { id: attachment.id });
+        Livewire.dispatch('open-modal', { id: 'attachment-info-modal' });
     }
 })

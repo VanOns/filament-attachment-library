@@ -41,10 +41,12 @@ return [
             'mime_type' => 'MIME-type',
             'path' => 'Pad',
             'url' => 'Link',
+            'modal_title' => 'Bestandsinformatie',
         ],
     ],
     'actions' => [
         'attachment' => [
+            'view' => 'Bekijk details',
             'open' => 'Open bestand',
             'edit' => 'Bewerk bestand',
             'delete' => 'Verwijder bestand',

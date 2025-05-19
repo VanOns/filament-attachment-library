@@ -1,4 +1,4 @@
-<div x-data="{ attachment: $wire.$entangle('attachment').live }">
+<div x-data="{ attachment: $wire.$entangle('attachment').live }" @class([$class])>
     <x-filament::section>
 
         {{-- No attachment selected --}}
@@ -19,12 +19,19 @@
 
                 {{-- Preview/icon --}}
                 <template x-if="attachment.is_image">
-                    <img loading="lazy" :src="attachment?.thumbnail_url" class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto">
+                    <img
+                        loading="lazy"
+                        :src="attachment?.thumbnail_url"
+                        class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto"
+                    >
                 </template>
 
                 <template x-if="attachment.is_video">
-                    <video :src="attachment?.url" controls class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48">
-                    </video>
+                    <video
+                        :src="attachment?.url"
+                        controls
+                        class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
+                    ></video>
                 </template>
 
                 <template x-if="!attachment.is_image && !attachment.is_video">
@@ -34,7 +41,7 @@
                 {{-- Details --}}
                 <div class="mt-6">
                     <h2 class="break-words text-xl font-medium text-gray-900 dark:text-gray-100" x-text="attachment.name"></h2>
-                    <div class="grid mt-2 grid-cols-2 gap-y-2">
+                    <div class="grid mt-2 grid-cols-auto gap-y-2 md:grid-cols-2">
                         <p class="flex-1 text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.path') }}</p>
                         <p class="flex-1" x-text="attachment.path ?? '/'"></p>
 
