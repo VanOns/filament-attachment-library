@@ -41,10 +41,12 @@ return [
             'mime_type' => 'MIME-type',
             'path' => 'Path',
             'url' => 'Link',
+            'modal_title' => 'File information',
         ],
     ],
     'actions' => [
         'attachment' => [
+            'view' => 'View details',
             'open' => 'Open file',
             'edit' => 'Modify file',
             'delete' => 'Remove file',
@@ -57,6 +59,10 @@ return [
         ],
     ],
     'header_actions' => [
+        'layout' => [
+            'grid' => 'Grid view',
+            'list' => 'List view',
+        ],
         'options' => 'Options',
         'sort' => [
             'updated_at_ascending' => 'Upload date ascending',

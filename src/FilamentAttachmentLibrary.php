@@ -12,6 +12,7 @@ use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfoModal;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentItemList;
 use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\AttachmentSynth;
 use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\DirectorySynth;
@@ -48,6 +49,7 @@ class FilamentAttachmentLibrary implements Plugin
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-item-list', AttachmentItemList::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
+        Livewire::component('attachment-info-modal', AttachmentInfoModal::class);
 
         // Don't render attachment browser by default, only if needed
         View::share('renderAttachmentBrowserModal', false);

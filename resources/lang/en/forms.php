@@ -13,7 +13,7 @@ return [
         'caption' => 'Caption',
     ],
     'upload_attachment' => [
-        'name' => 'Files',
+        'name' => 'File',
         'heading' => 'Upload',
     ],
 ];

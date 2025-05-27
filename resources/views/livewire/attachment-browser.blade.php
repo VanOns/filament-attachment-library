@@ -9,10 +9,11 @@
 
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
         {{-- Breadcrumbs --}}
-        @include('filament-attachment-library::components.breadcrumbs')
+        <x-filament-attachment-library::breadcrumbs />
 
         {{-- Filtering, sorting and header actions --}}
-        @include('filament-attachment-library::components.header-actions')
+        <x-filament-attachment-library::header-actions :$layout />
+        <x-filament-attachment-library::header-actions-mobile :$layout />
     </div>
 
     {{-- Search result indicator --}}
@@ -21,16 +22,21 @@
     </div>
 
     {{-- Main attachment browser content --}}
-    <div class="flex flex-row gap-6 mt-4 flex-wrap">
-
+    <div class="flex flex-col gap-6 mt-4 flex-wrap md:flex-row">
         {{-- Attachment list --}}
-        <livewire:attachment-item-list :attachments="$this->paginator->getCollection()" :$currentPath />
+        <livewire:attachment-item-list
+            :attachments="$this->paginator->getCollection()"
+            :$currentPath
+            :$layout
+            :$inModal
+            class="order-2 md:order-1"
+        />
 
         {{-- Include sidebar cards --}}
-        @include('filament-attachment-library::components.sidebar')
+        <x-filament-attachment-library::sidebar class="order-1 md:order-2" />
 
         {{-- Pagination --}}
-        <div class="mt-4 w-full">
+        <div class="mt-4 w-full order-3">
             <x-filament::pagination :paginator="$this->paginator" extreme-links />
         </div>
     </div>

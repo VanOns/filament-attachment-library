@@ -38,10 +38,10 @@
         </div>
 
         <x-filament::button
-            x-on:click="$dispatch('open-modal', {id: 'attachment-modal', statePath: '{{ $getStatePath() }}'})"
+            x-on:click="$dispatch('open-modal', { id: 'attachment-modal', statePath: '{{ $getStatePath() }}' })"
             x-on:selected-attachments-updated.window="$event.detail.statePath === '{{ $getStatePath() }}' ? $wire.$set('{{ $getStatePath() }}', $event.detail.attachments) : ''"
-            x-bind:disabled="{{ $isDisabled() }}"
             icon="heroicon-o-document"
+            :disabled="$isDisabled()"
             @class([
                 'mt-2',
                 'opacity-50 pointer-events-none' => $isDisabled(),

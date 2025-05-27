@@ -1,4 +1,15 @@
-<div class="flex-1 max-w-md" x-data="{showMimeOptions: false}" x-on:attachment-browser-loaded-js.window="showMimeOptions = $store.attachmentBrowser?.showMime()">
+@props([
+    'class' => '',
+])
+
+<div
+    x-data="{showMimeOptions: false}"
+    x-on:attachment-browser-loaded-js.window="showMimeOptions = $store.attachmentBrowser?.showMime()"
+    @class([
+        'flex-1 max-w-md',
+        $class,
+    ])
+>
 
     {{-- Upload attachment section --}}
     <x-filament::section collapsible collapsed class="mb-4" id="upload-attachment-form">
@@ -58,7 +69,7 @@
     </x-filament::section>
 
     {{-- Filter section --}}
-    <x-filament::section collapsible collapsed class="mb-6" id="filter-form" x-show="showMimeOptions">
+    <x-filament::section collapsible collapsed class="mb-4" id="filter-form" x-show="showMimeOptions">
 
         <x-slot name="heading">
             <x-filament::icon
@@ -89,5 +100,6 @@
     </x-filament::section>
 
     {{-- Attachment info section --}}
-    <livewire:attachment-info />
+    <livewire:attachment-info class="hidden md:block" />
+    <livewire:attachment-info-modal />
 </div>

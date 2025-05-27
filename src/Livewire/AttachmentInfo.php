@@ -12,6 +12,8 @@ class AttachmentInfo extends Component
 {
     public ?Attachment $attachment;
 
+    public string $class = '';
+
     protected string $view = 'filament-attachment-library::livewire.attachment-info';
 
     #[On('highlight-attachment')]

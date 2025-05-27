@@ -13,7 +13,7 @@ return [
         'caption' => 'Onderschrift',
     ],
     'upload_attachment' => [
-        'name' => 'Bestand(en)',
+        'name' => 'Bestand',
         'heading' => 'Uploaden',
     ],
 ];
