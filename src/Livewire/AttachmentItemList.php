@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Reactive;
@@ -40,7 +41,7 @@ class AttachmentItemList extends Component
         HTML;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('filament-attachment-library::livewire.attachment-item-list');
     }

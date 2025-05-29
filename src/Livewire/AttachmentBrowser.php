@@ -11,6 +11,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -79,7 +80,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'pdf' => 'application/pdf',
     ];
 
-    public function render()
+    public function render(): View
     {
         return view('filament-attachment-library::livewire.attachment-browser');
     }
@@ -175,7 +176,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Submit handler for UploadAttachmentForm.
      */
-    public function saveUploadAttachmentForm()
+    public function saveUploadAttachmentForm(): void
     {
         $this->uploadAttachmentForm->getState();
 
@@ -188,7 +189,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Submit handler for CreateDirectoryForm.
      */
-    public function saveCreateDirectoryForm()
+    public function saveCreateDirectoryForm(): void
     {
         $state = $this->createDirectoryForm->getState();
         $path = implode('/', (array_filter([$this->currentPath, $state['name']])));
@@ -222,7 +223,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Reset page on search query update.
      */
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
@@ -264,7 +265,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $directories = $this->applyFiltering($directories);
         $directories = $this->applySorting($directories);
 
-        $items = collect($directories)->merge($attachments);
+        $items = $directories->merge($attachments);
 
         $pageItems = $items->skip($this->pageSize * ($this->getPage() - 1))
             ->take($this->pageSize);
