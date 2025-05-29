@@ -8,10 +8,8 @@ use Livewire\Component;
 #[Lazy]
 class AttachmentInfoModal extends Component
 {
-    protected string $view = 'filament-attachment-library::livewire.attachment-info-modal';
-
     public function render()
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-info-modal');
     }
 }

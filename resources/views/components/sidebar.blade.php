@@ -102,4 +102,5 @@
     {{-- Attachment info section --}}
     <livewire:attachment-info class="hidden md:block" />
     <livewire:attachment-info-modal />
+
 </div>

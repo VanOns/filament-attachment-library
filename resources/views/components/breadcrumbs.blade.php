@@ -1,4 +1,5 @@
 <div class="min-w-full md:min-w-max">
+
     <nav class="fi-breadcrumbs">
         <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
 
@@ -31,4 +32,5 @@
 
         </ol>
     </nav>
+
 </div>

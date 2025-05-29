@@ -3,6 +3,7 @@
 ])
 
 <div {{ $attributes->only('class') }}>
+
     @if($withContextMenu)
         <x-filament::dropdown
             placement="bottom-end"
@@ -64,4 +65,5 @@
         class="w-8 h-8 m-0 hidden group-hover:block"
         x-show="attachment.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)"
     />
+
 </div>

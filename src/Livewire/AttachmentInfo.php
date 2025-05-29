@@ -14,8 +14,6 @@ class AttachmentInfo extends Component
 
     public string $class = '';
 
-    protected string $view = 'filament-attachment-library::livewire.attachment-info';
-
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {
@@ -51,6 +49,6 @@ class AttachmentInfo extends Component
 
     public function render()
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-info');
     }
 }

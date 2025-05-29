@@ -8,6 +8,7 @@
         disabled: false
     })"
 >
+
     <livewire:attachment-browser />
 
 </x-filament::page>

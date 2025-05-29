@@ -25,6 +25,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
+use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
@@ -50,15 +51,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public int $pageSize = 25;
 
     #[Url(history: true, keep: true)]
-    public string $layout = 'grid';
+    public Layout $layout = Layout::GRID;
 
     public string $search = '';
 
     public string $mime = '';
 
     public bool $inModal = false;
-
-    protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
     public ?array $createDirectoryFormState = [];
 
@@ -72,8 +71,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public const PAGE_SIZES = [5, 10, 25, 50];
 
-    public const LAYOUT_TYPES = ['grid', 'list'];
-
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
         'image' => 'image/*',
@@ -84,7 +81,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render()
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-browser');
     }
 
     public function mount(): void
@@ -93,8 +90,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->pageSize = 1;
         }
 
-        if (! in_array($this->layout, self::LAYOUT_TYPES)) {
-            $this->layout = 'grid';
+        if (! in_array($this->layout, Layout::cases())) {
+            $this->layout = Layout::GRID;
         }
     }
 
