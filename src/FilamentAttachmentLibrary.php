@@ -34,6 +34,7 @@ class FilamentAttachmentLibrary implements Plugin
         // Register all package panel assets
         $panel->assets([
             Js::make('attachmentBrowser', __DIR__.'/../resources/js/attachmentBrowser.js')->loadedOnRequest(),
+            Js::make('attachmentField', __DIR__.'/../resources/js/attachmentField.js')->defer(),
             Js::make('clipboard', __DIR__.'/../resources/js/clipboard.js'),
         ]);
     }
