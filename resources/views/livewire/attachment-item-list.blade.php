@@ -5,10 +5,7 @@
 @endphp
 
 <div
-    x-data="{
-        attachments: $wire.$entangle('attachments'),
-        statePath: $wire.statePath,
-    }"
+    x-data="attachmentItemList"
     @class([
         'flex-1 flex flex-wrap gap-4 content-start w-full',
         'opacity-50 pointer-events-none' => $disabled,

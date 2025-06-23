@@ -1,4 +1,4 @@
-<div x-data="{ attachment: $wire.$entangle('attachment').live }" @class([$class])>
+<div x-data="attachmentInfo" @class([$class])>
 
     <x-filament::section>
 

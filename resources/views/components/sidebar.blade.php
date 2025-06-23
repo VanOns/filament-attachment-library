@@ -3,8 +3,7 @@
 ])
 
 <div
-    x-data="{showMimeOptions: false}"
-    x-on:attachment-browser-loaded-js.window="showMimeOptions = $store.attachmentBrowser?.showMime()"
+    x-data="sidebar"
     @class([
         'flex-1 max-w-md',
         $class,

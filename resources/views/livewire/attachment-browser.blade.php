@@ -2,9 +2,8 @@
     {{-- Dispatch attachment browser loaded event --}}
     data-dispatch="attachment-browser-loaded"
     {{-- Load attachment browser javascript --}}
-    x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser'))]"
-    x-data="{search: $wire.entangle('search').live}"
-    x-on:dragover.prevent="$dispatch('open-section', {id: 'upload-attachment-form'})"
+    x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser', \VanOns\FilamentAttachmentLibrary\Facades\FilamentAttachmentLibrary::getId()))]"
+    x-data="attachmentBrowserData"
 >
 
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
