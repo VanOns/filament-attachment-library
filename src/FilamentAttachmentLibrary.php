@@ -37,9 +37,11 @@ class FilamentAttachmentLibrary implements Plugin
             Js::make('attachmentBrowser', __DIR__.'/../resources/js/stores/attachmentBrowser.js')->loadedOnRequest(),
 
             // Data
+            Js::make('attachmentActions', __DIR__.'/../resources/js/data/attachmentActions.js'),
             Js::make('attachmentBrowserData', __DIR__.'/../resources/js/data/attachmentBrowser.js'),
             Js::make('attachmentBrowserField', __DIR__ . '/../resources/js/data/attachmentBrowserField.js'),
             Js::make('attachmentInfo', __DIR__.'/../resources/js/data/attachmentInfo.js'),
+            Js::make('attachmentItem', __DIR__.'/../resources/js/data/attachmentItem.js'),
             Js::make('attachmentItemList', __DIR__.'/../resources/js/data/attachmentItemList.js'),
             Js::make('sidebar', __DIR__.'/../resources/js/data/sidebar.js'),
 

@@ -1,5 +1,5 @@
 document.addEventListener('alpine:init', () => {
-    Alpine.data('attachmentItemList', () => ({
+    Alpine.data('attachmentItem', ({ attachment }) => ({
         get statePath() {
             return this.$wire.statePath;
         },
@@ -8,36 +8,38 @@ document.addEventListener('alpine:init', () => {
             return this.$wire.attachments;
         },
 
-        init() {
-            this.$el.addEventListener('contextmenu', this.handleContextMenu.bind(this));
-        },
-
-        isAttachment(attachment) {
+        get isAttachment() {
             return attachment.class === 'attachment';
         },
 
-        isDirectory(attachment) {
+        get isDirectory() {
             return attachment.class === 'directory';
         },
 
-        isImage(attachment) {
+        get isImage() {
             return attachment.is_image;
         },
 
-        isVideo(attachment) {
+        get isVideo() {
             return attachment.is_video;
         },
 
-        isSelected(attachment) {
+        get isSelected() {
             return Alpine.store('attachmentBrowser')?.isSelected(attachment.id, this.statePath);
         },
 
-        handleItemClick(attachment) {
+        init() {
+            this.$el.addEventListener('click', this.handleItemClick.bind(this));
+            this.$el.addEventListener('contextmenu', this.handleContextMenu.bind(this));
+        },
+
+        handleItemClick() {
             Alpine.store('attachmentBrowser')?.handleItemClick(attachment, this.statePath);
         },
 
         handleContextMenu(event) {
             event.preventDefault();
+            event.stopPropagation();
 
             const toggleButton = this.$el.querySelector('.toggle');
             toggleButton?.parentNode?.click();
