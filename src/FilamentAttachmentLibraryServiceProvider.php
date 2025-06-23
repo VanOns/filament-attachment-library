@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -30,5 +31,16 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
                     }
                 })->setHidden(false);
             });
+    }
+
+    public function packageBooted(): void
+    {
+        FilamentAsset::registerScriptData([
+            'fml' => [
+                'labels' => [
+                    'clipboardSuccess' => __('filament-attachment-library::notifications.clipboard.success'),
+                ],
+            ],
+        ]);
     }
 }
