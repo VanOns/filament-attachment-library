@@ -43,6 +43,7 @@ class FilamentAttachmentLibrary implements Plugin
             Js::make('attachmentInfo', __DIR__.'/../resources/js/data/attachmentInfo.js'),
             Js::make('attachmentItem', __DIR__.'/../resources/js/data/attachmentItem.js'),
             Js::make('attachmentItemList', __DIR__.'/../resources/js/data/attachmentItemList.js'),
+            Js::make('breadcrumbs', __DIR__.'/../resources/js/data/breadcrumbs.js'),
             Js::make('sidebar', __DIR__.'/../resources/js/data/sidebar.js'),
 
             // Directives
