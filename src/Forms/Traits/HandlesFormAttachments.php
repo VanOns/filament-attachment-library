@@ -41,7 +41,8 @@ trait HandlesFormAttachments
         string $relationship = 'attachments',
     ): array {
         return array_merge($data, [
-            $relationship => static::getModel()::find($data['id'])
+            $relationship => static::getModel()::withoutGlobalScopes()
+                ->find($data['id'])
                 ->{$relationship}
                 ->pluck('id')
                 ->toArray(),
