@@ -143,7 +143,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return $form->schema([
             FileUpload::make('attachment')
                 ->rules([
-                    new AllowedFilename,
+                    new AllowedFilename(),
                     new DestinationExists($this->currentPath),
                     ...Config::get('filament-attachment-library.upload_rules'),
                 ])
@@ -175,7 +175,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
-                    new AllowedFilename,
+                    new AllowedFilename(),
                 ])->required()
                 ->autocomplete(false)
                 ->label(__('filament-attachment-library::forms.create_directory.name')),
