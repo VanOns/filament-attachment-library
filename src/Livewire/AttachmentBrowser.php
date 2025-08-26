@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Filament\Schemas\Schema;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\BaseFileUpload;
@@ -9,7 +10,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -31,8 +31,8 @@ use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 /**
- * @property Form $uploadAttachmentForm
- * @property Form $createDirectoryForm
+ * @property \Filament\Schemas\Schema $uploadAttachmentForm
+ * @property \Filament\Schemas\Schema $createDirectoryForm
  */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
@@ -136,9 +136,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Form schema for UploadAttachmentForm.
      */
-    public function uploadAttachmentForm(Form $form): Form
+    public function uploadAttachmentForm(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             FileUpload::make('attachment')
                 ->rules([new AllowedFilename(), new DestinationExists($this->currentPath)])
                 ->multiple()
@@ -162,9 +162,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Form schema for CreateDirectoryForm.
      */
-    public function createDirectoryForm(Form $form): Form
+    public function createDirectoryForm(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),

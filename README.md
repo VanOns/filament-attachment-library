@@ -33,17 +33,11 @@ Create the custom Filament theme and follow the instructions in the terminal to 
 php artisan make:filament-theme [PANEL_NAME]
 ```
 
-Add the following to the generated `tailwind.config.js` file:
+Add the following to the generated `theme.css` file:
 
-```javascript
-// resources/css/filament/[PANEL_NAME]/tailwind.config.js
-export default {
-    presets: '',
-    content: [
-        // ...
-        './vendor/van-ons/filament-attachment-library/resources/**/*.blade.php',
-    ],
-}
+```css
+// resources/css/filament/[PANEL_NAME]/theme.css
+@source '../../../../vendor/van-ons/filament-attachment-library/resources/**/*.blade.php'
 ```
 
 > [!NOTE]

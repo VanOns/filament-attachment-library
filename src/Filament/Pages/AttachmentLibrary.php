@@ -15,9 +15,9 @@ class AttachmentLibrary extends Page implements HasForms
     use WithFileUploads;
     use WithPagination;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-folder';
 
-    protected static string $view = 'filament-attachment-library::pages.attachments';
+    protected string $view = 'filament-attachment-library::pages.attachments';
 
     public static function getNavigationGroup(): ?string
     {

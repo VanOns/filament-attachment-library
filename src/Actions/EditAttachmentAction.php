@@ -2,8 +2,8 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Actions;
 
+use Filament\Schemas\Schema;
 use Filament\Actions\Action;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -24,7 +24,7 @@ class EditAttachmentAction extends Action
 
         $this->color('gray');
 
-        $this->form(function (array $arguments) {
+        $this->schema(function (array $arguments) {
             /** @var Attachment $attachment */
             $attachment = Attachment::find($arguments['attachment_id']);
 
@@ -55,11 +55,11 @@ class EditAttachmentAction extends Action
             ];
         });
 
-        $this->mountUsing(function (ComponentContainer $form, array $arguments) {
+        $this->mountUsing(function (Schema $schema, array $arguments) {
             /** @var Attachment $attachment */
             $attachment = Attachment::find($arguments['attachment_id']);
 
-            $form->fill([
+            $schema->fill([
                 'alt' => $attachment->alt,
                 'caption' => $attachment->caption,
                 'description' => $attachment->description,
