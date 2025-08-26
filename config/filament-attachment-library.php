@@ -12,4 +12,9 @@ return [
      */
     'username_property' => 'name',
 
+    /**
+     * Additional upload rules for file uploads.
+     */
+    'upload_rules' => [],
+
 ];
