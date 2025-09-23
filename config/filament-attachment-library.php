@@ -13,8 +13,10 @@ return [
     'username_property' => 'name',
 
     /**
-     * Additional upload rules for file uploads.
+     * Additional Laravel validation rules for file uploades.
      */
-    'upload_rules' => [],
+    'upload_rules' => [
+        // 'extensions:jpg,png',
+    ],
 
 ];
