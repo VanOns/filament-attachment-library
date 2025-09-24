@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'attachment_field' => [
+        'help' => 'Only the following types are resizable: :types. All other file types will be rendered normally.',
+    ],
     'create_directory' => [
         'name' => 'Name',
         'heading' => 'Create directory',
