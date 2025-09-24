@@ -14,7 +14,7 @@ class DirectorySynth extends Synth
         return $target instanceof Directory;
     }
 
-    public function dehydrate($target)
+    public function dehydrate(Directory $target)
     {
         return [[
             'path' => $target->path,
