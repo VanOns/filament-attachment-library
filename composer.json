@@ -53,8 +53,8 @@
     },
     "repositories": [
         {
-            "type": "git",
-            "url": "https://github.com/VanOns/laravel-attachment-library.git"
+            "type": "vcs",
+            "url": "git@github.com:VanOns/laravel-attachment-library.git"
         }
     ],
     "config": {
