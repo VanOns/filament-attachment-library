@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View as LaravelView;
+use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentField extends Field
@@ -20,6 +21,20 @@ class AttachmentField extends Field
     public string $mime = '';
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
+
+    public static function make(?string $name = null): static
+    {
+        return parent::make($name)
+            ->helperText(function () {
+                if (empty($formats = Glide::getSupportedImageFormats())) {
+                    return null;
+                }
+
+                return __('filament-attachment-library::forms.attachment_field.help', [
+                    'types' => implode(', ', $formats),
+                ]);
+            });
+    }
 
     /**
      * Return all selected attachments modals from state.
