@@ -31,7 +31,7 @@ class AttachmentField extends Field
                 }
 
                 return __('filament-attachment-library::forms.attachment_field.help', [
-                    'types' => implode(', ', $formats)
+                    'types' => implode(', ', $formats),
                 ]);
             });
     }
