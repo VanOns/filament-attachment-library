@@ -26,7 +26,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "van-ons/laravel-attachment-library": "^0.0"
+        "van-ons/laravel-attachment-library": "^1.0.0-rc1"
     },
     "require-dev": {
         "filament/filament": "^3.0-stable",
@@ -53,8 +53,8 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "git@github.com:VanOns/laravel-attachment-library.git"
+            "type": "git",
+            "url": "https://github.com/VanOns/laravel-attachment-library.git"
         }
     ],
     "config": {
