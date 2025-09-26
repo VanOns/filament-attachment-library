@@ -1,4 +1,4 @@
-<div class="text-center mx-auto" x-data="{currentPath: $wire.$entangle('currentPath')}">
+<div class="text-center mx-auto" x-data="emptyPathNotice">
 
     <x-filament::icon icon="heroicon-o-exclamation-triangle" class="w-10 h-10 mx-auto"/>
 
@@ -10,12 +10,11 @@
         {{ __('filament-attachment-library::views.browser.empty.description') }}
     </p>
 
-    {{-- Offer user path back to main directory --}}
     <x-filament::button
         wire:click="$dispatch('open-path', {path: null})"
         class="mt-2"
         icon="heroicon-o-arrow-uturn-left"
-        x-show="currentPath !== null && currentPath !== ''"
+        x-show="showButton"
     >
         {{ __('filament-attachment-library::views.browser.empty.button') }}
     </x-filament::button>
