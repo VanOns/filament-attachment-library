@@ -1,9 +1,10 @@
 name: Draft release
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - master
+      - main
       - 'releases/*'
 
 jobs:
