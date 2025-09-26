@@ -14,12 +14,12 @@ class AttachmentSynth extends Synth
 {
     public static $key = 'attachment';
 
-    public static function match($target)
+    public static function match($target): bool
     {
         return $target instanceof Attachment;
     }
 
-    public function dehydrate($target)
+    public function dehydrate($target): array
     {
         $userModel = Config::get('filament-attachment-library.user_model', User::class);
         $usernameProperty = Config::get('filament-attachment-library.username_property', 'name');
@@ -60,7 +60,7 @@ class AttachmentSynth extends Synth
         return [$fields, []];
     }
 
-    public function hydrate($value)
+    public function hydrate($value): ?Attachment
     {
         return Attachment::find($value['id']);
     }

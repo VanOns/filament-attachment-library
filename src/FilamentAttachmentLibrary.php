@@ -33,9 +33,26 @@ class FilamentAttachmentLibrary implements Plugin
 
         // Register all package panel assets
         $panel->assets([
-            Js::make('attachmentBrowser', __DIR__.'/../resources/js/attachmentBrowser.js')->loadedOnRequest(),
-            Js::make('clipboard', __DIR__.'/../resources/js/clipboard.js'),
-        ]);
+            // Stores
+            Js::make('attachmentBrowser', __DIR__.'/../resources/js/stores/attachmentBrowser.js')->loadedOnRequest(),
+
+            // Data
+            Js::make('attachmentActions', __DIR__.'/../resources/js/data/attachmentActions.js'),
+            Js::make('attachmentBrowserData', __DIR__.'/../resources/js/data/attachmentBrowser.js'),
+            Js::make('attachmentBrowserField', __DIR__ . '/../resources/js/data/attachmentBrowserField.js'),
+            Js::make('attachmentInfo', __DIR__.'/../resources/js/data/attachmentInfo.js'),
+            Js::make('attachmentItem', __DIR__.'/../resources/js/data/attachmentItem.js'),
+            Js::make('attachmentItemList', __DIR__.'/../resources/js/data/attachmentItemList.js'),
+            Js::make('breadcrumbs', __DIR__.'/../resources/js/data/breadcrumbs.js'),
+            Js::make('emptyPathNotice', __DIR__.'/../resources/js/data/emptyPathNotice.js'),
+            Js::make('sidebar', __DIR__.'/../resources/js/data/sidebar.js'),
+
+            // Directives
+            Js::make('clipboard', __DIR__.'/../resources/js/directives/clipboard.js'),
+
+            // Utils
+            Js::make('i18n', __DIR__.'/../resources/js/utils/i18n.js'),
+        ], $this->getId());
     }
 
     public static function make(): static
