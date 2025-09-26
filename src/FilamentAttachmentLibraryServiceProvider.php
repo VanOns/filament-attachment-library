@@ -36,7 +36,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::registerScriptData([
-            'fml' => [
+            'fal' => [
                 'labels' => [
                     'clipboardSuccess' => __('filament-attachment-library::notifications.clipboard.success'),
                 ],
