@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -13,8 +14,6 @@ class AttachmentInfo extends Component
     public ?Attachment $attachment;
 
     public string $class = '';
-
-    protected string $view = 'filament-attachment-library::livewire.attachment-info';
 
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
@@ -49,8 +48,8 @@ class AttachmentInfo extends Component
         HTML;
     }
 
-    public function render()
+    public function render(): View
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-info');
     }
 }

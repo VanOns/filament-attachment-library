@@ -5,9 +5,8 @@
 <template x-for="(attachment, index) in attachments">
 
     <div
-        @click="$store.attachmentBrowser?.handleItemClick(attachment, statePath)"
-        x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle')?.parentNode?.click(); return false"
-        :class="attachment.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)
+        x-data="attachmentItem({ attachment })"
+        :class="isAttachment && isSelected
             ? 'bg-black dark:bg-gray-300 dark:text-white text-white hover:dark:bg-red-400 hover:dark:text-white'
             : 'bg-white dark:bg-gray-{{ $inModal ? '800' : '900' }} hover:bg-gray-{{ $inModal ? '800' : '900' }} hover:dark:bg-gray-300 hover:text-white hover:dark:text-black'"
         @class([
@@ -18,7 +17,7 @@
 
         <div class="flex items-center gap-x-3">
             {{-- Preview image if attachment is image --}}
-            <template x-if="attachment.class === 'attachment' && attachment.is_image">
+            <template x-if="isAttachment && isImage">
                 <img
                     alt="attachment.alt"
                     loading="lazy"
@@ -32,7 +31,7 @@
 
                 <p
                     class="block text-sm font-medium opacity-60"
-                    x-show="attachment.class === 'attachment'"
+                    x-show="isAttachment"
                     x-text="attachment.size + ' MB'"
                 ></p>
             </div>

@@ -5,6 +5,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches-ignore:
+      - 'dependabot/github_actions/*'
       - 'dependabot/npm_and_yarn/*'
 
 env:
@@ -16,7 +17,7 @@ jobs:
 
     steps:
       - name: 📄 Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: ⚙️Set up PHP
         uses: shivammathur/setup-php@v2

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
 use Livewire\Mechanisms\HandleComponents\Synthesizers\Synth;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
+use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -13,12 +14,12 @@ class AttachmentSynth extends Synth
 {
     public static $key = 'attachment';
 
-    public static function match($target)
+    public static function match($target): bool
     {
         return $target instanceof Attachment;
     }
 
-    public function dehydrate($target)
+    public function dehydrate($target): array
     {
         $userModel = Config::get('filament-attachment-library.user_model', User::class);
         $usernameProperty = Config::get('filament-attachment-library.username_property', 'name');
@@ -43,22 +44,23 @@ class AttachmentSynth extends Synth
             'size' => round(($target->size / 1024 / 1024), 2),
         ];
 
-        $metadata = $target->metadata;
+        if ($target->isImage()) {
+            $fields['thumbnail_url'] = match(Glide::imageIsSupported($target->full_path)) {
+                true => Resizer::src($target)->height(200)->resize()['url'] ?? null,
+                default => $target->url,
+            };
 
-        if ($target->isType(AttachmentType::PREVIEWABLE_IMAGE)) {
-            $fields['thumbnail_url'] = Resizer::src($target)->height(200)->resize()['url'];
-        }
-
-        if ($metadata && $target->isType(AttachmentType::PREVIEWABLE_IMAGE)) {
-            $fields['bits'] = $metadata->bits;
-            $fields['channels'] = $metadata->channels;
-            $fields['dimensions'] = "{$metadata->width}x{$metadata->height}";
+            if ($metadata = $target->metadata) {
+                $fields['bits'] = $metadata->bits;
+                $fields['channels'] = $metadata->channels;
+                $fields['dimensions'] = "{$metadata->width}x{$metadata->height}";
+            }
         }
 
         return [$fields, []];
     }
 
-    public function hydrate($value)
+    public function hydrate($value): ?Attachment
     {
         return Attachment::find($value['id']);
     }

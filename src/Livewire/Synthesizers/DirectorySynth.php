@@ -9,12 +9,12 @@ class DirectorySynth extends Synth
 {
     public static $key = 'directory';
 
-    public static function match($target)
+    public static function match($target): bool
     {
         return $target instanceof Directory;
     }
 
-    public function dehydrate($target)
+    public function dehydrate(Directory $target): array
     {
         return [[
             'path' => $target->path,
@@ -24,7 +24,7 @@ class DirectorySynth extends Synth
         ], []];
     }
 
-    public function hydrate($value)
+    public function hydrate($value): Directory
     {
         return new Directory($value['fullPath']);
     }

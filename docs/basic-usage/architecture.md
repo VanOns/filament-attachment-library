@@ -23,5 +23,5 @@ comprehensive file management solution. This approach ensures that both develope
 to manage files efficiently and effectively.
 
 Explore the documentation to see how you can leverage both packages to include file management functionalities in your
-Filament applications. Make sure to also view the [documentation](https://github.com/VanOns/laravel-attachment-library/blob/master/docs/README.md)
+Filament applications. Make sure to also view the [documentation](https://github.com/VanOns/laravel-attachment-library/blob/main/docs/README.md)
 of the Laravel package for additional configuration options.

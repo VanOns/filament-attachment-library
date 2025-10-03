@@ -1,9 +1,8 @@
-<template x-for="(attachment, index) in attachments">
+<template x-data="attachmentItemList" x-for="(attachment, index) in attachments">
 
     <div
-        @click="$store.attachmentBrowser?.handleItemClick(attachment, statePath)"
-        x-on:contextmenu="$event.preventDefault(); $el.querySelector('.toggle')?.parentNode?.click(); return false"
-        :class="attachment.class === 'attachment' && $store.attachmentBrowser?.isSelected(attachment.id, statePath)
+        x-data="attachmentItem({ attachment })"
+        :class="isAttachment && isSelected
             ? 'bg-black dark:bg-gray-300 dark:text-black text-white hover:dark:bg-red-400 hover:dark:text-white'
             : 'dark:bg-gray-900 hover:bg-gray-900 hover:dark:bg-gray-300 hover:text-white hover:dark:text-black'"
         @class([
@@ -13,7 +12,7 @@
     >
 
         {{-- Preview image if attachment is image --}}
-        <template x-if="attachment.class === 'attachment' && attachment.is_image">
+        <template x-if="isAttachment && isImage">
             <img
                 alt="attachment.alt"
                 loading="lazy"
@@ -26,14 +25,14 @@
 
         {{-- Attachment item icon --}}
         <div class="absolute p-6">
-            <template x-if="attachment.class === 'directory'"><x-filament::icon icon="heroicon-o-folder" class="w-8 h-8 m-0" /></template>
-            <template x-if="attachment.class === 'attachment' && attachment.is_image"><x-filament::icon icon="heroicon-o-photo" class="w-8 h-8 m-0" /></template>
-            <template x-if="attachment.class === 'attachment' && attachment.is_video"><x-filament::icon icon="heroicon-o-film" class="w-8 h-8 m-0" /></template>
-            <template x-if="attachment.class === 'attachment' && (!attachment.is_image && !attachment.is_video)"><x-filament::icon icon="heroicon-o-document" class="w-8 h-8 m-0" /></template>
+            <template x-if="isDirectory"><x-filament::icon icon="heroicon-o-folder" class="w-8 h-8 m-0" /></template>
+            <template x-if="isAttachment && isImage"><x-filament::icon icon="heroicon-o-photo" class="w-8 h-8 m-0" /></template>
+            <template x-if="isAttachment && isVideo"><x-filament::icon icon="heroicon-o-film" class="w-8 h-8 m-0" /></template>
+            <template x-if="isAttachment && (!isImage && !isVideo)"><x-filament::icon icon="heroicon-o-document" class="w-8 h-8 m-0" /></template>
 
             <p x-text="attachment.name" class="max-w-48 overflow-hidden box line-clamp-1 mt-2"></p>
 
-            <p class="block text-sm font-medium" x-show="attachment.class === 'attachment'" x-text="attachment.size + ' MB'"></p>
+            <p class="block text-sm font-medium" x-show="isAttachment" x-text="attachment.size + ' MB'"></p>
         </div>
 
         {{-- Attachment item actions & hover indicator --}}

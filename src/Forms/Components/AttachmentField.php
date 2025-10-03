@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View as LaravelView;
+use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentField extends Field
@@ -20,6 +21,20 @@ class AttachmentField extends Field
     public string $mime = '';
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
+
+    public static function make(?string $name = null): static
+    {
+        return parent::make($name)
+            ->helperText(function () {
+                if (empty($formats = Glide::getSupportedImageFormats())) {
+                    return null;
+                }
+
+                return __('filament-attachment-library::forms.attachment_field.help', [
+                    'types' => implode(', ', $formats),
+                ]);
+            });
+    }
 
     /**
      * Return all selected attachments modals from state.
@@ -52,7 +67,7 @@ class AttachmentField extends Field
     /**
      * Allow the selection of multiple attachments.
      */
-    public function multiple(): Field
+    public function multiple(): static
     {
         $this->multiple = true;
 
@@ -64,7 +79,7 @@ class AttachmentField extends Field
         return $this->evaluate($this->multiple);
     }
 
-    public function mime(string $mimeType): Field
+    public function mime(string $mimeType): static
     {
         $this->mime = $mimeType;
 
@@ -80,17 +95,17 @@ class AttachmentField extends Field
      * Wrapper methods to stay compliant with commonly used FileUpload methods.
      */
 
-    public function minFiles(int $min): Field
+    public function minFiles(int $min): static
     {
         return $this->minItems($min);
     }
 
-    public function maxFiles(int $max): Field
+    public function maxFiles(int $max): static
     {
         return $this->maxItems($max);
     }
 
-    public function image(): Field
+    public function image(): static
     {
         return $this->mime('image/*');
     }
@@ -98,17 +113,17 @@ class AttachmentField extends Field
     /**
      * Wrapper methods for restricting mime types.
      */
-    public function audio(): Field
+    public function audio(): static
     {
         return $this->mime('audio/*');
     }
 
-    public function video(): Field
+    public function video(): static
     {
         return $this->mime('video/*');
     }
 
-    public function text(): Field
+    public function text(): static
     {
         return $this->mime('text/*');
     }

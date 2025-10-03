@@ -13,9 +13,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          ref: master
+          ref: main
           token: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Update changelog
@@ -25,8 +25,8 @@ jobs:
           release-notes: ${{ github.event.release.body }}
 
       - name: Commit changelog
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
-          branch: master
+          branch: main
           commit_message: "chore: update CHANGELOG.md"
           file_pattern: CHANGELOG.md

@@ -1,20 +1,6 @@
 <x-dynamic-component
-    x-data="{ state: $wire.$entangle('{{ $getStatePath() }}').live }"
-    x-on:selected-attachments-updated.window="$event.detail.statePath === '{{ $getStatePath() }}' ? $wire.$set('{{ $getStatePath() }}', $event.detail.attachments) : ''"
-    x-init="if ($store.attachmentBrowser !== undefined) {
-        $store.attachmentBrowser.addStatePath('{{ $getStatePath() }}', {
-            state: state ?? [],
-            multiple: {{ $getMultiple() ? 'true' : 'false' }},
-            showActions: true,
-            showMime: false,
-            mime: '{{ $getMime() }}',
-            disabled: {{ $isDisabled() ? 'true' : 'false' }}
-        })
-    }"
-
-    {{-- Failover if attachmentBrowser isn't yet defined. --}}
-    x-on:attachment-browser-loaded-js.window="$store.attachmentBrowser.addStatePath('{{ $getStatePath() }}', {
-        state: state ?? [],
+    x-data="attachmentBrowserField({
+        statePath: '{{ $getStatePath() }}',
         multiple: {{ $getMultiple() ? 'true' : 'false' }},
         showActions: true,
         showMime: false,

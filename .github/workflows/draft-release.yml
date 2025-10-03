@@ -3,7 +3,7 @@ name: Draft release
 on:
   push:
     branches:
-      - master
+      - main
       - 'releases/*'
 
 jobs:

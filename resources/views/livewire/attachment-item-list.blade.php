@@ -1,9 +1,11 @@
+@php
+    /**
+     * @var \VanOns\FilamentAttachmentLibrary\Enums\Layout $layout
+     */
+@endphp
+
 <div
-    x-data="{
-        attachments: $wire.$entangle('attachments'),
-        statePath: $wire.statePath,
-        layout: $wire.$entangle('layout'),
-    }"
+    x-data="attachmentItemList"
     @class([
         'flex-1 flex flex-wrap gap-4 content-start w-full',
         'opacity-50 pointer-events-none' => $disabled,
@@ -18,14 +20,12 @@
 
     <template x-if="typeof attachments !== undefined">
 
-        @switch($layout)
-            @case('list')
-                <x-filament-attachment-library::attachment-item-list.list :$inModal />
-                @break
-            @default
-                <x-filament-attachment-library::attachment-item-list.grid />
-                @break
-        @endswitch
+        @if($layout->isList())
+            <x-filament-attachment-library::attachment-item-list.list :$inModal />
+        @else
+            <x-filament-attachment-library::attachment-item-list.grid />
+        @endif
 
     </template>
+
 </div>

@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -25,6 +26,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
+use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
@@ -50,15 +52,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public int $pageSize = 25;
 
     #[Url(history: true, keep: true)]
-    public string $layout = 'grid';
+    public Layout $layout = Layout::GRID;
 
     public string $search = '';
 
     public string $mime = '';
 
     public bool $inModal = false;
-
-    protected string $view = 'filament-attachment-library::livewire.attachment-browser';
 
     public ?array $createDirectoryFormState = [];
 
@@ -72,8 +72,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public const PAGE_SIZES = [5, 10, 25, 50];
 
-    public const LAYOUT_TYPES = ['grid', 'list'];
-
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
         'image' => 'image/*',
@@ -82,9 +80,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'pdf' => 'application/pdf',
     ];
 
-    public function render()
+    public function render(): View
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-browser');
     }
 
     public function mount(): void
@@ -93,8 +91,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->pageSize = 1;
         }
 
-        if (! in_array($this->layout, self::LAYOUT_TYPES)) {
-            $this->layout = 'grid';
+        if (! in_array($this->layout, Layout::cases())) {
+            $this->layout = Layout::GRID;
         }
     }
 
@@ -178,7 +176,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Submit handler for UploadAttachmentForm.
      */
-    public function saveUploadAttachmentForm()
+    public function saveUploadAttachmentForm(): void
     {
         $this->uploadAttachmentForm->getState();
 
@@ -191,7 +189,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Submit handler for CreateDirectoryForm.
      */
-    public function saveCreateDirectoryForm()
+    public function saveCreateDirectoryForm(): void
     {
         $state = $this->createDirectoryForm->getState();
         $path = implode('/', (array_filter([$this->currentPath, $state['name']])));
@@ -225,7 +223,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Reset page on search query update.
      */
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
@@ -267,7 +265,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $directories = $this->applyFiltering($directories);
         $directories = $this->applySorting($directories);
 
-        $items = collect($directories)->merge($attachments);
+        $items = $directories->merge($attachments);
 
         $pageItems = $items->skip($this->pageSize * ($this->getPage() - 1))
             ->take($this->pageSize);

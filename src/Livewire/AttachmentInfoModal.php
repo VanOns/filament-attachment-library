@@ -2,16 +2,15 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
 #[Lazy]
 class AttachmentInfoModal extends Component
 {
-    protected string $view = 'filament-attachment-library::livewire.attachment-info-modal';
-
-    public function render()
+    public function render(): View
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-info-modal');
     }
 }

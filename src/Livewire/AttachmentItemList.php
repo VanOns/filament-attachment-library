@@ -2,10 +2,12 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
+use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 #[Lazy]
@@ -18,7 +20,7 @@ class AttachmentItemList extends Component
     public ?string $currentPath;
 
     #[Reactive]
-    public string $layout = 'grid';
+    public Layout $layout = Layout::GRID;
 
     public ?string $statePath;
 
@@ -30,8 +32,6 @@ class AttachmentItemList extends Component
 
     public string $class = '';
 
-    protected string $view = 'filament-attachment-library::livewire.attachment-item-list';
-
     public function placeholder()
     {
         return <<<'HTML'
@@ -41,8 +41,8 @@ class AttachmentItemList extends Component
         HTML;
     }
 
-    public function render()
+    public function render(): View
     {
-        return view($this->view);
+        return view('filament-attachment-library::livewire.attachment-item-list');
     }
 }

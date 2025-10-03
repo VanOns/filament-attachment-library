@@ -186,4 +186,4 @@ Alpine.store('attachmentBrowser', {
         Livewire.dispatch('highlight-attachment', { id: attachment.id });
         Livewire.dispatch('open-modal', { id: 'attachment-info-modal' });
     }
-})
+});
