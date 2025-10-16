@@ -5,6 +5,8 @@ namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View as LaravelView;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -62,6 +64,46 @@ class AttachmentField extends Field
         }
 
         return $state->first();
+    }
+
+    public function relationship(?string $collection = null, string $relationship = 'attachments'): static
+    {
+        $collection ??= $this->getName();
+
+        $this->dehydrated(false);
+
+        $this->loadStateFromRelationshipsUsing(
+            function (AttachmentField $component, Model $record, $state) use ($collection, $relationship) {
+                if (filled($state)) {
+                    return;
+                }
+
+                $relationship = $record->{$relationship}();
+
+                if ($relationship instanceof MorphToMany) {
+                    $state = $relationship->where('collection', $collection)->pluck(
+                        $relationship->getRelatedKeyName()
+                    )->all();
+
+                    $component->state($state);
+                }
+            }
+        );
+
+        $this->saveRelationshipsUsing(
+            function (Model $record, $state) use ($collection, $relationship): void {
+                $state = match ($state instanceof Collection) {
+                    true => $state,
+                    default => collect([$state])->filter()
+                };
+
+                $record->{$relationship}()->sync(
+                    $state->mapWithKeys(fn ($attachmentId) => [$attachmentId => ['collection' => $collection]])
+                );
+            }
+        );
+
+        return $this;
     }
 
     /**
