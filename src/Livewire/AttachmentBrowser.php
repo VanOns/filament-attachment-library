@@ -138,12 +138,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function uploadAttachmentForm(Schema $schema): Schema
     {
+        $validationMessages = Lang::get('validation');
+
         return $schema->components([
             FileUpload::make('attachment')
                 ->rules([
                     new AllowedFilename(),
                     new DestinationExists($this->currentPath),
-                    ...Config::get('filament-attachment-library.upload_rules'),
+                    ...Config::get('filament-attachment-library.upload_rules', []),
                 ])
                 ->multiple()
                 ->required()
@@ -157,7 +159,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                         $component->removeUploadedFile($file);
                     }
                 )->validationMessages([
-                    ...Lang::get('validation'),
+                    ...(is_array($validationMessages) ? $validationMessages : []),
                     DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
                     AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
                 ]),
