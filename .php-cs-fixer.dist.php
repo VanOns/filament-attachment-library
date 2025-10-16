@@ -17,14 +17,15 @@ return (new PhpCsFixer\Config())
     ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
         '@PSR12' => true,
-        'array_syntax' => true,
         'array_indentation' => true,
+        'array_syntax' => true,
         'explicit_indirect_variable' => true,
         'explicit_string_variable' => true,
         'method_chaining_indentation' => true,
         'no_unused_imports' => true,
+        'ordered_imports' => true,
+        'phpdoc_line_span' => true,
         'single_quote' => true,
         'trailing_comma_in_multiline' => true,
-        'phpdoc_line_span' => true,
     ])
     ->setFinder($finder);
