@@ -18,6 +18,10 @@ class AttachmentField extends Field
 
     public bool $multiple = false;
 
+    public ?string $collection = null;
+
+    public ?string $relationship = null;
+
     public bool $showActions = false;
 
     public string $mime = '';
@@ -66,22 +70,31 @@ class AttachmentField extends Field
         return $state->first();
     }
 
+    public function collection(?string $collection = null): static
+    {
+        $this->collection = $collection;
+
+        return $this;
+    }
+
     public function relationship(?string $collection = null, string $relationship = 'attachments'): static
     {
-        $collection ??= $this->getName();
+        $this->collection = $collection ?: $this->getName();
+
+        $this->relationship = $relationship;
 
         $this->dehydrated(false);
 
         $this->loadStateFromRelationshipsUsing(
-            function (AttachmentField $component, Model $record, $state) use ($collection, $relationship) {
+            function (AttachmentField $component, Model $record, $state) {
                 if (filled($state)) {
                     return;
                 }
 
-                $relationship = $record->{$relationship}();
+                $relationship = $record->{$this->relationship}();
 
                 if ($relationship instanceof MorphToMany) {
-                    $state = $relationship->where('collection', $collection)->pluck(
+                    $state = $relationship->where('collection', $this->collection)->pluck(
                         $relationship->getRelatedKeyName()
                     )->all();
 
@@ -91,14 +104,14 @@ class AttachmentField extends Field
         );
 
         $this->saveRelationshipsUsing(
-            function (Model $record, $state) use ($collection, $relationship): void {
+            function (Model $record, $state): void {
                 $state = match ($state instanceof Collection) {
                     true => $state,
                     default => collect([$state])->filter()
                 };
 
-                $record->{$relationship}()->sync(
-                    $state->mapWithKeys(fn ($attachmentId) => [$attachmentId => ['collection' => $collection]])
+                $record->{$this->relationship}()->sync(
+                    $state->mapWithKeys(fn ($attachmentId) => [$attachmentId => ['collection' => $this->collection]])
                 );
             }
         );
