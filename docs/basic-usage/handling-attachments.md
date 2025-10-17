@@ -20,7 +20,7 @@ class ModelName extends Model
 ```
 
 This will add the `attachments()` relationship which links one or more
-attachments to your model. By default the attachments will be stored in a collection that matches the name of the field (e.g. `gallery`). You can provide a different collection name as the first parameter of the `relationship` method. Or you can force the collection to be `null` by calling `collection(null)`.
+attachments to your model. By default the attachments will be stored in a collection that matches the name of the field (e.g. `gallery`). You can provide a different collection by calling `collection('collection_name')`.
 
 Then, in your form schema, add the `AttachmentField`:
 
