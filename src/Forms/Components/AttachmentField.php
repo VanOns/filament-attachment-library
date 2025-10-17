@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View as LaravelView;
+use ReflectionProperty;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -18,7 +19,7 @@ class AttachmentField extends Field
 
     public bool $multiple = false;
 
-    public ?string $collection = null;
+    public ?string $collection;
 
     public ?string $relationship = null;
 
@@ -77,9 +78,13 @@ class AttachmentField extends Field
         return $this;
     }
 
-    public function relationship(?string $collection = null, string $relationship = 'attachments'): static
+    public function relationship(string $relationship = 'attachments'): static
     {
-        $this->collection = $collection ?: $this->getName();
+        // We check if the property has been initialized to allow setting the collection before the relationship.
+        // We have to use reflection because the property can be null and other checks fail in this case.
+        if (!(new ReflectionProperty(static::class, 'collection'))->isInitialized($this)) {
+            $this->collection = $this->getName();
+        }
 
         $this->relationship = $relationship;
 

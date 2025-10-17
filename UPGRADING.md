@@ -7,6 +7,7 @@ across such a case, please let us know by [opening an issue][issues], or by addi
 # v0 to v1
 * Remove the `HandlesFormAttachments` trait from your Edit and Create Filament Pages.
 * Add `->relationship()->collection(null)` to your AttachmentField definitions if you store attachments in the `attachments` relationship of your model.
+    * Note: You can change `null` to any collection name you want to use. But this means that you have to update the `collection` column in your `attachables` table to reflect this. 
 * Run `php artisan filament-attachment-library:install` to publish new migrations.
 * Run `php artisan migrate` to update the database.
 

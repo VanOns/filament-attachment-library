@@ -40,8 +40,8 @@ public static function form(Form $form): Form
             AttachmentField::make('featured_image'),
             // Or if you want to store attachments in the attachments relationship with a specific collection name
             AttachmentField::make('gallery')->relationship(),
-            // Or if you want to store attachments in the attachments relationship with no collection name
-            AttachmentField::make('documents')->relationship()->collection(null),
+            // Or if you want the collection name to be different from the field name
+            AttachmentField::make('gallery')->relationship()->collection('product_gallery'),
         ]);
 }
 ```
