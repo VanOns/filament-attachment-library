@@ -20,7 +20,7 @@ class ModelName extends Model
 ```
 
 This will add the `attachments()` relationship which links one or more
-attachments to your model.
+attachments to your model. By default the attachments will be stored in a collection that matches the name of the field (e.g. `gallery`). You can provide a different collection by calling `collection('collection_name')`.
 
 Then, in your form schema, add the `AttachmentField`:
 
@@ -40,6 +40,8 @@ public static function form(Form $form): Form
             AttachmentField::make('featured_image'),
             // Or if you want to store attachments in the attachments relationship with a specific collection name
             AttachmentField::make('gallery')->relationship(),
+            // Or if you want the collection name to be different from the field name
+            AttachmentField::make('gallery')->relationship()->collection('product_gallery'),
         ]);
 }
 ```

@@ -5,12 +5,9 @@ use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude([
-        'example',
-        'node_modules',
-        'public',
+        'art',
         'resources',
         'vendor',
-        'webpack',
     ]);
 
 return (new PhpCsFixer\Config())
