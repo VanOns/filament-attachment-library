@@ -29,7 +29,7 @@ The Filament Attachment Library can be installed using Composer by running
 the following command:
 
 ```bash
-composer require van-ons/filament-attachment-library
+composer require van-ons/filament-attachment-library:^1.0
 ```
 
 An installation command is available that ensures that the migrations and
