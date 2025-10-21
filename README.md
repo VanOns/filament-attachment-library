@@ -2,11 +2,26 @@
 
 # Filament Attachment Library
 
-<!-- BADGES -->
+[![Latest version on GitHub](https://img.shields.io/github/release/VanOns/filament-attachment-library.svg?style=flat-square)](https://github.com/VanOns/filament-attachment-library/releases)
+[![Total downloads](https://img.shields.io/packagist/dt/van-ons/filament-attachment-library.svg?style=flat-square)](https://packagist.org/packages/van-ons/filament-attachment-library)
+[![GitHub issues](https://img.shields.io/github/issues/VanOns/filament-attachment-library?style=flat-square)](https://github.com/VanOns/filament-attachment-library/issues)
+[![License](https://img.shields.io/github/license/VanOns/filament-attachment-library?style=flat-square)](https://github.com/VanOns/filament-attachment-library/blob/main/LICENSE.md)
 
 Filament package for easy attachment uploading and browsing.
 
 ## Quick start
+
+### Compatibility
+
+For certain Filament versions, changes have to be made that render the package backwards incompatible with the previous version.
+Please see the table below to determine which version you need.
+
+| Version                                                               | Filament |
+|-----------------------------------------------------------------------|----------|
+| [v2](https://github.com/VanOns/filament-attachment-library/tree/main) | \>=4.0   |
+| v1 (current)                                                          | <4.0     |
+
+**Please note:** the `main` branch will always be the latest major version.
 
 ### Installation
 
