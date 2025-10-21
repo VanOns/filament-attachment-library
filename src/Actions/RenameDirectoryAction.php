@@ -3,9 +3,9 @@
 namespace VanOns\FilamentAttachmentLibrary\Actions;
 
 use Filament\Actions\Action;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
@@ -21,7 +21,7 @@ class RenameDirectoryAction extends Action
 
         $this->outlined();
 
-        $this->form([
+        $this->schema([
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
@@ -29,8 +29,8 @@ class RenameDirectoryAction extends Action
                 ]),
         ]);
 
-        $this->mountUsing(function (ComponentContainer $form, array $arguments) {
-            $form->fill([
+        $this->mountUsing(function (Schema $schema, array $arguments) {
+            $schema->fill([
                 'name' => $arguments['directory']['name'],
             ]);
         });

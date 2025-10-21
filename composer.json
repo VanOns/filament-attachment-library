@@ -26,13 +26,13 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^3.0",
+        "filament/filament": "^4.0",
         "van-ons/laravel-attachment-library": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.64",
-        "larastan/larastan": "^2.9",
-        "orchestra/testbench": "^8.21"
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^9.0"
     },
     "scripts": {
         "analyse": "./vendor/bin/phpstan analyse --memory-limit=1G",
