@@ -2,6 +2,7 @@ version: 2
 
 updates:
   - package-ecosystem: github-actions
+    target-branch: main
     directory: /
     schedule:
       interval: weekly
@@ -9,6 +10,23 @@ updates:
       - dependencies
 
   - package-ecosystem: composer
+    target-branch: main
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
+  - package-ecosystem: github-actions
+    target-branch: 'releases/v1'
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
+  - package-ecosystem: composer
+    target-branch: 'releases/v1'
     directory: /
     schedule:
       interval: weekly
