@@ -2,7 +2,7 @@
     'inModal' => false,
 ])
 
-<template x-for="(attachment, index) in attachments">
+<template x-for="(attachment, index) in attachments" :key="attachment.id">
 
     <div
         x-data="attachmentItem({ attachment })"
