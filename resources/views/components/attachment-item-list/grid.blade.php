@@ -1,4 +1,4 @@
-<template x-data="attachmentItemList" x-for="(attachment, index) in attachments">
+<template x-data="attachmentItemList" x-for="(attachment, index) in attachments" :key="attachment.id">
 
     <div
         x-data="attachmentItem({ attachment })"
