@@ -51,12 +51,6 @@
             ]
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:VanOns/laravel-attachment-library.git"
-        }
-    ],
     "config": {
         "sort-packages": true
     },
