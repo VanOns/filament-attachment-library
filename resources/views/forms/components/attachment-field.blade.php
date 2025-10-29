@@ -19,7 +19,8 @@
                 :statePath="$getStatePath()"
                 :withContextMenu="false"
                 :disabled="$isDisabled()"
-                wire:key="attachment-item-list-{{ Str::random(10) }}"
+                :layout="\VanOns\FilamentAttachmentLibrary\Enums\Layout::GRID"
+                wire:key="attachment-item-list-{{ md5($getStatePath()) }}"
             />
         </div>
 
