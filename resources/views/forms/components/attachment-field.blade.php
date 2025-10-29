@@ -11,17 +11,7 @@
     :field="$field"
 >
     <div>
-
-        <div class="flex gap-2 flex-wrap">
-            <livewire:attachment-item-list
-                :lazy="false"
-                :attachments="$getAttachments()"
-                :statePath="$getStatePath()"
-                :withContextMenu="false"
-                :disabled="$isDisabled()"
-                wire:key="attachment-item-list-{{ Str::random(10) }}"
-            />
-        </div>
+        <x-filament-attachment-library::field-items :attachments="$getAttachments()" :statePath="$getStatePath()" />
 
         <x-filament::button
             x-on:click="$dispatch('open-modal', { id: 'attachment-modal', statePath: '{{ $getStatePath() }}' })"

@@ -3,6 +3,7 @@
 return [
     'attachment_field' => [
         'help' => 'Alleen de volgende bestandstypen zijn schaalbaar: :types. Alle andere bestandstypen zullen normaal worden weergegeven.',
+        'no_file_selected' => 'Er is nog geen bestand gekozen',
     ],
     'create_directory' => [
         'name' => 'Naam',
