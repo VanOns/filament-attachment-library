@@ -37,10 +37,10 @@
                         @endphp
 
                         <img
-                                alt="{{ $attachment->alt }}"
-                                loading="lazy"
-                                src="{{ $thumbnailUrl }}"
-                                class="object-contain"
+                            alt="{{ $attachment->alt }}"
+                            loading="lazy"
+                            src="{{ $thumbnailUrl }}"
+                            class="object-contain"
                         >
                     @endif
 
