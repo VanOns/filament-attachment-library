@@ -25,7 +25,5 @@
         @else
             <x-filament-attachment-library::attachment-item-list.grid />
         @endif
-
     </template>
-
 </div>

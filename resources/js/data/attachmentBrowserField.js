@@ -32,7 +32,10 @@ document.addEventListener('alpine:init', () => {
         },
 
         initAttachmentBrowser() {
-            this.$store.attachmentBrowser.addStatePath(statePath, this.config);
+            this.$store.attachmentBrowser.addStatePath(statePath, {
+                ...this.config,
+                state: this.$wire.get(statePath)
+            });
         },
 
         onSelectedAttachmentsUpdated(event) {

@@ -142,6 +142,20 @@ Alpine.store('attachmentBrowser', {
         }
     },
 
+    removeItemFromState(id, alternativeStatePath = null) {
+        const statePath = alternativeStatePath ?? this.currentStatePath;
+
+        if (this._isDisabled(statePath)) return;
+
+        this.states[statePath].state = this._isMultiple(statePath)
+            ? this.states[statePath].state.filter(e => e !== id)
+            : null;
+
+        if (alternativeStatePath !== null) {
+            this._dispatchUpdatedAttachments(statePath);
+        }
+    },
+
     /**
      * Attachment and directory actions
      */
