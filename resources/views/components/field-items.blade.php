@@ -45,7 +45,7 @@
                         'bg-black/25' => !$attachment->isImage(),
                     ])>
                         <div class="text-white p-4">
-                            <p class="font-bold">{{ $attachment->filename }}</p>
+                            <p class="font-bold">{{ \Illuminate\Support\Str::limit($attachment->filename, 100) }}</p>
                             <p>{{ round($attachment->size / 1024 / 1024, 2) }} MB</p>
                         </div>
                         <button class="opacity-0 group-hover:opacity-100 transition absolute top-4 right-4" x-on:click="$store.attachmentBrowser.removeItemFromState({{ json_encode($attachment->id) }}, '{{ $statePath }}')" type="button">
