@@ -29,7 +29,7 @@ class AttachmentField extends Field
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setup();
 
