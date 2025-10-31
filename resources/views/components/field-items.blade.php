@@ -24,10 +24,10 @@
                         @endphp
 
                         <img
-                                alt="{{ $attachment->alt }}"
-                                loading="lazy"
-                                src="{{ $thumbnailUrl }}"
-                                class="object-contain h-full w-full"
+                            alt="{{ $attachment->alt }}"
+                            loading="lazy"
+                            src="{{ $thumbnailUrl }}"
+                            class="object-contain h-full w-full"
                         >
                     @endif
 
@@ -48,7 +48,7 @@
                             <p class="font-bold">{{ \Illuminate\Support\Str::limit($attachment->filename, 100) }}</p>
                             <p>{{ round($attachment->size / 1024 / 1024, 2) }} MB</p>
                         </div>
-                        <button class="opacity-0 group-hover:opacity-100 transition absolute top-4 right-4" x-on:click="$store.attachmentBrowser.removeItemFromState({{ json_encode($attachment->id) }}, '{{ $statePath }}')" type="button">
+                        <button class="opacity-0 group-hover:opacity-100 transition absolute top-4 right-4" x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button">
                             <x-filament::icon icon="heroicon-o-x-circle" class="size-8 text-white"/>
                         </button>
                     </div>

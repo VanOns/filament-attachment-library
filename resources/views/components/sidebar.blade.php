@@ -1,17 +1,12 @@
 @props([
     'class' => '',
+    'currentPath' => null
 ])
 
-<div
-    x-data="sidebar"
-    @class([
-        'flex-1 max-w-md',
-        $class,
-    ])
->
+<div @class([ 'flex-1 max-w-md', $class ])>
 
     {{-- Upload attachment section --}}
-    <x-filament::section collapsible collapsed class="mb-4" id="upload-attachment-form">
+    <x-filament::section collapsible collapsed class="mb-4" collapse-id="upload-attachment-form">
 
         <x-slot name="heading">
             <x-filament::icon
@@ -39,7 +34,7 @@
     </x-filament::section>
 
     {{-- Create directory section --}}
-    <x-filament::section collapsible collapsed class="mb-4" id="create-directory-form">
+    <x-filament::section collapsible collapsed class="mb-4" collapse-id="create-directory-form">
 
         <x-slot name="heading">
             <x-filament::icon
@@ -68,7 +63,7 @@
     </x-filament::section>
 
     {{-- Filter section --}}
-    <x-filament::section collapsible collapsed class="mb-4" id="filter-form" x-show="showMimeOptions">
+    <x-filament::section collapsible collapsed class="mb-4" collapse-id="filter-form">
 
         <x-slot name="heading">
             <x-filament::icon
@@ -99,7 +94,6 @@
     </x-filament::section>
 
     {{-- Attachment info section --}}
-    <livewire:attachment-info class="hidden md:block" />
-    <livewire:attachment-info-modal />
-
+    <livewire:attachment-info :currentPath="$currentPath" class="hidden md:block" />
+    <livewire:attachment-info-modal :currentPath="$currentPath" />
 </div>

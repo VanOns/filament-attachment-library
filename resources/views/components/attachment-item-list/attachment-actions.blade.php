@@ -1,67 +1,58 @@
-@props([
-    'withContextMenu' => true,
-])
+@props(['viewModel'])
 
-<div x-data="attachmentActions({ attachment })" {{ $attributes->only('class') }}>
+<div {{ $attributes->only('class') }}>
+    <x-filament::dropdown>
+        <x-slot name="trigger">
+            <x-filament::icon
+                icon="heroicon-o-ellipsis-vertical"
+                class="w-8 h-8"
+            />
+        </x-slot>
 
-    @if($withContextMenu)
-        <x-filament::dropdown
-            placement="bottom-end"
-            x-ref="dropdown"
-            x-show="showDropdown"
-            x-on:click.stop=""
-        >
-            <x-slot name="trigger">
-                <x-filament::icon
-                    x-show="showIcon"
-                    icon="heroicon-o-ellipsis-vertical"
-                    class="w-8 h-8 m-0 toggle"
-                />
-            </x-slot>
-
-            <x-filament::dropdown.list x-show="isAttachment">
-                <x-filament::dropdown.list.item x-on:click="viewDetails()" class="flex md:hidden">
+        <x-filament::dropdown.list>
+            @if($viewModel->isAttachment())
+                <x-filament::dropdown.list.item
+                    class="flex md:hidden"
+                    x-on:click="
+                        $dispatch('highlight-attachment', { id: {{ json_encode($viewModel->attachment->id) }} });
+                        $dispatch('open-modal', { id: 'attachment-info-modal' });
+                    "
+                >
                     {{ __('filament-attachment-library::views.actions.attachment.view') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item x-on:click="openFile()">
+                <x-filament::dropdown.list.item tag="a" :href="$viewModel->attachment->url" target="_blank">
                     {{ __('filament-attachment-library::views.actions.attachment.open') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item x-on:click="modifyFile()">
+                <x-filament::dropdown.list.item
+                    wire:click="mountAction('editAttachmentAction', { attachment_id: {{ json_encode($viewModel->attachment->id) }}})"
+                >
                     {{ __('filament-attachment-library::views.actions.attachment.edit') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item color="danger" x-on:click="removeFile()">
+                <x-filament::dropdown.list.item
+                    color="danger"
+                    wire:click="mountAction('deleteAttachment', { attachment_id: {{ json_encode($viewModel->attachment->id) }}})"
+                >
                     {{ __('filament-attachment-library::views.actions.attachment.delete') }}
                 </x-filament::dropdown.list.item>
-            </x-filament::dropdown.list>
+            @endif
 
-            <x-filament::dropdown.list x-show="isDirectory">
-                <x-filament::dropdown.list.item x-on:click="viewDetails()" class="flex md:hidden">
-                    {{ __('filament-attachment-library::views.actions.attachment.view') }}
-                </x-filament::dropdown.list.item>
-
-                <x-filament::dropdown.list.item x-on:click="renameDirectory()">
+            @if($viewModel->isDirectory())
+                <x-filament::dropdown.list.item
+                    wire:click="mountAction('renameDirectory', { name: '{{ $viewModel->directory->name }}', full_path: '{{ $viewModel->directory->fullPath }}' })"
+                >
                     {{ __('filament-attachment-library::views.actions.directory.rename') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item color="danger" x-on:click="removeDirectory()">
+                <x-filament::dropdown.list.item
+                    color="danger"
+                    wire:click="mountAction('deleteDirectory', { full_path: '{{ $viewModel->directory->fullPath }}' })"
+                >
                     {{ __('filament-attachment-library::views.actions.directory.delete') }}
                 </x-filament::dropdown.list.item>
-            </x-filament::dropdown.list>
-        </x-filament::dropdown>
-    @endif
-
-    <x-filament::icon
-        icon="heroicon-o-check"
-        class="w-8 h-8 m-0 block group-hover:hidden"
-        x-show="showSelectIcons"
-    />
-    <x-filament::icon
-        icon="heroicon-o-x-circle"
-        class="w-8 h-8 m-0 hidden group-hover:block"
-        x-show="showSelectIcons"
-    />
-
+            @endif
+        </x-filament::dropdown.list>
+    </x-filament::dropdown>
 </div>

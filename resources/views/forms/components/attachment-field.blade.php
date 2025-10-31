@@ -1,21 +1,17 @@
 <x-dynamic-component
-    x-data="attachmentBrowserField({
-        statePath: '{{ $getStatePath() }}',
-        multiple: {{ $getMultiple() ? 'true' : 'false' }},
-        showActions: true,
-        showMime: false,
-        mime: '{{ $getMime() }}',
-        disabled: {{ $isDisabled() ? 'true' : 'false' }}
-    })"
+    x-data="{
+        state: $wire.entangle('{{ $getStatePath() }}').live,
+    }"
     :component="$getFieldWrapperView()"
     :field="$field"
+    x-on:attachments-selected="state = $event.detail.selected"
+    x-on:attachment-removed="state = {{ json_encode($getMultiple()) }} ? state.filter(id => id !== $event.detail.id) : null"
 >
     <div>
         <x-filament-attachment-library::field-items :attachments="$getAttachments()" :statePath="$getStatePath()" />
 
         <x-filament::button
-            x-on:click="$dispatch('open-modal', { id: 'attachment-modal', statePath: '{{ $getStatePath() }}' })"
-            x-on:selected-attachments-updated.window="$event.detail.statePath === '{{ $getStatePath() }}' ? $wire.$set('{{ $getStatePath() }}', $event.detail.attachments) : ''"
+            x-on:click="$dispatch('open-modal', { id: 'attachment-modal-{{ $getStatePath() }}' })"
             icon="heroicon-o-document"
             :disabled="$isDisabled()"
             @class([
@@ -27,5 +23,10 @@
         </x-filament::button>
 
     </div>
-
+    @php
+        /**
+         * TODO: $multiple, $mime, $disabled
+         */
+    @endphp
+    <x-filament-attachment-library::attachment-browser-modal :multiple="$getMultiple()" :statePath="$getStatePath()" />
 </x-dynamic-component>

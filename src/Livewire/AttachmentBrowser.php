@@ -31,6 +31,9 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
+use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
+use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -62,6 +65,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public bool $inModal = false;
 
+    public bool $multiple = false;
+
+    public array $selected = [];
+
+    public bool $disabled = false;
+
+    public ?string $statePath = null;
+
     public ?array $createDirectoryFormState = [];
 
     public ?array $uploadFormState = ['attachment' => []];
@@ -84,16 +95,18 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render(): View
     {
-        return view('filament-attachment-library::livewire.attachment-browser');
+        $attachments = $this->paginator()->getCollection();
+
+        return view('filament-attachment-library::livewire.attachment-browser', compact('attachments'));
     }
 
     public function mount(): void
     {
-        if (! in_array($this->pageSize, self::PAGE_SIZES)) {
+        if (!in_array($this->pageSize, self::PAGE_SIZES)) {
             $this->pageSize = 1;
         }
 
-        if (! in_array($this->layout, Layout::cases())) {
+        if (!in_array($this->layout, Layout::cases())) {
             $this->layout = Layout::GRID;
         }
     }
@@ -213,6 +226,24 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->send();
     }
 
+    public function selectAttachment(int|string $id): void
+    {
+        if ($this->disabled) return;
+
+        if (in_array($id, $this->selected)) {
+            $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->toArray();
+            $this->dispatch('highlight-attachment', null);
+            return;
+        }
+
+        $this->selected = match($this->multiple) {
+            true => collect($this->selected)->push($id)->unique()->toArray(),
+            false => [$id],
+        };
+
+        $this->dispatch('highlight-attachment', $id);
+    }
+
     /**
      * Set current path.
      */
@@ -262,17 +293,21 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         $this->currentPath = empty($this->currentPath) ? null : $this->currentPath;
 
-        if ($this->currentPath !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
+        if ($this->currentPath !== null && !AttachmentManager::destinationExists($this->currentPath)) {
             $this->currentPath = null;
         }
+
+        // TODO: Optimize queries to avoid loading all attachments and directories into memory.
 
         $attachments = Attachment::all();
         $attachments = $this->applyFiltering($attachments, true);
         $attachments = $this->applySorting($attachments);
+        $attachments = $attachments->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment));
 
         $directories = AttachmentManager::directories($this->currentPath);
         $directories = $this->applyFiltering($directories);
         $directories = $this->applySorting($directories);
+        $directories = $directories->map(fn (Directory $directory) => new DirectoryViewModel($directory));
 
         $items = $directories->merge($attachments);
 
@@ -314,12 +349,31 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $descending = $sortDirection === 'descending';
 
         // Return unsorted collection if sort key is not found.
-        if (! in_array($sortColumn, $this::SORTABLE_FIELDS)) {
+        if (!in_array($sortColumn, $this::SORTABLE_FIELDS)) {
             return $items;
         }
 
         return $descending
             ? $items->sortByDesc($sortColumn)
             : $items->sortBy($sortColumn);
+    }
+
+    #[On('close-modal')]
+    public function handleModalClose(bool $save, string $statePath): void
+    {
+        if (!$save) {
+            return;
+        }
+
+        if ($statePath !== $this->statePath) {
+            return;
+        };
+
+        $selected = match($this->multiple) {
+            true => $this->selected,
+            false => $this->selected[0] ?? null,
+        };
+
+        $this->dispatch('attachments-selected', statePath: $statePath, selected: $selected);
     }
 }

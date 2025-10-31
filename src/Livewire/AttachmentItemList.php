@@ -30,6 +30,8 @@ class AttachmentItemList extends Component
 
     public bool $inModal = false;
 
+    public mixed $selected = null;
+
     public string $class = '';
 
     public function placeholder()

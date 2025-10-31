@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Filament\Pages;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -18,6 +19,8 @@ class AttachmentLibrary extends Page implements HasForms
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-folder';
 
     protected string $view = 'filament-attachment-library::pages.attachments';
+
+    protected Width | string | null $maxContentWidth = Width::Full;
 
     public static function getNavigationGroup(): ?string
     {
