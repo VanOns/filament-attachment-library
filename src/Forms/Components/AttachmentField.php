@@ -190,12 +190,4 @@ class AttachmentField extends Field
     {
         return $this->mime('text/*');
     }
-
-    public function render(): View
-    {
-        // Activate render of browser modal.
-        LaravelView::share('renderAttachmentBrowserModal', true);
-
-        return parent::render();
-    }
 }
