@@ -8,9 +8,15 @@ class DirectoryViewModel
 {
     public Directory $directory;
 
+    public string $name;
+
+    public string $fullPath;
+
     public function __construct(Directory $directory)
     {
         $this->directory = $directory;
+        $this->name = $directory->name;
+        $this->fullPath = $directory->fullPath;
     }
 
     public function isAttachment(): bool

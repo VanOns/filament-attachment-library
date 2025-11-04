@@ -19,6 +19,8 @@ class AttachmentViewModel implements Wireable
 
     public string $name;
 
+    public string $filename;
+
     public string $url;
 
     public ?string $path;
@@ -58,6 +60,7 @@ class AttachmentViewModel implements Wireable
 
         $this->id = $attachment->id;
         $this->name = $attachment->name;
+        $this->filename = $attachment->filename;
         $this->url = $attachment->url;
         $this->path = $attachment->path;
         $this->mimeType = $attachment->mime_type;
@@ -101,7 +104,7 @@ class AttachmentViewModel implements Wireable
 
     public function isDocument(): bool
     {
-        return $this->isAttachment() && !$this->isVideo() && !$this->isImage();
+        return !$this->isVideo() && !$this->isImage();
     }
 
     public function isSelected(array $selected): bool

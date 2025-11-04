@@ -359,7 +359,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     #[On('close-modal')]
-    public function handleModalClose(bool $save, string $statePath): void
+    public function handleModalClose(bool $save = false, ?string $statePath = null): void
     {
         if (!$save) {
             return;

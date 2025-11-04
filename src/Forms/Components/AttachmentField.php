@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View as LaravelView;
 use ReflectionProperty;
+use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -54,7 +55,9 @@ class AttachmentField extends Field
             $attachments = [$attachments];
         }
 
-        return collect($attachments);
+        return collect($attachments)->map(
+            fn($model) => new AttachmentViewModel($model)
+        );
     }
 
     /**
