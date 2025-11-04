@@ -3,7 +3,6 @@
 namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
-use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class DirectoryViewModel
 {

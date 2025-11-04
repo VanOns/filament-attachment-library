@@ -22,7 +22,7 @@
         >
             @if(!$directories->isEmpty())
                 @if($layout === Layout::LIST)
-                    <x-filament-attachment-library::items.list :$inModal :$selected :attachments="$directories"/>
+                    <x-filament-attachment-library::items.list :$selected :attachments="$directories"/>
                 @endif
 
                 @if($layout === Layout::GRID)
@@ -34,7 +34,7 @@
 
             @if(!$attachments->isEmpty())
                 @if($layout === Layout::LIST)
-                    <x-filament-attachment-library::items.list :$inModal :$selected :$attachments/>
+                    <x-filament-attachment-library::items.list :$selected :$attachments/>
                 @endif
 
                 @if($layout === Layout::GRID)

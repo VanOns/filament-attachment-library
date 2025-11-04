@@ -7,11 +7,7 @@
     */
 @endphp
 
-@props([
-    'attachments',
-    'selected',
-    'inModal' => false,
-])
+@props(['attachments', 'selected'])
 
 <div class="grid gap-4">
     @foreach($attachments as $viewModel)
