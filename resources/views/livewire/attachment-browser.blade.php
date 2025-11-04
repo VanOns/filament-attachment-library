@@ -20,9 +20,19 @@
                 'opacity-50 pointer-events-none' => $disabled,
             ])
         >
-            @if($attachments->isEmpty())
-                <x-filament-attachment-library::empty-path-notice :$currentPath/>
-            @else
+            @if(!$directories->isEmpty())
+                @if($layout === Layout::LIST)
+                    <x-filament-attachment-library::items.list :$inModal :$selected :attachments="$directories"/>
+                @endif
+
+                @if($layout === Layout::GRID)
+                    <x-filament-attachment-library::items.grid :$selected :attachments="$directories"/>
+                @endif
+
+                <div class="w-full border-t border-gray-300 my-6"></div>
+            @endif
+
+            @if(!$attachments->isEmpty())
                 @if($layout === Layout::LIST)
                     <x-filament-attachment-library::items.list :$inModal :$selected :$attachments/>
                 @endif
@@ -31,12 +41,16 @@
                     <x-filament-attachment-library::items.grid :$selected :$attachments/>
                 @endif
             @endif
+
+            @if($attachments->isEmpty() && $directories->isEmpty())
+                <x-filament-attachment-library::empty-path-notice :$currentPath/>
+            @endif
         </div>
 
         <x-filament-attachment-library::sidebar :$currentPath class="order-1 md:order-2"/>
 
         <div class="mt-4 w-full order-3">
-            <x-filament::pagination :paginator="$this->paginator" extreme-links/>
+            <x-filament::pagination :paginator="$attachments" extreme-links/>
         </div>
     </div>
 

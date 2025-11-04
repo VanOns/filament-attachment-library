@@ -24,8 +24,8 @@
         <x-filament::input.select wire:model.live="sortBy">
 
             @foreach(AttachmentBrowser::SORTABLE_FIELDS as $field)
-                <option value="{{$field}}_ascending">{{ __("filament-attachment-library::views.header_actions.sort.{$field}_ascending") }}</option>
-                <option value="{{$field}}_descending">{{ __("filament-attachment-library::views.header_actions.sort.{$field}_descending") }}</option>
+                <option value="{{$field}}_asc">{{ __("filament-attachment-library::views.header_actions.sort.{$field}_ascending") }}</option>
+                <option value="{{$field}}_desc">{{ __("filament-attachment-library::views.header_actions.sort.{$field}_descending") }}</option>
             @endforeach
 
         </x-filament::input.select>

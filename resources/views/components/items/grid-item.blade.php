@@ -16,7 +16,7 @@
             'ring-3 ring-primary-500' => $selected
         ]) }}
     >
-        <div class="aspect-[4/3] w-full overflow-hidden flex justify-center items-center">
+        <div class="aspect-square w-full overflow-hidden flex justify-center items-center">
             {{ $slot }}
         </div>
 
