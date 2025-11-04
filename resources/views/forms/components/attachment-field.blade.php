@@ -8,7 +8,7 @@
     x-on:attachment-removed="state = {{ json_encode($getMultiple()) }} ? state.filter(id => id !== $event.detail.id) : null"
 >
     <div>
-        <x-filament-attachment-library::field-items :attachments="$getAttachments()" :statePath="$getStatePath()" />
+        <x-filament-attachment-library::items.field :attachments="$getAttachments()" :statePath="$getStatePath()" />
 
         <x-filament::button
             x-on:click="$dispatch('open-modal', { id: 'attachment-modal-{{ $getStatePath() }}' })"

@@ -24,11 +24,11 @@
                 <x-filament-attachment-library::empty-path-notice :$currentPath/>
             @else
                 @if($layout === Layout::LIST)
-                    <x-filament-attachment-library::attachment-item-list.list :$inModal :$selected :$attachments/>
+                    <x-filament-attachment-library::items.list :$inModal :$selected :$attachments/>
                 @endif
 
                 @if($layout === Layout::GRID)
-                    <x-filament-attachment-library::attachment-item-list.grid :$selected :$attachments/>
+                    <x-filament-attachment-library::items.grid :$selected :$attachments/>
                 @endif
             @endif
         </div>

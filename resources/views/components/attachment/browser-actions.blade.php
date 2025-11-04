@@ -4,12 +4,11 @@
      */
 @endphp
 
-@props(['attachment', 'triggerClass' => ''])
-
+@props(['attachment', 'triggerClass' => null])
 <x-filament::dropdown>
     <x-slot name="trigger">
-        <button type="button" class="{{ $triggerClass }}">
-            <x-filament::icon icon="heroicon-o-ellipsis-vertical" class="w-8 h-8 stroke-white"/>
+        <button type="button" @class($triggerClass)>
+            <x-filament::icon icon="heroicon-o-ellipsis-vertical" class="size-6"/>
         </button>
     </x-slot>
 

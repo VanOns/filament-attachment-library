@@ -17,10 +17,10 @@
                 <x-filament-attachment-library::attachment.grid-item :attachment="$attachment">
                     <x-slot name="actions">
                         <button
-                            class="opacity-0 group-hover:opacity-100 transition"
-                            x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
+                                class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition"
+                                x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
                         >
-                            <x-filament::icon icon="heroicon-o-x-circle" class="size-8 text-white"/>
+                            <x-filament::icon icon="heroicon-o-x-mark" class="size-6"/>
                         </button>
                     </x-slot>
                 </x-filament-attachment-library::attachment.grid-item>
