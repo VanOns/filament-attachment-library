@@ -53,7 +53,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
-    public string $sortBy = 'name_ascending';
+    public string $sortBy = 'name_asc';
 
     #[Url(history: true, keep: true)]
     public int $pageSize = 25;
@@ -309,6 +309,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             })->map(fn (Directory $directory) => new DirectoryViewModel($directory));
     }
 
+    /**
+     * @return LengthAwarePaginator<AttachmentViewModel>
+     */
     private function getAttachments(): LengthAwarePaginator
     {
         $sortColumn = Str::beforeLast($this->sortBy, '_');

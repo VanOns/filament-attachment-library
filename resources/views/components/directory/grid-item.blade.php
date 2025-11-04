@@ -7,9 +7,9 @@
 @props(['directory'])
 
 <x-filament-attachment-library::items.grid-item
-        :title="$directory->name"
-        subtitle="13 FILES"
-        {{ $attributes }}
+    :title="$directory->name"
+    :subtitle="trans_choice('filament-attachment-library::views.browser.file_count', $directory->itemCount(), ['count' => $directory->itemCount()])"
+    {{ $attributes }}
 >
     @isset($actions)
         <x-slot name="actions">

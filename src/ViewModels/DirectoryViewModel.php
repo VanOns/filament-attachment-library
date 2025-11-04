@@ -3,6 +3,7 @@
 namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
+use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class DirectoryViewModel
 {
@@ -12,6 +13,8 @@ class DirectoryViewModel
 
     public string $fullPath;
 
+    protected int $itemCount;
+
     public function __construct(Directory $directory)
     {
         $this->directory = $directory;
@@ -19,38 +22,10 @@ class DirectoryViewModel
         $this->fullPath = $directory->fullPath;
     }
 
-    public function isAttachment(): bool
+    public function itemCount(): int
     {
-        return false;
-    }
+        $class = config('attachment-library.class_mapping.attachment');
 
-    public function isDirectory(): bool
-    {
-        return true;
-    }
-
-    public function isImage(): bool
-    {
-        return false;
-    }
-
-    public function isVideo(): bool
-    {
-        return false;
-    }
-
-    public function isDocument(): bool
-    {
-        return false;
-    }
-
-    public function isSelected(array $selected): bool
-    {
-        return in_array($this->directory, $selected);
-    }
-
-    public function thumbnailUrl(): ?string
-    {
-        return null;
+        return $this->itemCount ??= $class::where('path', $this->fullPath)->count();
     }
 }
