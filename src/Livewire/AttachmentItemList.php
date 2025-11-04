@@ -28,8 +28,6 @@ class AttachmentItemList extends Component
 
     public bool $disabled = false;
 
-    public bool $inModal = false;
-
     public mixed $selected = null;
 
     public string $class = '';

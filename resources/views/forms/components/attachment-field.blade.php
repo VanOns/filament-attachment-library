@@ -28,5 +28,5 @@
          * TODO: $multiple, $mime, $disabled
          */
     @endphp
-    <x-filament-attachment-library::attachment-browser-modal :multiple="$getMultiple()" :statePath="$getStatePath()" />
+    <x-filament-attachment-library::attachment-browser-modal :mime="$getMime()" :multiple="$getMultiple()" :statePath="$getStatePath()" :disableMimeFilter="$getMime() !== null" />
 </x-dynamic-component>

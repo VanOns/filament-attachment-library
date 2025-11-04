@@ -63,9 +63,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
-    public string $mime = '';
+    public ?string $mime = null;
 
-    public bool $inModal = false;
+    public bool $disableMimeFilter = false;
 
     public bool $multiple = false;
 
@@ -170,8 +170,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
                         $attachment = AttachmentManager::upload($file, $this->currentPath);
-                        $this->dispatch('select-attachment', $attachment->id, $this->currentPath);
-                        $this->dispatch('highlight-attachment', $attachment->id);
+                        $this->selectAttachment($attachment->id);
                         $component->removeUploadedFile($file);
                     }
                 )->validationMessages([
@@ -325,7 +324,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 $query->where('path', $this->currentPath);
             })
             ->when($this->mime, function (Builder $query) {
-                $query->where('mime_type', $this->mime);
+                $query->where('mime_type', 'like', str_replace('*', '%', $this->mime));
             })
             ->orderBy($sortColumn, $sortDirection)
             ->paginate($this->pageSize);
@@ -337,7 +336,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
 
     #[On('close-modal')]
-    public function handleModalClose(bool $save = false, ?string $statePath = null): void
+    public function closeModal(bool $save = false, ?string $statePath = null): void
     {
         if (!$save) {
             return;
