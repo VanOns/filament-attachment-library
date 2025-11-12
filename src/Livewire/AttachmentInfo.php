@@ -34,7 +34,6 @@ class AttachmentInfo extends Component implements HasActions, HasForms
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {
-        /** @var Attachment $attachment */
         $attachment = Attachment::find($id);
 
         if (!$attachment) {

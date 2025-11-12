@@ -309,7 +309,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * @return LengthAwarePaginator<AttachmentViewModel>
+     * @return LengthAwarePaginator<int, AttachmentViewModel>
      */
     private function getAttachments(): LengthAwarePaginator
     {
@@ -329,9 +329,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->orderBy($sortColumn, $sortDirection)
             ->paginate($this->pageSize);
 
-        return $attachments->setCollection(
-            $attachments->getCollection()->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment))
-        );
+        $collection = $attachments->getCollection()
+            ->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment));
+
+        /** @var LengthAwarePaginator<int, AttachmentViewModel> $attachments */
+        $attachments->setCollection($collection);
+
+        return $attachments;
     }
 
 
