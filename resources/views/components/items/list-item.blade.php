@@ -20,12 +20,12 @@
         {{ $attributes }}
     >
         <div class="flex items-center gap-x-3">
-            <div class="size-12 rounded-lg flex justify-center items-center overflow-hidden ring-1 ring-gray-950/10 dark:ring-white/10 bg-gray-100 dark:bg-gray-800">
+            <div class="size-12 flex-shrink-0 rounded-lg flex justify-center items-center overflow-hidden ring-1 ring-gray-950/10 dark:ring-white/10 bg-gray-100 dark:bg-gray-800">
                 {{ $slot }}
             </div>
 
             <div class="flex flex-col text-sm">
-                <p class="font-semibold line-clamp-1">
+                <p class="font-semibold line-clamp-1" title="{{ $title }}">
                     {{ $title }}
                 </p>
 

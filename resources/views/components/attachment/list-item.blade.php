@@ -9,7 +9,7 @@
 <x-filament-attachment-library::items.list-item
     :selected="$selected"
     :title="$attachment->name"
-    subtitle="{{ $attachment->size }} MB"
+    subtitle="{{$attachment->extension}} — {{ $attachment->size }} MB"
     {{ $attributes }}
 >
     @if($attachment->isImage())

@@ -21,25 +21,28 @@
             ])
         >
             @if(!$directories->isEmpty())
-                @if($layout === Layout::LIST)
-                    <x-filament-attachment-library::items.list :$selected :attachments="$directories"/>
-                @endif
+                <x-filament-attachment-library::items :layout="$layout">
+                    @foreach($directories as $directory)
+                        <x-filament-attachment-library::directory.item
+                            :$directory
+                            :layout="$layout"
+                        />
+                    @endforeach
+                </x-filament-attachment-library::items>
 
-                @if($layout === Layout::GRID)
-                    <x-filament-attachment-library::items.grid :$selected :attachments="$directories"/>
-                @endif
-
-                <div class="w-full border-t border-gray-300 my-6"></div>
+                <div class="w-full border-t border-gray-300 dark:border-gray-700 my-6"></div>
             @endif
 
             @if(!$attachments->isEmpty())
-                @if($layout === Layout::LIST)
-                    <x-filament-attachment-library::items.list :$selected :$attachments/>
-                @endif
-
-                @if($layout === Layout::GRID)
-                    <x-filament-attachment-library::items.grid :$selected :$attachments/>
-                @endif
+                <x-filament-attachment-library::items :layout="$layout">
+                    @foreach($attachments as $attachment)
+                        <x-filament-attachment-library::attachment.item
+                            :$attachment
+                            :layout="$layout"
+                            :selected="$attachment->isSelected($selected)"
+                        />
+                    @endforeach
+                </x-filament-attachment-library::items>
             @endif
 
             @if($attachments->isEmpty() && $directories->isEmpty())

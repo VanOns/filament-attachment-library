@@ -21,7 +21,7 @@
         </div>
 
         <div class="p-2 bg-white dark:bg-gray-900 group-hover:bg-gray-100 dark:group-hover:bg-black border-t border-black/10 dark:border-white/10 text-sm transition">
-            <p class="font-semibold line-clamp-1">{{ $title }}</p>
+            <p class="font-semibold line-clamp-1" title="{{ $title }}">{{ $title }}</p>
             @if($subtitle)
                 <p class="opacity-60">{{ $subtitle }}</p>
             @endif

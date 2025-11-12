@@ -8,8 +8,8 @@
 
 <x-filament-attachment-library::items.grid-item
         :selected="$selected"
-        :title="$attachment->filename"
-        subtitle="{{ $attachment->size }} MB"
+        :title="$attachment->name"
+        subtitle="{{$attachment->extension}} — {{ $attachment->size }} MB"
         {{ $attributes }}
 >
     @isset($actions)

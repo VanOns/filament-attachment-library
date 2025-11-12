@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use Livewire\Wireable;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -24,6 +25,8 @@ class AttachmentViewModel implements Wireable
     public string $url;
 
     public ?string $path;
+
+    public ?string $extension;
 
     public ?string $mimeType;
 
@@ -63,6 +66,7 @@ class AttachmentViewModel implements Wireable
         $this->filename = $attachment->filename;
         $this->url = $attachment->url;
         $this->path = $attachment->path;
+        $this->extension = Str::of($attachment->filename)->afterLast('.')->upper()->toString();
         $this->mimeType = $attachment->mime_type;
         $this->size = round($attachment->size / 1024 / 1024, 2);
         $this->createdBy = $userModel::find($attachment->created_by)->{$usernameProperty};
