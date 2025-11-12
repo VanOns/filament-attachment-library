@@ -7,7 +7,6 @@ use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
-use VanOns\LaravelAttachmentLibrary\DataTransferObjects\FileMetadata;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
