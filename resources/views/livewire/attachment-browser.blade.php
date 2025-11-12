@@ -21,28 +21,28 @@
             ])
         >
             @if(!$directories->isEmpty())
-                <x-filament-attachment-library::items :layout="$layout">
+                <x-filament-attachment-library::items.container :layout="$layout">
                     @foreach($directories as $directory)
-                        <x-filament-attachment-library::directory.item
+                        <x-filament-attachment-library::directory.browser-item
                             :$directory
                             :layout="$layout"
                         />
                     @endforeach
-                </x-filament-attachment-library::items>
+                </x-filament-attachment-library::items.container>
 
                 <div class="w-full border-t border-gray-300 dark:border-gray-700 my-6"></div>
             @endif
 
             @if(!$attachments->isEmpty())
-                <x-filament-attachment-library::items :layout="$layout">
+                <x-filament-attachment-library::items.container :layout="$layout">
                     @foreach($attachments as $attachment)
-                        <x-filament-attachment-library::attachment.item
+                        <x-filament-attachment-library::attachment.browser-item
                             :$attachment
                             :layout="$layout"
                             :selected="$attachment->isSelected($selected)"
                         />
                     @endforeach
-                </x-filament-attachment-library::items>
+                </x-filament-attachment-library::items.container>
             @endif
 
             @if($attachments->isEmpty() && $directories->isEmpty())
