@@ -4,11 +4,9 @@ namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\View as LaravelView;
 use ReflectionProperty;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -56,7 +54,7 @@ class AttachmentField extends Field
         }
 
         return collect($attachments)->map(
-            fn($model) => new AttachmentViewModel($model)
+            fn ($model) => new AttachmentViewModel($model)
         );
     }
 

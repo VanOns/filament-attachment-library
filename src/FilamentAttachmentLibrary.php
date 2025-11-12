@@ -4,18 +4,12 @@ namespace VanOns\FilamentAttachmentLibrary;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfoModal;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentItemList;
-use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\AttachmentSynth;
-use VanOns\FilamentAttachmentLibrary\Livewire\Synthesizers\DirectorySynth;
 
 class FilamentAttachmentLibrary implements Plugin
 {
