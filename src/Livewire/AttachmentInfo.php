@@ -69,7 +69,7 @@ class AttachmentInfo extends Component implements HasActions, HasForms
         return EditAttachmentAction::make('editAttributeAttachmentAction')->setCurrentPath($this->currentPath);
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->attachment = null;
     }

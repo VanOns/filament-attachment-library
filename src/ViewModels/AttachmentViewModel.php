@@ -124,7 +124,10 @@ class AttachmentViewModel implements Wireable
         };
     }
 
-    public function toLivewire()
+    /**
+     * @return array<string, int>
+     */
+    public function toLivewire(): array
     {
         return [ 'id' => $this->attachment->id ];
     }
