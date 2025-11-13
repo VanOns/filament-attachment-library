@@ -23,11 +23,5 @@
         </x-filament::button>
 
     </div>
-    @php
-        /**
-         * TODO: $multiple, $mime, $disabled
-         */
-        dump($getMime());
-    @endphp
     <x-filament-attachment-library::attachment-browser-modal :mime="$getMime()" :multiple="$getMultiple()" :statePath="$getStatePath()" :disableMimeFilter="$getMime() !== null" />
 </x-dynamic-component>
