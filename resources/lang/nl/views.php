@@ -8,6 +8,7 @@ return [
             'button' => 'Terug naar hoofdmap',
         ],
         'search_results' => 'Zoekresultaten voor:',
+        'file_count' => ':count bestand|:count bestanden',
     ],
     'info' => [
         'empty' => [

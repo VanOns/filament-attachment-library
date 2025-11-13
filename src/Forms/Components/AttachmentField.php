@@ -4,12 +4,11 @@ namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\View as LaravelView;
 use ReflectionProperty;
+use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -25,7 +24,7 @@ class AttachmentField extends Field
 
     public bool $showActions = false;
 
-    public string $mime = '';
+    public ?string $mime = null;
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
@@ -54,7 +53,9 @@ class AttachmentField extends Field
             $attachments = [$attachments];
         }
 
-        return collect($attachments);
+        return collect($attachments)->map(
+            fn ($model) => new AttachmentViewModel($model)
+        );
     }
 
     /**
@@ -139,14 +140,14 @@ class AttachmentField extends Field
         return $this->evaluate($this->multiple);
     }
 
-    public function mime(string $mimeType): static
+    public function mime(?string $mimeType): static
     {
         $this->mime = $mimeType;
 
         return $this;
     }
 
-    public function getMime(): string
+    public function getMime(): ?string
     {
         return $this->evaluate($this->mime);
     }
@@ -186,13 +187,5 @@ class AttachmentField extends Field
     public function text(): static
     {
         return $this->mime('text/*');
-    }
-
-    public function render(): View
-    {
-        // Activate render of browser modal.
-        LaravelView::share('renderAttachmentBrowserModal', true);
-
-        return parent::render();
     }
 }

@@ -12,10 +12,12 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -31,12 +33,15 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
+use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
+use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 /**
- * @property Form $uploadAttachmentForm
- * @property Form $createDirectoryForm
+ * @property \Filament\Forms\Form $uploadAttachmentForm
+ * @property \Filament\Forms\Form $createDirectoryForm
  */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
@@ -48,7 +53,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
-    public string $sortBy = 'name_ascending';
+    public string $sortBy = 'name_asc';
 
     #[Url(history: true, keep: true)]
     public int $pageSize = 25;
@@ -58,9 +63,17 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
-    public string $mime = '';
+    public ?string $mime = null;
 
-    public bool $inModal = false;
+    public bool $disableMimeFilter = false;
+
+    public bool $multiple = false;
+
+    public array $selected = [];
+
+    public bool $disabled = false;
+
+    public ?string $statePath = null;
 
     public ?array $createDirectoryFormState = [];
 
@@ -84,16 +97,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render(): View
     {
-        return view('filament-attachment-library::livewire.attachment-browser');
+        $attachments = $this->getAttachments();
+        $directories = $this->getDirectories();
+
+        return view('filament-attachment-library::livewire.attachment-browser', compact('attachments', 'directories'));
     }
 
     public function mount(): void
     {
-        if (! in_array($this->pageSize, self::PAGE_SIZES)) {
+        if (!in_array($this->pageSize, self::PAGE_SIZES)) {
             $this->pageSize = 1;
         }
 
-        if (! in_array($this->layout, Layout::cases())) {
+        if (!in_array($this->layout, Layout::cases())) {
             $this->layout = Layout::GRID;
         }
     }
@@ -140,7 +156,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         $validationMessages = Lang::get('validation');
 
-        return $form->schema([
+        return $form->components([
             FileUpload::make('attachment')
                 ->rules([
                     new AllowedFilename(),
@@ -154,8 +170,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
                         $attachment = AttachmentManager::upload($file, $this->currentPath);
-                        $this->dispatch('select-attachment', $attachment->id, $this->currentPath);
-                        $this->dispatch('highlight-attachment', $attachment->id);
+                        $this->selectAttachment($attachment->id);
                         $component->removeUploadedFile($file);
                     }
                 )->validationMessages([
@@ -171,7 +186,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function createDirectoryForm(Form $form): Form
     {
-        return $form->schema([
+        return $form->components([
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
@@ -211,6 +226,26 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->title(__('filament-attachment-library::notifications.directory.created'))
             ->success()
             ->send();
+    }
+
+    public function selectAttachment(int|string $id): void
+    {
+        if ($this->disabled) {
+            return;
+        }
+
+        if (in_array($id, $this->selected)) {
+            $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->toArray();
+            $this->dispatch('highlight-attachment', null);
+            return;
+        }
+
+        $this->selected = match ($this->multiple) {
+            true => collect($this->selected)->push($id)->unique()->toArray(),
+            false => [$id],
+        };
+
+        $this->dispatch('highlight-attachment', $id);
     }
 
     /**
@@ -254,72 +289,72 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return $breadcrumbs;
     }
 
-    /**
-     * Return sorted and filtered attachments as paginator.
-     */
-    #[Computed]
-    protected function paginator(): LengthAwarePaginator
+    private function getDirectories(): Collection
     {
-        $this->currentPath = empty($this->currentPath) ? null : $this->currentPath;
+        $sortColumn = Str::beforeLast($this->sortBy, '_');
+        $sortDirection = Str::afterLast($this->sortBy, '_');
 
-        if ($this->currentPath !== null && ! AttachmentManager::destinationExists($this->currentPath)) {
-            $this->currentPath = null;
-        }
-
-        $attachments = Attachment::all();
-        $attachments = $this->applyFiltering($attachments, true);
-        $attachments = $this->applySorting($attachments);
-
-        $directories = AttachmentManager::directories($this->currentPath);
-        $directories = $this->applyFiltering($directories);
-        $directories = $this->applySorting($directories);
-
-        $items = $directories->merge($attachments);
-
-        $pageItems = $items->skip($this->pageSize * ($this->getPage() - 1))
-            ->take($this->pageSize);
-
-        return new LengthAwarePaginator(
-            $pageItems,
-            count($items),
-            $this->pageSize,
-            $this->getPage()
-        );
+        return AttachmentManager::directories($this->currentPath)
+            ->when($this->search, function (Collection $collection) {
+                return $collection->filter(fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search)));
+            })
+            ->when(!$this->search, function (Collection $collection) {
+                return $collection->filter(fn (Directory $directory) => $directory->path === $this->currentPath);
+            })
+            ->when($sortColumn === 'name', function (Collection $collection) use ($sortDirection) {
+                return $sortDirection === 'desc'
+                    ? $collection->sortByDesc('name')
+                    : $collection->sortBy('name');
+            })->map(fn (Directory $directory) => new DirectoryViewModel($directory));
     }
 
     /**
-     * Return filtered attachments or directories.
+     * @return LengthAwarePaginator<AttachmentViewModel>
      */
-    private function applyFiltering(Collection $items, bool $attachment = false): Collection
+    private function getAttachments(): LengthAwarePaginator
     {
-        if ($this->search) {
-            $items = $items->filter(fn ($item) => str_contains(strtolower($item->name), strtolower($this->search)));
-        } else {
-            $items = $items->filter(fn ($item) => $item->path === $this->currentPath);
-        }
+        $sortColumn = Str::beforeLast($this->sortBy, '_');
+        $sortDirection = Str::afterLast($this->sortBy, '_');
 
-        if ($this->mime && $attachment) {
-            $items = $items->filter(fn ($item) => fnmatch($this->mime, $item->mime_type));
-        }
+        $attachments = Attachment::query()
+            ->when($this->search, function (Builder $query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->when(!$this->search, function (Builder $query) {
+                $query->where('path', $this->currentPath);
+            })
+            ->when($this->mime, function (Builder $query) {
+                $query->where('mime_type', 'like', str_replace('*', '%', $this->mime));
+            })
+            ->orderBy($sortColumn, $sortDirection)
+            ->paginate($this->pageSize);
 
-        return $items;
+        $collection = $attachments->getCollection()
+            ->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment));
+
+        /** @var LengthAwarePaginator<AttachmentViewModel> $attachments */
+        $attachments->setCollection($collection);
+
+        return $attachments;
     }
 
-    /**
-     * Return sorted attachments or directories.
-     */
-    private function applySorting(Collection $items): Collection
-    {
-        [$sortColumn, $sortDirection] = explode('_', $this->sortBy);
-        $descending = $sortDirection === 'descending';
 
-        // Return unsorted collection if sort key is not found.
-        if (! in_array($sortColumn, $this::SORTABLE_FIELDS)) {
-            return $items;
+    #[On('close-modal')]
+    public function closeModal(bool $save = false, ?string $statePath = null): void
+    {
+        if (!$save) {
+            return;
         }
 
-        return $descending
-            ? $items->sortByDesc($sortColumn)
-            : $items->sortBy($sortColumn);
+        if ($statePath !== $this->statePath) {
+            return;
+        }
+
+        $selected = match ($this->multiple) {
+            true => $this->selected,
+            false => $this->selected[0] ?? null,
+        };
+
+        $this->dispatch('attachments-selected', statePath: $statePath, selected: $selected);
     }
 }

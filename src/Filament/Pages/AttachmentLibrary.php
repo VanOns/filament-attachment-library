@@ -19,6 +19,8 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected static string $view = 'filament-attachment-library::pages.attachments';
 
+    protected ?string $maxContentWidth = 'full';
+
     public static function getNavigationGroup(): ?string
     {
         return __('filament-attachment-library::views.group');

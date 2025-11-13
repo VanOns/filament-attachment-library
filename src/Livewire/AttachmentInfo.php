@@ -2,26 +2,40 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 #[Lazy]
-class AttachmentInfo extends Component
+class AttachmentInfo extends Component implements HasActions, HasForms
 {
-    public ?Attachment $attachment;
+    use InteractsWithActions;
+    use InteractsWithForms;
+
+    public ?AttachmentViewModel $attachment;
 
     public string $class = '';
+
+    public bool $contained = true;
 
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {
-        /** @var Attachment $attachment */
         $attachment = Attachment::find($id);
 
-        $this->attachment = $attachment;
+        if (!$attachment) {
+            $this->attachment = null;
+            return;
+        }
+
+        $this->attachment = new AttachmentViewModel($attachment);
     }
 
     #[On('dehighlight-attachment')]

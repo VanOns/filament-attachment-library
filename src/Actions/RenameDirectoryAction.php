@@ -31,12 +31,12 @@ class RenameDirectoryAction extends Action
 
         $this->mountUsing(function (ComponentContainer $form, array $arguments) {
             $form->fill([
-                'name' => $arguments['directory']['name'],
+                'name' => $arguments['name'],
             ]);
         });
 
         $this->action(function (array $arguments, array $data) {
-            AttachmentManager::renameDirectory($arguments['directory']['fullPath'], $data['name']);
+            AttachmentManager::renameDirectory($arguments['full_path'], $data['name']);
 
             Notification::make()
                 ->title(__('filament-attachment-library::notifications.directory.renamed'))
