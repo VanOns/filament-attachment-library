@@ -1,45 +1,61 @@
-<div
-    {{-- Dispatch attachment browser loaded event --}}
-    data-dispatch="attachment-browser-loaded"
-    {{-- Load attachment browser javascript --}}
-    x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('attachmentBrowser', \VanOns\FilamentAttachmentLibrary\Facades\FilamentAttachmentLibrary::getId()))]"
-    x-data="attachmentBrowserData"
->
+@php
+    use VanOns\FilamentAttachmentLibrary\Enums\Layout
+@endphp
 
+<div>
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
-        {{-- Breadcrumbs --}}
-        <x-filament-attachment-library::breadcrumbs />
-
-        {{-- Filtering, sorting and header actions --}}
-        <x-filament-attachment-library::header-actions :$layout />
-        <x-filament-attachment-library::header-actions-mobile :$layout />
+        <x-filament-attachment-library::breadcrumbs/>
+        <x-filament-attachment-library::header-actions :$layout/>
+        <x-filament-attachment-library::header-actions-mobile :$layout/>
     </div>
 
-    {{-- Search result indicator --}}
-    <div x-show="search">
-        <h1>{{ __('filament-attachment-library::views.browser.search_results') }} <span x-text="search"></span></h1>
-    </div>
+    @if($search)
+        <h1>{{ __('filament-attachment-library::views.browser.search_results') }} <span>{{ $search }}</span></h1>
+    @endif
 
-    {{-- Main attachment browser content --}}
     <div class="flex flex-col gap-6 mt-4 flex-wrap md:flex-row">
-        {{-- Attachment list --}}
-        <livewire:attachment-item-list
-            :attachments="$this->paginator->getCollection()"
-            :$currentPath
-            :$layout
-            :$inModal
-            class="order-2 md:order-1"
-        />
+        <div
+            @class([
+                'flex-1 order-2 md:order-1',
+                'opacity-50 pointer-events-none' => $disabled,
+            ])
+        >
+            @if(!$directories->isEmpty())
+                <x-filament-attachment-library::items.container :layout="$layout">
+                    @foreach($directories as $directory)
+                        <x-filament-attachment-library::directory.browser-item
+                            :$directory
+                            :layout="$layout"
+                        />
+                    @endforeach
+                </x-filament-attachment-library::items.container>
 
-        {{-- Include sidebar cards --}}
-        <x-filament-attachment-library::sidebar class="order-1 md:order-2" />
+                <div class="w-full border-t border-gray-300 dark:border-gray-700 my-6"></div>
+            @endif
 
-        {{-- Pagination --}}
+            @if(!$attachments->isEmpty())
+                <x-filament-attachment-library::items.container :layout="$layout">
+                    @foreach($attachments as $attachment)
+                        <x-filament-attachment-library::attachment.browser-item
+                            :$attachment
+                            :layout="$layout"
+                            :selected="$attachment->isSelected($selected)"
+                        />
+                    @endforeach
+                </x-filament-attachment-library::items.container>
+            @endif
+
+            @if($attachments->isEmpty() && $directories->isEmpty())
+                <x-filament-attachment-library::empty-path-notice :$currentPath/>
+            @endif
+        </div>
+
+        <x-filament-attachment-library::sidebar :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
+
         <div class="mt-4 w-full order-3">
-            <x-filament::pagination :paginator="$this->paginator" extreme-links />
+            <x-filament::pagination :paginator="$attachments" extreme-links/>
         </div>
     </div>
 
     <x-filament-actions::modals/>
-
 </div>

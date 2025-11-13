@@ -8,6 +8,7 @@ return [
             'button' => 'Back to home',
         ],
         'search_results' => 'Search results for:',
+        'file_count' => ':count file|:count files',
     ],
     'info' => [
         'empty' => [
