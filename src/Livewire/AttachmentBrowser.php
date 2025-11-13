@@ -235,7 +235,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         }
 
         if (in_array($id, $this->selected)) {
-            $this->selected = collect($this->selected)->filter(fn($item) => $item !== $id)->toArray();
+            $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->toArray();
             $this->dispatch('highlight-attachment', null);
             return;
         }
@@ -297,17 +297,17 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return AttachmentManager::directories($this->currentPath)
             ->when($this->search, function (Collection $collection) {
                 return $collection->filter(
-                    fn(Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search))
+                    fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search))
                 );
             })
             ->when(!$this->search, function (Collection $collection) {
-                return $collection->filter(fn(Directory $directory) => $directory->path === $this->currentPath);
+                return $collection->filter(fn (Directory $directory) => $directory->path === $this->currentPath);
             })
             ->when($sortColumn === 'name', function (Collection $collection) use ($sortDirection) {
                 return $sortDirection === 'desc'
                     ? $collection->sortByDesc('name')
                     : $collection->sortBy('name');
-            })->map(fn(Directory $directory) => new DirectoryViewModel($directory));
+            })->map(fn (Directory $directory) => new DirectoryViewModel($directory));
     }
 
     /**
@@ -332,7 +332,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->paginate($this->pageSize);
 
         $collection = $attachments->getCollection()
-            ->map(fn(Attachment $attachment) => new AttachmentViewModel($attachment));
+            ->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment));
 
         /** @var LengthAwarePaginator<AttachmentViewModel> $attachments */
         $attachments->setCollection($collection);
