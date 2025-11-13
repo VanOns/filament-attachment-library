@@ -296,7 +296,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         return AttachmentManager::directories($this->currentPath)
             ->when($this->search, function (Collection $collection) {
-                return $collection->filter(fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search)));
+                return $collection->filter(
+                    fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search))
+                );
             })
             ->when(!$this->search, function (Collection $collection) {
                 return $collection->filter(fn (Directory $directory) => $directory->path === $this->currentPath);
@@ -340,13 +342,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
 
     #[On('close-modal')]
-    public function closeModal(bool $save = false, ?string $statePath = null): void
+    public function closeModal(bool $save = false): void
     {
         if (!$save) {
-            return;
-        }
-
-        if ($statePath !== $this->statePath) {
             return;
         }
 
@@ -355,6 +353,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             false => $this->selected[0] ?? null,
         };
 
-        $this->dispatch('attachments-selected', statePath: $statePath, selected: $selected);
+        $this->dispatch('attachments-selected', statePath: $this->statePath, selected: $selected);
+    }
+
+    #[On('open-attachment-modal')]
+    public function openModal(?string $statePath = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null): void
+    {
+        $this->statePath = $statePath;
+        $this->multiple = $multiple;
+        $this->mime = $mime;
+        $this->disableMimeFilter = $disableMimeFilter;
+        $this->selected = [];
     }
 }
