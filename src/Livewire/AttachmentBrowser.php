@@ -40,8 +40,8 @@ use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 /**
- * @property \Filament\Schemas\Schema $uploadAttachmentForm
- * @property \Filament\Schemas\Schema $createDirectoryForm
+ * @property \Filament\Forms\Form $uploadAttachmentForm
+ * @property \Filament\Forms\Form $createDirectoryForm
  */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
@@ -309,7 +309,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * @return LengthAwarePaginator<int, AttachmentViewModel>
+     * @return LengthAwarePaginator<AttachmentViewModel>
      */
     private function getAttachments(): LengthAwarePaginator
     {
@@ -332,7 +332,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $collection = $attachments->getCollection()
             ->map(fn (Attachment $attachment) => new AttachmentViewModel($attachment));
 
-        /** @var LengthAwarePaginator<int, AttachmentViewModel> $attachments */
+        /** @var LengthAwarePaginator<AttachmentViewModel> $attachments */
         $attachments->setCollection($collection);
 
         return $attachments;
