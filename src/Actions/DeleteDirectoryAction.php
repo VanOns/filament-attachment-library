@@ -18,7 +18,7 @@ class DeleteDirectoryAction extends Action
 
         $this->action(
             function (array $arguments) {
-                AttachmentManager::deleteDirectory($arguments['directory']['fullPath']);
+                AttachmentManager::deleteDirectory($arguments['full_path']);
 
                 Notification::make()
                     ->title(__('filament-attachment-library::notifications.directory.deleted'))

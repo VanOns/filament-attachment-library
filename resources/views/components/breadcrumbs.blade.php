@@ -1,7 +1,4 @@
-<div
-    class="min-w-full md:min-w-max"
-    x-data="breadcrumbs"
->
+<div class="min-w-full md:min-w-max">
 
     <nav class="fi-breadcrumbs">
         <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
@@ -36,11 +33,9 @@
                 <x-filament::icon-button
                     icon="heroicon-o-folder-plus"
                     tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
-                    x-on:click="openSection()"
+                    x-on:click="$dispatch('open-section', { id: 'create-directory-form' })"
                 />
             </li>
-
         </ol>
     </nav>
-
 </div>
