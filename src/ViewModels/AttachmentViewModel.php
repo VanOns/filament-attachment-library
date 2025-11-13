@@ -32,11 +32,11 @@ class AttachmentViewModel implements Wireable
 
     public float $size;
 
-    public string $createdBy;
+    public ?string $createdBy;
 
     public ?Carbon $createdAt;
 
-    public string $updatedBy;
+    public ?string $updatedBy;
 
     public ?Carbon $updatedAt;
 
@@ -69,9 +69,9 @@ class AttachmentViewModel implements Wireable
         $this->extension = Str::of($attachment->filename)->afterLast('.')->upper()->toString();
         $this->mimeType = $attachment->mime_type;
         $this->size = round($attachment->size / 1024 / 1024, 2);
-        $this->createdBy = $userModel::find($attachment->created_by)->{$usernameProperty};
+        $this->createdBy = $userModel::find($attachment->created_by)?->{$usernameProperty};
         $this->createdAt = $attachment->created_at; // @phpstan-ignore-line
-        $this->updatedBy = $userModel::find($attachment->updated_by)->{$usernameProperty};
+        $this->updatedBy = $userModel::find($attachment->updated_by)?->{$usernameProperty};
         $this->updatedAt = $attachment->updated_at; // @phpstan-ignore-line
 
         $this->title = $attachment->title;
