@@ -4,6 +4,8 @@ namespace VanOns\FilamentAttachmentLibrary;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
@@ -36,5 +38,11 @@ class FilamentAttachmentLibrary implements Plugin
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
         Livewire::component('attachment-info-modal', AttachmentInfoModal::class);
+
+        // Register attachment browser modal on every page start
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_END,
+            fn () => view('filament-attachment-library::components.attachment-browser-modal'),
+        );
     }
 }
