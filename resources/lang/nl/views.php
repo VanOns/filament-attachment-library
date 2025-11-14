@@ -71,6 +71,7 @@ return [
         ],
     ],
     'sidebar' => [
+        'files_selected' => ':count bestanden geselecteerd',
         'filters' => [
             'header' => 'Filters',
             'mime' => 'Bestandstype',

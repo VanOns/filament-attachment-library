@@ -2,6 +2,7 @@
     'class' => '',
     'currentPath' => null,
     'disableMimeFilter' => false,
+    'selected' => []
 ])
 
 <div @class([ 'flex-1 max-w-md', $class ])>
@@ -96,7 +97,13 @@
         </x-filament::section>
     @endif
 
+    @if(count($selected) > 1)
+        <x-filament::section class="mb-4">
+            <p>{{ __('filament-attachment-library::views.sidebar.files_selected', ['count' => count($selected)]) }}</p>
+        </x-filament::section>
+    @endif
+
     {{-- Attachment info section --}}
-    <livewire:attachment-info :currentPath="$currentPath" class="hidden md:block" />
-    <livewire:attachment-info-modal :currentPath="$currentPath" />
+    <livewire:attachment-info :$selected :$currentPath class="hidden md:block" />
+    <x-filament-attachment-library::attachment-info-modal :$selected :$currentPath/>
 </div>

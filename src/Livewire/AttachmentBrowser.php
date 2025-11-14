@@ -340,21 +340,32 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
 
     #[On('close-modal')]
-    public function closeModal(bool $save = false, ?string $statePath = null): void
+    public function closeModal(bool $save = false): void
     {
-        if (!$save) {
-            return;
+        if ($save) {
+            $selected = match ($this->multiple) {
+                true => $this->selected,
+                false => $this->selected[0] ?? null,
+            };
+
+            // Fire a dynamic event name based on the statePath so only the correct listener picks it up
+            $this->dispatch('attachments-selected-' . md5($this->statePath), statePath: $this->statePath, selected: $selected);
         }
 
-        if ($statePath !== $this->statePath) {
-            return;
-        };
+        $this->dispatch('highlight-attachment', null);
+        $this->reset();
+    }
 
-        $selected = match ($this->multiple) {
-            true => $this->selected,
-            false => $this->selected[0] ?? null,
-        };
+    #[On('open-attachment-modal')]
+    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null): void
+    {
+        $this->statePath = $statePath;
+        $this->multiple = $multiple;
+        $this->mime = $mime;
+        $this->disableMimeFilter = $disableMimeFilter;
 
-        $this->dispatch('attachments-selected', statePath: $statePath, selected: $selected);
+        if ($selected) {
+            $this->selected = is_array($selected) ? $selected : [$selected];
+        }
     }
 }
