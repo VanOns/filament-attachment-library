@@ -6,7 +6,6 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy]
 class AttachmentInfoModal extends Component
 {
     public function render(): View

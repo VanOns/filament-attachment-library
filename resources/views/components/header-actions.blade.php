@@ -13,7 +13,7 @@
     <x-filament::input.wrapper>
         <x-filament::input
             type="text"
-            wire:model.live="search"
+            wire:model.live.debounce="search"
             placeholder="{{ __('filament-attachment-library::views.search') }}"
             class="w-full"
         />

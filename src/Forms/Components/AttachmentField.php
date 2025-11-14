@@ -28,18 +28,19 @@ class AttachmentField extends Field
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
-    public static function make(?string $name = null): static
+    public function setUp(?string $name = null): void
     {
-        return parent::make($name)
-            ->helperText(function () {
-                if (empty($formats = Glide::getSupportedImageFormats())) {
-                    return null;
-                }
+        parent::setUp($name);
 
-                return __('filament-attachment-library::forms.attachment_field.help', [
-                    'types' => implode(', ', $formats),
-                ]);
-            });
+        $this->helperText(function () {
+            if (empty($formats = Glide::getSupportedImageFormats())) {
+                return null;
+            }
+
+            return __('filament-attachment-library::forms.attachment_field.help', [
+                'types' => implode(', ', $formats),
+            ]);
+        });
     }
 
     /**
