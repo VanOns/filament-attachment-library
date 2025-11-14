@@ -10,7 +10,6 @@ use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfoModal;
 
 class FilamentAttachmentLibrary implements Plugin
 {
