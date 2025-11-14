@@ -37,7 +37,6 @@ class FilamentAttachmentLibrary implements Plugin
         // Register all livewire components
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
-        Livewire::component('attachment-info-modal', AttachmentInfoModal::class);
 
         // Register attachment browser modal on every page start
         FilamentView::registerRenderHook(

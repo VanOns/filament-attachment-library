@@ -28,9 +28,9 @@ class AttachmentField extends Field
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
-    public function setUp(?string $name = null): void
+    public function setUp(): void
     {
-        parent::setUp($name);
+        parent::setUp();
 
         $this->helperText(function () {
             if (empty($formats = Glide::getSupportedImageFormats())) {
