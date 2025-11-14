@@ -10,7 +10,7 @@
                 ? state.filter(id => id !== $event.detail.id)
                 : null
         "
-        x-on:attachments-selected-{{ md5($getStatePath()) }}.window="console.log($event); state = $event.detail.selected"
+        x-on:attachments-selected-{{ md5($getStatePath()) }}.window="state = $event.detail.selected"
     >
         <x-filament-attachment-library::items.field :attachments="$getAttachments()" :statePath="$getStatePath()" />
 
