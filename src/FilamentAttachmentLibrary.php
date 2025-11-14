@@ -10,7 +10,6 @@ use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfoModal;
 
 class FilamentAttachmentLibrary implements Plugin
 {
@@ -37,7 +36,6 @@ class FilamentAttachmentLibrary implements Plugin
         // Register all livewire components
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
-        Livewire::component('attachment-info-modal', AttachmentInfoModal::class);
 
         // Register attachment browser modal on every page start
         FilamentView::registerRenderHook(

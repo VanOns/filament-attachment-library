@@ -9,9 +9,11 @@
         <x-filament-attachment-library::header-actions-mobile :$layout/>
     </div>
 
-    @if($search)
-        <h1>{{ __('filament-attachment-library::views.browser.search_results') }} <span>{{ $search }}</span></h1>
-    @endif
+    <div wire:key="attachment-search-heading">
+        @if($search)
+            <h1>{{ __('filament-attachment-library::views.browser.search_results') }} <span>{{ $search }}</span></h1>
+        @endif
+    </div>
 
     <div class="flex flex-col gap-6 mt-4 flex-wrap md:flex-row">
         <div
@@ -52,7 +54,7 @@
             @endif
         </div>
 
-        <x-filament-attachment-library::sidebar :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
+        <x-filament-attachment-library::sidebar :$selected :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
 
         <div class="mt-4 w-full order-3">
             <x-filament::pagination :paginator="$attachments" extreme-links/>

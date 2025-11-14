@@ -19,6 +19,7 @@
             <div>
                 @if($attachment->isImage())
                     <img
+                        alt="{{ $attachment->alt }}"
                         loading="lazy"
                         src="{{ $attachment->thumbnailUrl() }}"
                         class="relative rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto"
@@ -32,7 +33,6 @@
                         class="relative object-cover object-center rounded-lg dark:opacity-80 focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
                     ></video>
                 @endif
-
 
                 @if($attachment->isDocument())
                     <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
