@@ -54,7 +54,7 @@
             @endif
         </div>
 
-        <x-filament-attachment-library::sidebar :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
+        <x-filament-attachment-library::sidebar :$selected :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
 
         <div class="mt-4 w-full order-3">
             <x-filament::pagination :paginator="$attachments" extreme-links/>

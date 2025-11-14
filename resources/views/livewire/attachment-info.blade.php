@@ -34,7 +34,6 @@
                     ></video>
                 @endif
 
-
                 @if($attachment->isDocument())
                     <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
                 @endif

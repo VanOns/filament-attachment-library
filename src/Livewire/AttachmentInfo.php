@@ -29,6 +29,8 @@ class AttachmentInfo extends Component implements HasActions, HasForms
 
     public bool $contained = true;
 
+    public array $selected = [];
+
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {

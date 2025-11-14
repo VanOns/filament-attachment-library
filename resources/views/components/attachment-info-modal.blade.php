@@ -1,4 +1,4 @@
-@props([ 'currentPath' => null ])
+@props([ 'selected' => [], 'currentPath' => null ])
 
 <x-filament::modal width="7xl" id="attachment-info-modal" sticky-footer>
     <x-slot name="heading">
