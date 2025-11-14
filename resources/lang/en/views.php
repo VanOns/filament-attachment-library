@@ -71,6 +71,7 @@ return [
         ],
     ],
     'sidebar' => [
+        'files_selected' => ':count files selected',
         'filters' => [
             'header' => 'Filters',
             'mime' => 'File type',

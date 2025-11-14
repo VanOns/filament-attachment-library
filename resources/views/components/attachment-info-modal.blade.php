@@ -1,11 +1,11 @@
-@props([ 'currentPath' => null ])
+@props([ 'selected' => [], 'currentPath' => null ])
 
 <x-filament::modal width="7xl" id="attachment-info-modal" sticky-footer>
     <x-slot name="heading">
         {{ __('filament-attachment-library::views.info.details.modal_title') }}
     </x-slot>
 
-    <livewire:attachment-info :contained="false" :currentPath="$currentPath" />
+    <livewire:attachment-info :$selected :$currentPath :contained="false"  />
 
     <x-slot name="footer">
         <div class="flex gap-4">

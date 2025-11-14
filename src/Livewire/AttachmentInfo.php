@@ -8,7 +8,6 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Lazy;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
@@ -17,19 +16,20 @@ use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-#[Lazy]
 class AttachmentInfo extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public ?AttachmentViewModel $attachment;
+    public ?AttachmentViewModel $attachment = null;
 
     public string $class = '';
 
     public ?string $currentPath = null;
 
     public bool $contained = true;
+
+    public array $selected = [];
 
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
@@ -67,11 +67,6 @@ class AttachmentInfo extends Component implements HasActions, HasForms
     public function editAttachmentAction(): Action
     {
         return EditAttachmentAction::make('editAttributeAttachmentAction')->setCurrentPath($this->currentPath);
-    }
-
-    public function mount(): void
-    {
-        $this->attachment = null;
     }
 
     public function placeholder()
