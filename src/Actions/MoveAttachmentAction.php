@@ -20,7 +20,7 @@ class MoveAttachmentAction extends Action
         $this->color('gray');
 
         $this->schema([
-            Select::make('path')->options(
+            Select::make('path')->label(__('filament-attachment-library::views.info.details.path'))->options(
                 fn () => $this->getDirectories(recursive: true)
                     ->sort()
                     ->prepend(null)
