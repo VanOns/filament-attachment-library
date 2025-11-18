@@ -20,4 +20,7 @@ return [
         'name' => 'File',
         'heading' => 'Upload',
     ],
+    'replace_attachment' => [
+        'helper_text' => 'Replace the file with a new file, links will be preserved.',
+    ]
 ];

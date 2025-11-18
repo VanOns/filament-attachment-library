@@ -141,6 +141,12 @@
                             {{ __('filament-attachment-library::views.actions.attachment.move') }}
                         </x-filament::button>
 
+                        <x-filament::button color="gray"
+                            wire:click="mountAction('replaceAttachmentAction', { attachment_id: {{ json_encode($attachment->id) }}})"
+                        >
+                            {{ __('filament-attachment-library::views.actions.attachment.replace') }}
+                        </x-filament::button>
+
                         <x-filament::button color="danger"
                             wire:click="mountAction('deleteAttachment', { attachment_id: {{ json_encode($attachment->id) }}})"
                         >

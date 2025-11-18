@@ -14,5 +14,6 @@ return [
         'updated' => 'The file was successfully updated.',
         'deleted' => 'The file was successfully removed.',
         'moved' => 'The file was successfully moved.',
+        'replaced' => 'The file was successfully replaced.',
     ],
 ];
