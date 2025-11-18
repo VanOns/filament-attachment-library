@@ -52,6 +52,7 @@ return [
             'edit' => 'Modify file',
             'delete' => 'Remove file',
             'upload' => 'Upload file',
+            'move' => 'Move file',
         ],
         'directory' => [
             'rename' => 'Rename directory',

@@ -13,5 +13,6 @@ return [
         'created' => 'The file was successfully uploaded.',
         'updated' => 'The file was successfully updated.',
         'deleted' => 'The file was successfully removed.',
+        'moved' => 'The file was successfully moved.',
     ],
 ];

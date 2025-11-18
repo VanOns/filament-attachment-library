@@ -52,6 +52,7 @@ return [
             'edit' => 'Bewerk bestand',
             'delete' => 'Verwijder bestand',
             'upload' => 'Upload bestand',
+            'move' => 'Verplaats bestand',
         ],
         'directory' => [
             'rename' => 'Hernoem map',

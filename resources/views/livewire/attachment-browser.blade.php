@@ -25,10 +25,12 @@
             @if(!$directories->isEmpty())
                 <x-filament-attachment-library::items.container :layout="$layout">
                     @foreach($directories as $directory)
-                        <x-filament-attachment-library::directory.browser-item
-                            :$directory
-                            :layout="$layout"
-                        />
+                        <div wire:key="directory-browser-item-{{ md5($directory->fullPath) }}">
+                            <x-filament-attachment-library::directory.browser-item
+                                :$directory
+                                :layout="$layout"
+                            />
+                        </div>
                     @endforeach
                 </x-filament-attachment-library::items.container>
 
@@ -38,11 +40,13 @@
             @if(!$attachments->isEmpty())
                 <x-filament-attachment-library::items.container :layout="$layout">
                     @foreach($attachments as $attachment)
-                        <x-filament-attachment-library::attachment.browser-item
-                            :$attachment
-                            :layout="$layout"
-                            :selected="$attachment->isSelected($selected)"
-                        />
+                        <div wire:key="attachment-browser-item-{{ $attachment->id }}">
+                            <x-filament-attachment-library::attachment.browser-item
+                                :$attachment
+                                :layout="$layout"
+                                :selected="$attachment->isSelected($selected)"
+                            />
+                        </div>
                     @endforeach
                 </x-filament-attachment-library::items.container>
             @endif

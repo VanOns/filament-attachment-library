@@ -1,7 +1,6 @@
 @props([ 'currentPath' => null ])
 
-<div class="text-center text-center border-2 border-dashed px-4 py-8 rounded-xl w-full border-gray-400">
-
+<x-filament::section class="text-center" id="upload-attachment-form">
     <h2 class="break-words text-lg font-medium text-gray-900 dark:text-gray-100">
         <span class="break-words">{{ __('filament-attachment-library::views.browser.empty.title') }}</span>
     </h2>
@@ -19,4 +18,4 @@
             {{ __('filament-attachment-library::views.browser.empty.button') }}
         </x-filament::button>
     @endif
-</div>
+</x-filament::section>
