@@ -12,6 +12,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -67,6 +68,11 @@ class AttachmentInfo extends Component implements HasActions, HasForms
     public function editAttachmentAction(): Action
     {
         return EditAttachmentAction::make('editAttributeAttachmentAction')->setCurrentPath($this->currentPath);
+    }
+
+    public function moveAttachmentAction(): Action
+    {
+        return MoveAttachmentAction::make('moveAttachment');
     }
 
     public function placeholder()

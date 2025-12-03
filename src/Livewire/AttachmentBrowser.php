@@ -27,6 +27,7 @@ use Livewire\WithPagination;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
@@ -78,6 +79,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?array $createDirectoryFormState = [];
 
     public ?array $uploadFormState = ['attachment' => []];
+
+    protected $listeners = [
+        'refresh-attachments' => '$refresh',
+    ];
 
     public const SORTABLE_FIELDS = [
         'name',
@@ -139,6 +144,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     {
         return EditAttachmentAction::make('editAttributeAttachmentAction')
             ->setCurrentPath($this->currentPath);
+    }
+
+    public function moveAttachmentAction(): Action
+    {
+        return MoveAttachmentAction::make('moveAttachment');
     }
 
     protected function getForms(): array
