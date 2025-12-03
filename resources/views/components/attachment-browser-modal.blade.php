@@ -14,7 +14,7 @@
                 {{ __('filament-attachment-library::views.submit') }}
             </x-filament::button>
 
-            <x-filament::button color="gray" x-on:click="$dispatch('close-modal', {id: 'attachment-modal}'})">
+            <x-filament::button color="gray" x-on:click="$dispatch('close-modal', {id: 'attachment-modal'})">
                 {{ __('filament-attachment-library::views.close') }}
             </x-filament::button>
         </div>

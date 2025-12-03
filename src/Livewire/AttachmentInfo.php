@@ -14,6 +14,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -73,6 +74,11 @@ class AttachmentInfo extends Component implements HasActions, HasForms
     public function moveAttachmentAction(): Action
     {
         return MoveAttachmentAction::make('moveAttachment');
+    }
+
+    public function replaceAttachmentAction(): Action
+    {
+        return ReplaceAttachmentAction::make('replaceAttachment')->setCurrentPath($this->currentPath);
     }
 
     public function placeholder()

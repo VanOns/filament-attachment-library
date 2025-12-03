@@ -14,5 +14,6 @@ return [
         'updated' => 'Het bestand is succesvol bijgewerkt.',
         'deleted' => 'Het bestand is succesvol verwijderd.',
         'moved' => 'Het bestand is succesvol verplaatst.',
+        'replaced' => 'Het bestand is succesvol vervangen.',
     ],
 ];

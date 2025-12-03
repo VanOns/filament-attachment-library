@@ -34,9 +34,15 @@
         </x-filament::dropdown.list.item>
 
         <x-filament::dropdown.list.item
-                wire:click="mountAction('moveAttachmentAction', { attachment_id: {{ json_encode($attachment->attachment->id) }}})"
+            wire:click="mountAction('moveAttachmentAction', { attachment_id: {{ json_encode($attachment->attachment->id) }}})"
         >
             {{ __('filament-attachment-library::views.actions.attachment.move') }}
+        </x-filament::dropdown.list.item>
+
+        <x-filament::dropdown.list.item
+            wire:click="mountAction('replaceAttachmentAction', { attachment_id: {{ json_encode($attachment->attachment->id) }}})"
+        >
+            {{ __('filament-attachment-library::views.actions.attachment.replace') }}
         </x-filament::dropdown.list.item>
 
         <x-filament::dropdown.list.item

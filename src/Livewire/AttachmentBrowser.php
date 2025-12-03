@@ -30,6 +30,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
+use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
@@ -149,6 +150,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function moveAttachmentAction(): Action
     {
         return MoveAttachmentAction::make('moveAttachment');
+    }
+
+    public function replaceAttachmentAction(): Action
+    {
+        return ReplaceAttachmentAction::make('replaceAttachment')
+            ->setCurrentPath($this->currentPath);
     }
 
     protected function getForms(): array
