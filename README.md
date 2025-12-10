@@ -1,4 +1,4 @@
-<p align="center"><img src="art/social-card.png" alt="Social card of Filament attachment library"></p>
+<p align="center" class="filament-hidden"><img src="art/social-card.png" alt="Social card of Filament attachment library"></p>
 
 # Filament Attachment Library
 
