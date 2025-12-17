@@ -10,6 +10,7 @@ use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
+use VanOns\FilamentRedirects\Filament\Resources\RedirectResource;
 
 class FilamentAttachmentLibrary implements Plugin
 {
@@ -24,6 +25,13 @@ class FilamentAttachmentLibrary implements Plugin
         $panel->pages([
             AttachmentLibrary::class,
         ]);
+    }
+
+    public function navigationGroup(?string $navigationGroup): static
+    {
+        AttachmentLibrary::navigationGroup($navigationGroup);
+
+        return $this;
     }
 
     public static function make(): static
