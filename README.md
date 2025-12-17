@@ -87,7 +87,9 @@ class ExamplePanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->plugin(FilamentAttachmentLibrary::make());
+            ->plugin(
+                FilamentAttachmentLibrary::make()->navigationGroup('Files')
+            );
     }
 
 }

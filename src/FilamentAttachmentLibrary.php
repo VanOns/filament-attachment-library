@@ -26,6 +26,13 @@ class FilamentAttachmentLibrary implements Plugin
         ]);
     }
 
+    public function navigationGroup(?string $navigationGroup): static
+    {
+        AttachmentLibrary::navigationGroup($navigationGroup);
+
+        return $this;
+    }
+
     public static function make(): static
     {
         return app(static::class);
