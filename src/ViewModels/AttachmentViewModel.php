@@ -2,7 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -34,11 +34,11 @@ class AttachmentViewModel implements Wireable
 
     public ?string $createdBy;
 
-    public ?Carbon $createdAt;
+    public ?CarbonInterface $createdAt;
 
     public ?string $updatedBy;
 
-    public ?Carbon $updatedAt;
+    public ?CarbonInterface $updatedAt;
 
     public ?string $title;
 
