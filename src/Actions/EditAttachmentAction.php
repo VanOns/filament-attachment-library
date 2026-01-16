@@ -36,11 +36,13 @@ class EditAttachmentAction extends Action
 
             return [
                 Grid::make()->schema([
-                    Section::make('Focal point')->schema([
-                        FocalPointPicker::make('focal_point')
-                            ->hiddenLabel()
-                            ->image($attachment->url),
-                    ]),
+                    Section::make(__('filament-attachment-library::forms.focal_point.label'))
+                        ->description(__('filament-attachment-library::forms.focal_point.description'))
+                        ->schema([
+                            FocalPointPicker::make('focal_point')
+                                ->hiddenLabel()
+                                ->image($attachment->url),
+                        ]),
                     Section::make()->schema([
                         TextInput::make('name')
                             ->label(__('filament-attachment-library::forms.edit_attachment.name'))
