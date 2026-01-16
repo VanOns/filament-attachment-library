@@ -22,5 +22,9 @@ return [
     ],
     'replace_attachment' => [
         'helper_text' => 'Vervang het bestand door een nieuwe bestand, koppelingen blijven behouden.',
-    ]
+    ],
+    'focal_point' => [
+        'label' => 'Focuspunt',
+        'description' => 'Selecteer het focuspunt van de afbeelding om ervoor te zorgen dat belangrijke delen zichtbaar blijven bij het bijsnijden.',
+    ],
 ];
