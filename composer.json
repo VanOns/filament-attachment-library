@@ -32,7 +32,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.64",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^9.0"
+        "orchestra/testbench": "^10.9"
     },
     "scripts": {
         "analyse": "./vendor/bin/phpstan analyse --memory-limit=1G",
