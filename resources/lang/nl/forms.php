@@ -20,4 +20,8 @@ return [
         'name' => 'Bestand',
         'heading' => 'Uploaden',
     ],
+    'focal_point' => [
+        'label' => 'Focuspunt',
+        'description' => 'Selecteer het focuspunt van de afbeelding om ervoor te zorgen dat belangrijke delen zichtbaar blijven bij het bijsnijden.',
+    ],
 ];

@@ -20,4 +20,8 @@ return [
         'name' => 'File',
         'heading' => 'Upload',
     ],
+    'focal_point' => [
+        'label' => 'Focal point',
+        'description' => 'Select the focal point of the image to ensure important parts remain visible when cropped.',
+    ],
 ];
