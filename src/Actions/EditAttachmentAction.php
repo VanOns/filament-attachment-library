@@ -6,8 +6,12 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
+use VanOns\FilamentAttachmentLibrary\Filament\Fields\FocalPointPicker;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
@@ -31,27 +35,38 @@ class EditAttachmentAction extends Action
             $isImage = $attachment->isType(AttachmentType::PREVIEWABLE_IMAGE);
 
             return [
-                TextInput::make('name')
-                    ->label(__('filament-attachment-library::forms.edit_attachment.name'))
-                    ->rules([
-                        new DestinationExists($this->currentPath, $arguments['attachment_id']),
-                        new AllowedFilename(),
-                    ], fn (?string $state) => $state !== $attachment->name)
-                    ->maxLength(255),
-                TextInput::make('title')
-                    ->label(__('filament-attachment-library::forms.edit_attachment.title'))
-                    ->maxLength(255),
-                Textarea::make('description')
-                    ->label(__('filament-attachment-library::forms.edit_attachment.description'))
-                    ->maxLength(255),
-                TextInput::make('alt')
-                    ->hidden(! $isImage)
-                    ->label(__('filament-attachment-library::forms.edit_attachment.alt'))
-                    ->maxLength(255),
-                Textarea::make('caption')
-                    ->hidden(! $isImage)
-                    ->label(__('filament-attachment-library::forms.edit_attachment.caption'))
-                    ->maxLength(255),
+                Grid::make()->schema([
+                    Section::make(__('filament-attachment-library::forms.focal_point.label'))
+                        ->description(__('filament-attachment-library::forms.focal_point.description'))
+                        ->schema([
+                            FocalPointPicker::make('focal_point')
+                                ->hiddenLabel()
+                                ->image($attachment->url),
+                        ]),
+                    Section::make()->schema([
+                        TextInput::make('name')
+                            ->label(__('filament-attachment-library::forms.edit_attachment.name'))
+                            ->rules([
+                                new DestinationExists($this->currentPath, $arguments['attachment_id']),
+                                new AllowedFilename(),
+                            ], fn (?string $state) => $state !== $attachment->name)
+                            ->maxLength(255),
+                        TextInput::make('title')
+                            ->label(__('filament-attachment-library::forms.edit_attachment.title'))
+                            ->maxLength(255),
+                        Textarea::make('description')
+                            ->label(__('filament-attachment-library::forms.edit_attachment.description'))
+                            ->maxLength(255),
+                        TextInput::make('alt')
+                            ->hidden(! $isImage)
+                            ->label(__('filament-attachment-library::forms.edit_attachment.alt'))
+                            ->maxLength(255),
+                        Textarea::make('caption')
+                            ->hidden(! $isImage)
+                            ->label(__('filament-attachment-library::forms.edit_attachment.caption'))
+                            ->maxLength(255),
+                    ])->contained(false),
+                ]),
             ];
         });
 
@@ -65,6 +80,7 @@ class EditAttachmentAction extends Action
                 'description' => $attachment->description,
                 'name' => $attachment->name,
                 'title' => $attachment->title,
+                'focal_point' => $attachment->focal_point,
             ]);
         });
 
@@ -76,7 +92,7 @@ class EditAttachmentAction extends Action
                 AttachmentManager::rename($attachment, $data['name']);
             }
 
-            $attachment->update($data);
+            $attachment->fill($data);
             $attachment->save();
 
             $this->getLivewire()->dispatch('highlight-attachment', $arguments['attachment_id']);
@@ -86,5 +102,8 @@ class EditAttachmentAction extends Action
                 ->success()
                 ->send();
         });
+
+        $this->modalWidth(Width::Full);
+        $this->slideOver();
     }
 }

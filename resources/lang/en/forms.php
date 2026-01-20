@@ -22,5 +22,9 @@ return [
     ],
     'replace_attachment' => [
         'helper_text' => 'Replace the file with a new file, links will be preserved.',
-    ]
+    ],
+    'focal_point' => [
+        'label' => 'Focal point',
+        'description' => 'Select the focal point of the image to ensure important parts remain visible when cropped.',
+    ],
 ];
