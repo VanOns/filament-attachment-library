@@ -65,11 +65,11 @@ class EditAttachmentAction extends Action
                             ->hidden(! $isImage)
                             ->label(__('filament-attachment-library::forms.edit_attachment.caption'))
                             ->maxLength(255),
-                    ])->columnSpan(1)
+                    ])->columnSpan(1),
                 ])->columns([
                     'sm' => 1,
                     'md' => 2,
-                ])
+                ]),
             ];
         });
 
