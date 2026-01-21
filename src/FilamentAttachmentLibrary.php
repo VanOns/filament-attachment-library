@@ -24,6 +24,16 @@ class FilamentAttachmentLibrary implements Plugin
         $panel->pages([
             AttachmentLibrary::class,
         ]);
+
+        // Register all livewire components
+        Livewire::component('attachment-browser', AttachmentBrowser::class);
+        Livewire::component('attachment-info', AttachmentInfo::class);
+
+        // Register attachment browser modal on every page start
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_END,
+            fn() => view('filament-attachment-library::components.attachment-browser-modal'),
+        );
     }
 
     public static function make(): static
@@ -33,14 +43,5 @@ class FilamentAttachmentLibrary implements Plugin
 
     public function boot(Panel $panel): void
     {
-        // Register all livewire components
-        Livewire::component('attachment-browser', AttachmentBrowser::class);
-        Livewire::component('attachment-info', AttachmentInfo::class);
-
-        // Register attachment browser modal on every page start
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_END,
-            fn () => view('filament-attachment-library::components.attachment-browser-modal'),
-        );
     }
 }

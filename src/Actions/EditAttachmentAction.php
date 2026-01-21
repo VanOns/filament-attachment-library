@@ -42,7 +42,8 @@ class EditAttachmentAction extends Action
                             FocalPointPicker::make('focal_point')
                                 ->hiddenLabel()
                                 ->image($attachment->url),
-                        ])->columnSpan(1),
+                        ])->columnSpan(1)
+                        ->visible($isImage),
                     Section::make()->schema([
                         TextInput::make('name')
                             ->label(__('filament-attachment-library::forms.edit_attachment.name'))
@@ -65,7 +66,7 @@ class EditAttachmentAction extends Action
                             ->hidden(! $isImage)
                             ->label(__('filament-attachment-library::forms.edit_attachment.caption'))
                             ->maxLength(255),
-                    ])->columnSpan(1),
+                    ])->columnSpan($isImage ? 1 : 2),
                 ])->columns([
                     'sm' => 1,
                     'md' => 2,
