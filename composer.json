@@ -26,7 +26,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^4.0",
+        "filament/filament": "^5.1",
         "van-ons/laravel-attachment-library": "^1.2.0"
     },
     "require-dev": {
