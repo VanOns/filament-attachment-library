@@ -81,6 +81,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?array $uploadFormState = ['attachment' => []];
 
+    public ?string $baseDirectory = null;
+
     protected $listeners = [
         'refresh-attachments' => '$refresh',
     ];
@@ -103,6 +105,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render(): View
     {
+        $this->validateCurrentPath();
+
         $attachments = $this->getAttachments();
         $directories = $this->getDirectories();
 
@@ -117,6 +121,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         if (!in_array($this->layout, Layout::cases())) {
             $this->layout = Layout::GRID;
+        }
+
+        $this->baseDirectory = AttachmentManager::getDirectory();
+        if (!$this->currentPath) {
+            $this->currentPath = $this->baseDirectory;
+        }
+    }
+
+    public function validateCurrentPath(): void
+    {
+        AttachmentManager::setDirectory($this->baseDirectory);
+        if (!AttachmentManager::isInDirectory($this->currentPath ?? $this->baseDirectory)) {
+            $this->openPath($this->baseDirectory);
         }
     }
 
@@ -271,7 +288,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[On('open-path')]
     public function openPath(?string $path): void
     {
-        $this->currentPath = $path;
+        $this->currentPath = $path ?? $this->baseDirectory;
         $this->dispatch('highlight-attachment', null);
     }
 
