@@ -123,16 +123,40 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->layout = Layout::GRID;
         }
 
-        $this->baseDirectory = AttachmentManager::getDirectory();
-        if (!$this->currentPath) {
-            $this->currentPath = $this->baseDirectory;
-        }
+        $this->currentPath = $this->getPath();
     }
 
+    /**
+     * Get current path. This validates if it contains the base directory and resets it if not.
+     */
+    public function getPath(): string
+    {
+        if (empty($this->baseDirectory)) {
+            $this->baseDirectory = AttachmentManager::getDirectory();
+        }
+
+        if (empty($this->currentPath) | !str_starts_with($this->currentPath, $this->baseDirectory)) {
+            return $this->currentPath = $this->baseDirectory;
+        }
+
+        return $this->currentPath;
+    }
+
+    /**
+     * Get current path without base directory.
+     */
+    public function getPathWithoutBase(): string
+    {
+        return trim(Str::after($this->getPath(), $this->baseDirectory), '/');
+    }
+
+    /**
+     * Validate if the current path is within the base directory. If not, reset to base directory.
+     */
     public function validateCurrentPath(): void
     {
         AttachmentManager::setDirectory($this->baseDirectory);
-        if (!AttachmentManager::isInDirectory($this->currentPath ?? $this->baseDirectory)) {
+        if (!AttachmentManager::isInDirectory($this->getPath())) {
             $this->openPath($this->baseDirectory);
         }
     }
@@ -145,7 +169,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function renameDirectoryAction(): Action
     {
         return RenameDirectoryAction::make('renameDirectory')
-            ->setCurrentPath($this->currentPath);
+            ->setCurrentPath($this->getPath());
     }
 
     public function deleteAttachmentAction(): Action
@@ -161,7 +185,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function editAttachmentAction(): Action
     {
         return EditAttachmentAction::make('editAttributeAttachmentAction')
-            ->setCurrentPath($this->currentPath);
+            ->setCurrentPath($this->getPath());
     }
 
     public function moveAttachmentAction(): Action
@@ -172,7 +196,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function replaceAttachmentAction(): Action
     {
         return ReplaceAttachmentAction::make('replaceAttachment')
-            ->setCurrentPath($this->currentPath);
+            ->setCurrentPath($this->getPath());
     }
 
     protected function getForms(): array
@@ -194,7 +218,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             FileUpload::make('attachment')
                 ->rules([
                     new AllowedFilename(),
-                    new DestinationExists($this->currentPath),
+                    new DestinationExists($this->getPath()),
                     ...Config::get('filament-attachment-library.upload_rules', []),
                 ])
                 ->multiple()
@@ -203,7 +227,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->fetchFileInformation()
                 ->saveUploadedFileUsing(
                     function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-                        $attachment = AttachmentManager::upload($file, $this->currentPath);
+                        $attachment = AttachmentManager::upload($file, $this->getPath());
                         $this->selectAttachment($attachment->id);
                         $component->removeUploadedFile($file);
                     }
@@ -223,7 +247,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return $schema->components([
             TextInput::make('name')
                 ->rules([
-                    new DestinationExists($this->currentPath),
+                    new DestinationExists($this->getPath()),
                     new AllowedFilename(),
                 ])->required()
                 ->autocomplete(false)
@@ -250,7 +274,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function saveCreateDirectoryForm(): void
     {
         $state = $this->createDirectoryForm->getState();
-        $path = implode('/', (array_filter([$this->currentPath, $state['name']])));
+        $path = implode('/', (array_filter([$this->getPath(), $state['name']])));
 
         AttachmentManager::createDirectory($path);
 
@@ -312,7 +336,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Computed]
     public function breadcrumbs(): array
     {
-        $crumbs = array_filter(explode('/', $this->currentPath ?? ''));
+        $crumbs = array_filter(explode('/', $this->getPathWithoutBase()));
         $breadcrumbs = [];
 
         foreach ($crumbs as $index => $crumb) {
@@ -328,12 +352,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $sortColumn = Str::beforeLast($this->sortBy, '_');
         $sortDirection = Str::afterLast($this->sortBy, '_');
 
-        return AttachmentManager::directories($this->currentPath)
+        return AttachmentManager::directories($this->getPath())
             ->when($this->search, function (Collection $collection) {
                 return $collection->filter(fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search)));
             })
             ->when(!$this->search, function (Collection $collection) {
-                return $collection->filter(fn (Directory $directory) => $directory->path === $this->currentPath);
+                return $collection->filter(fn (Directory $directory) => $directory->path === $this->getPath());
             })
             ->when($sortColumn === 'name', function (Collection $collection) use ($sortDirection) {
                 return $sortDirection === 'desc'
@@ -355,7 +379,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 $query->where('name', 'like', '%' . $this->search . '%');
             })
             ->when(!$this->search, function (Builder $query) {
-                $query->where('path', $this->currentPath);
+                $query->where('path', $this->getPath());
             })
             ->when($this->mime, function (Builder $query) {
                 $query->where('mime_type', 'like', str_replace('*', '%', $this->mime));
