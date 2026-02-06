@@ -21,7 +21,7 @@ class ExamplePanelProvider extends PanelProvider
             ->tenant(...)
             ->plugin(
                 FilamentAttachmentLibrary::make()
-                    ->directory(fn () => 'tenants/' . Filament::getTenant()?->slug)
+                    ->basePath(fn () => 'tenants/' . Filament::getTenant()?->slug)
             );
     }
 }
