@@ -11,3 +11,4 @@
    1. [Architecture](basic-usage/architecture.md)
    2. [Handling attachments](basic-usage/handling-attachments.md)
    3. [Validation](basic-usage/validation.md)
+   4. [Changing the directory](basic-usage/changing-the-directory.md)
