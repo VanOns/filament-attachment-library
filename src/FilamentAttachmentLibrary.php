@@ -32,13 +32,22 @@ class FilamentAttachmentLibrary implements Plugin
         // Register attachment browser modal on every page start
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_END,
-            fn () => view('filament-attachment-library::components.attachment-browser-modal'),
+            fn () => view('filament-attachment-library::components.attachment-browser-modal', [
+                'basePath' => AttachmentLibrary::getBasePath(),
+            ]),
         );
     }
 
     public function navigationGroup(?string $navigationGroup): static
     {
         AttachmentLibrary::navigationGroup($navigationGroup);
+
+        return $this;
+    }
+
+    public function basePath(string $basePath): static
+    {
+        AttachmentLibrary::basePath($basePath);
 
         return $this;
     }

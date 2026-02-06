@@ -25,6 +25,17 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
+    protected static ?string $basePath = null;
+
+    public static function basePath(?string $basePath): void
+    {
+        static::$basePath = $basePath;
+    }
+
+    public static function getBasePath(): ?string
+    {
+        return static::$basePath;
+    }
 
     public static function navigationGroup(?string $group): void
     {
@@ -49,5 +60,12 @@ class AttachmentLibrary extends Page implements HasForms
     public function getTitle(): string|Htmlable
     {
         return __('filament-attachment-library::views.title');
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'basePath' => static::$basePath,
+        ];
     }
 }
