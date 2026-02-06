@@ -129,14 +129,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     /**
      * Get current path. This validates if it contains the base directory and resets it if not.
      */
-    public function getPath(): string
+    public function getPath(): ?string
     {
         if (empty($this->baseDirectory)) {
             $this->baseDirectory = AttachmentManager::getDirectory();
         }
 
         if (empty($this->currentPath) | !str_starts_with($this->currentPath, $this->baseDirectory)) {
-            return $this->currentPath = $this->baseDirectory;
+            $this->currentPath = $this->baseDirectory;
         }
 
         return $this->currentPath;
@@ -147,6 +147,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function getPathWithoutBase(): string
     {
+        $path = $this->getPath();
+        if (empty($this->baseDirectory)) {
+            return trim($path, '/');
+        }
+
         return trim(Str::after($this->getPath(), $this->baseDirectory), '/');
     }
 
@@ -337,8 +342,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function breadcrumbs(): array
     {
         $crumbs = array_filter(explode('/', $this->getPathWithoutBase()));
-        $breadcrumbs = [];
 
+        $breadcrumbs = [];
         foreach ($crumbs as $index => $crumb) {
             $pathToCrumb = implode('/', array_slice($crumbs, 0, $index + 1));
             $breadcrumbs[$pathToCrumb] = $crumb;
