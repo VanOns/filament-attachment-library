@@ -38,6 +38,7 @@ use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
+use VanOns\LaravelAttachmentLibrary\Enums\DirectoryStrategies;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -242,7 +243,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $state = $this->createDirectoryForm->getState();
         $path = implode('/', (array_filter([$this->getCurrentPath(), $state['name']])));
 
-        AttachmentManager::createDirectory($path);
+        $flags = [];
+        if ($this->basePath) {
+            $flags[] = DirectoryStrategies::CREATE_PARENT_DIRECTORIES;
+        }
+
+        AttachmentManager::createDirectory($path, ...$flags);
 
         $this->createDirectoryForm->fill();
 
@@ -279,7 +285,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function openPath(?string $path): void
     {
         $this->currentPath = Str::startsWith($path, $this->basePath)
-            ? Str::after($path, $this->basePath)
+            ? trim(Str::after($path, $this->basePath), '/')
             : $path;
 
         $this->dispatch('highlight-attachment', null);

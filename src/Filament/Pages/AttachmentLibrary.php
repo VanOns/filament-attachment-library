@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Filament\Pages;
 
+use Closure;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
@@ -25,16 +26,18 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
-    protected static ?string $basePath = null;
+    protected static null|Closure|string $basePath = null;
 
-    public static function basePath(?string $basePath): void
+    public static function basePath(null|Closure|string $basePath): void
     {
         static::$basePath = $basePath;
     }
 
     public static function getBasePath(): ?string
     {
-        return static::$basePath;
+        return is_callable($basePath = static::$basePath)
+            ? call_user_func($basePath)
+            : $basePath;
     }
 
     public static function navigationGroup(?string $group): void
@@ -65,7 +68,7 @@ class AttachmentLibrary extends Page implements HasForms
     protected function getViewData(): array
     {
         return [
-            'basePath' => static::$basePath,
+            'basePath' => static::getBasePath(),
         ];
     }
 }

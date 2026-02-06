@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
@@ -45,7 +46,7 @@ class FilamentAttachmentLibrary implements Plugin
         return $this;
     }
 
-    public function basePath(string $basePath): static
+    public function basePath(null|Closure|string $basePath): static
     {
         AttachmentLibrary::basePath($basePath);
 
