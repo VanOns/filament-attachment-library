@@ -112,6 +112,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         if (!in_array($this->layout, Layout::cases())) {
             $this->layout = Layout::GRID;
         }
+
+        if (empty($this->currentPath)) {
+            $this->currentPath = null;
+        }
     }
 
     public function deleteDirectoryAction(): Action
