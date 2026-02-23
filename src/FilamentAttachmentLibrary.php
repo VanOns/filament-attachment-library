@@ -32,7 +32,7 @@ class FilamentAttachmentLibrary implements Plugin
         // Register attachment browser modal on every page start
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_END,
-            fn() => view('filament-attachment-library::components.attachment-browser-modal'),
+            fn () => view('filament-attachment-library::components.attachment-browser-modal'),
         );
     }
 
