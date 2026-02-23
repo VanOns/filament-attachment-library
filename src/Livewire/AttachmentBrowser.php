@@ -33,6 +33,7 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Rules\HasValidExtension;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
@@ -165,6 +166,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->rules([
                     new AllowedFilename(),
                     new DestinationExists($this->currentPath),
+                    new HasValidExtension(),
                     ...Config::get('filament-attachment-library.upload_rules', []),
                 ])
                 ->multiple()
@@ -181,6 +183,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     ...(is_array($validationMessages) ? $validationMessages : []),
                     DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
                     AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
+                    HasValidExtension::class => __('filament-attachment-library::validation.invalid_extension'),
                 ]),
         ])->statePath('uploadFormState');
     }
