@@ -50,7 +50,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     use InteractsWithForms;
     use WithPagination;
 
-    #[Url(history: true, keep: true)]
+    #[Url(history: true, keep: true, nullable: true)]
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
@@ -98,6 +98,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render(): View
     {
+        $this->currentPath = $this->normalizePath($this->currentPath);
+
         $attachments = $this->getAttachments();
         $directories = $this->getDirectories();
 
@@ -114,9 +116,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->layout = Layout::GRID;
         }
 
-        if (empty($this->currentPath)) {
-            $this->currentPath = null;
-        }
+        $this->currentPath = $this->normalizePath($this->currentPath);
     }
 
     public function deleteDirectoryAction(): Action
@@ -261,7 +261,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[On('open-path')]
     public function openPath(?string $path): void
     {
-        $this->currentPath = $path;
+        $this->currentPath = $this->normalizePath($path);
         $this->dispatch('highlight-attachment', null);
     }
 
@@ -277,6 +277,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function updatingSearch(): void
     {
         $this->resetPage();
+    }
+
+    /**
+     * Normalize path to ensure empty strings are treated as null (root directory).
+     */
+    public function normalizePath(?string $path): ?string
+    {
+        return blank($path)
+            ? null
+            : $path;
     }
 
     /**
