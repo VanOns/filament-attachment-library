@@ -25,12 +25,6 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
-
-    public static function navigationGroup(?string $group): void
-    {
-        static::$navigationGroup = $group;
-    }
-
     public static function getNavigationIcon(): ?string
     {
         return self::$navigationIcon;
