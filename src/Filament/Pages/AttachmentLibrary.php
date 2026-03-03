@@ -9,7 +9,6 @@ use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
-use UnitEnum;
 
 class AttachmentLibrary extends Page implements HasForms
 {
@@ -22,8 +21,6 @@ class AttachmentLibrary extends Page implements HasForms
     protected string $view = 'filament-attachment-library::pages.attachments';
 
     protected Width | string | null $maxContentWidth = Width::Full;
-
-    protected static string | UnitEnum | null $navigationGroup = null;
 
     public static function getNavigationIcon(): ?string
     {
