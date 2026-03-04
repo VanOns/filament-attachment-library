@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,9 @@ class AttachmentField extends Field
 {
     use CanLimitItemsLength;
 
-    public bool $multiple = false;
+    public bool|Closure $multiple = false;
+
+    public bool|Closure $reorderable = true;
 
     public ?string $collection;
 
@@ -44,19 +47,22 @@ class AttachmentField extends Field
     }
 
     /**
-     * Return all selected attachments modals from state.
+     * Return all selected attachments from state, preserving the state order.
      */
-    public function getAttachments(): Collection|Attachment
+    public function getAttachments(): Collection
     {
-        $attachments = Attachment::find($this->getState());
+        $ids = collect($this->getState())->filter()->values();
 
-        if ($attachments instanceof Attachment) {
-            $attachments = [$attachments];
+        if ($ids->isEmpty()) {
+            return collect();
         }
 
-        return collect($attachments)->map(
-            fn ($model) => new AttachmentViewModel($model)
-        );
+        $attachmentMap = Attachment::find($ids->toArray())->keyBy('id');
+
+        return $ids
+            ->map(fn ($id) => $attachmentMap->get($id))
+            ->filter()
+            ->map(fn ($model) => new AttachmentViewModel($model));
     }
 
     /**
@@ -66,7 +72,7 @@ class AttachmentField extends Field
     {
         $state = collect(parent::getState())->unique();
 
-        if ($this->multiple) {
+        if ($this->getMultiple()) {
             return $state;
         }
 
@@ -118,7 +124,11 @@ class AttachmentField extends Field
                 };
 
                 $record->{$this->relationship}()->sync(
-                    $state->mapWithKeys(fn ($attachmentId) => [$attachmentId => ['collection' => $this->collection]])
+                    $state->mapWithKeys(fn ($attachmentId, $index) => [
+                        $attachmentId => $this->getReorderable()
+                            ? ['collection' => $this->collection, 'order' => $index]
+                            : ['collection' => $this->collection],
+                    ])
                 );
             }
         );
@@ -129,9 +139,9 @@ class AttachmentField extends Field
     /**
      * Allow the selection of multiple attachments.
      */
-    public function multiple(): static
+    public function multiple(bool|Closure $multiple = true): static
     {
-        $this->multiple = true;
+        $this->multiple = $multiple;
 
         return $this;
     }
@@ -139,6 +149,23 @@ class AttachmentField extends Field
     public function getMultiple(): bool
     {
         return $this->evaluate($this->multiple);
+    }
+
+    /**
+     * Allow drag-and-drop reordering of selected attachments.
+     * When used with a relationship, requires the `order` column on the pivot table.
+     * Publish and run the package migration: vendor:publish --tag=filament-attachment-library-migrations
+     */
+    public function reorderable(bool|Closure $reorderable = true): static
+    {
+        $this->reorderable = $reorderable;
+
+        return $this;
+    }
+
+    public function getReorderable(): bool
+    {
+        return $this->getMultiple() && $this->evaluate($this->reorderable);
     }
 
     public function mime(string $mimeType): static

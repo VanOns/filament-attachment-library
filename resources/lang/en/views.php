@@ -88,6 +88,7 @@ return [
     ],
     'field' => [
         'pick' => 'Choose files',
+        'drag_to_reorder' => 'Drag to reorder',
     ],
     'title' => 'File manager',
     'group' => 'Files',
