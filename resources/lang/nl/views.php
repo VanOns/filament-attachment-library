@@ -88,6 +88,7 @@ return [
     ],
     'field' => [
         'pick' => 'Kies bestand(en)',
+        'drag_to_reorder' => 'Sleep om te herordenen',
     ],
     'title' => 'Bestandsbeheer',
     'group' => 'Bestanden',

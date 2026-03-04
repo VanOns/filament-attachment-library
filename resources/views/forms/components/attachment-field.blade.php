@@ -10,9 +10,14 @@
                 ? state.filter(id => id !== $event.detail.id)
                 : null
         "
+        x-on:attachment-reordered="state = $event.detail.ids"
         x-on:attachments-selected-{{ md5($getStatePath()) }}.window="state = $event.detail.selected"
     >
-        <x-filament-attachment-library::items.field :attachments="$getAttachments()" :statePath="$getStatePath()" />
+        <x-filament-attachment-library::items.field
+            :attachments="$getAttachments()"
+            :statePath="$getStatePath()"
+            :reorderable="$getReorderable()"
+        />
 
         <x-filament::button
             x-on:click="$dispatch('open-attachment-modal', {

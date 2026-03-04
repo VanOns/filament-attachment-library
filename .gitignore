@@ -307,3 +307,4 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/node,phpstorm+all,composer,macos,visualstudiocode,phpunit
 
 .php-cs-fixer.cache
+CLAUDE.md
