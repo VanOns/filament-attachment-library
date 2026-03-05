@@ -107,6 +107,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function render(): View
     {
+        $this->currentPath = $this->normalizePath($this->currentPath);
+
         $attachments = $this->getAttachments();
         $directories = $this->getDirectories();
 
@@ -313,6 +315,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function normalizePath(?string $path): ?string
     {
+        $path = trim($path, '/');
+        dump($path);
         return blank($path)
             ? null
             : $path;
