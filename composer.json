@@ -3,7 +3,6 @@
     "description": "A Filament library for attaching files to Eloquent models.",
     "homepage": "https://github.com/VanOns/filament-attachment-library",
     "license": "MIT",
-    "version": "2.0.0",
     "keywords": [
         "laravel",
         "filament",
