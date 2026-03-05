@@ -10,7 +10,6 @@ use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
-use UnitEnum;
 
 class AttachmentLibrary extends Page implements HasForms
 {
@@ -24,8 +23,6 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected Width | string | null $maxContentWidth = Width::Full;
 
-    protected static string | UnitEnum | null $navigationGroup = null;
-
     protected static null|Closure|string $basePath = null;
 
     public static function basePath(null|Closure|string $basePath): void
@@ -38,11 +35,6 @@ class AttachmentLibrary extends Page implements HasForms
         return is_callable($basePath = static::$basePath)
             ? call_user_func($basePath)
             : $basePath;
-    }
-
-    public static function navigationGroup(?string $group): void
-    {
-        static::$navigationGroup = $group;
     }
 
     public static function getNavigationIcon(): ?string

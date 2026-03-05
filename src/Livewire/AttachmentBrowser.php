@@ -35,6 +35,7 @@ use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Rules\HasValidExtension;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
@@ -54,7 +55,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $basePath = null;
 
-    #[Url(history: true, keep: true)]
+    #[Url(history: true, keep: true, nullable: true)]
     public ?string $currentPath = null;
 
     #[Url(history: true, keep: true)]
@@ -186,6 +187,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                 ->rules([
                     new AllowedFilename(),
                     new DestinationExists($this->getCurrentPath()),
+                    new HasValidExtension(),
                     ...Config::get('filament-attachment-library.upload_rules', []),
                 ])
                 ->multiple()
@@ -202,6 +204,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
                     ...(is_array($validationMessages) ? $validationMessages : []),
                     DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
                     AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
+                    HasValidExtension::class => __('filament-attachment-library::validation.invalid_extension'),
                 ]),
         ])->statePath('uploadFormState');
     }
@@ -303,6 +306,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function updatingSearch(): void
     {
         $this->resetPage();
+    }
+
+    /**
+     * Normalize path to ensure empty strings are treated as null (root directory).
+     */
+    public function normalizePath(?string $path): ?string
+    {
+        return blank($path)
+            ? null
+            : $path;
     }
 
     /**
