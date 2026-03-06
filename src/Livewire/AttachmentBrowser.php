@@ -316,7 +316,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function normalizePath(?string $path): ?string
     {
         $path = trim($path, '/');
-        dump($path);
         return blank($path)
             ? null
             : $path;
