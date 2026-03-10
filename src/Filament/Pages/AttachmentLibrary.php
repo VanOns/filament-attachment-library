@@ -23,7 +23,14 @@ class AttachmentLibrary extends Page implements HasForms
 
     protected Width | string | null $maxContentWidth = Width::Full;
 
+    protected static string|null|\UnitEnum $navigationGroup = null;
+
     protected static null|Closure|string $basePath = null;
+
+    public static function navigationGroup(string|\UnitEnum|null $group): void
+    {
+        static::$navigationGroup = $group;
+    }
 
     public static function basePath(null|Closure|string $basePath): void
     {
