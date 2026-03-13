@@ -123,7 +123,15 @@ class AttachmentField extends Field
                     default => collect([$state])->filter()
                 };
 
-                $record->{$this->relationship}()->sync(
+                $relation = $record->{$this->relationship}();
+
+                // Detach only pivot rows that belong to this collection and are no longer selected.
+                $relation->wherePivot('collection', $this->collection)
+                    ->whereNotIn($relation->getRelatedKeyName(), $state->values()->all())
+                    ->detach();
+
+                // Attach/update only the attachments in the current state.
+                $relation->syncWithoutDetaching(
                     $state->mapWithKeys(fn ($attachmentId, $index) => [
                         $attachmentId => $this->getReorderable()
                             ? ['collection' => $this->collection, 'order' => $index]
