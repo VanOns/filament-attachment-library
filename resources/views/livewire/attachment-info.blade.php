@@ -53,10 +53,20 @@
                         <p>{{ $attachment->size }} MB</p>
 
                         <p class="flex-1 text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.url') }}</p>
-                        <p class="cursor-pointer break-all" x-clipboard="{{ $attachment->url }}">
+                        <button
+                            class="cursor-pointer break-all text-left"
+                            x-data="{ url: @js($attachment->url) }"
+                            x-on:click="navigator.clipboard.writeText(url).then(
+                                () => new FilamentNotification()
+                                    .title(window.filamentData?.fal?.labels?.clipboardSuccess)
+                                    .success()
+                                    .send()
+                                )
+                            "
+                        >
                             <span>{{ $attachment->url }}</span>
                             <x-filament::icon icon="heroicon-o-document-duplicate" class="w-6 h-6 inline" />
-                        </p>
+                        </button>
                     </div>
 
                     {{-- Date fields --}}
