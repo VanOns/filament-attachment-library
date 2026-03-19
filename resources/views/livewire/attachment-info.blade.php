@@ -52,20 +52,19 @@
                         <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.size') }}</p>
                         <p>{{ $attachment->size }} MB</p>
 
-                        <p class="flex-1 text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.url') }}</p>
+                        <p class="flex-1 text-gray-500 dark:text-gray-400 col-span-2">{{ __('filament-attachment-library::views.info.details.url') }}</p>
                         <button
-                            class="cursor-pointer break-all text-left"
+                            class="col-span-2 flex items-center gap-2 w-full text-left text-sm rounded-lg px-3 py-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition group"
                             x-data="{ url: @js($attachment->url) }"
                             x-on:click="navigator.clipboard.writeText(url).then(
                                 () => new FilamentNotification()
                                     .title(window.filamentData?.fal?.labels?.clipboardSuccess)
                                     .success()
                                     .send()
-                                )
-                            "
+                            )"
                         >
-                            <span>{{ $attachment->url }}</span>
-                            <x-filament::icon icon="heroicon-o-document-duplicate" class="w-6 h-6 inline" />
+                            <span class="flex-1 break-all text-gray-700 dark:text-gray-300">{{ $attachment->url }}</span>
+                            <x-filament::icon icon="heroicon-o-document-duplicate" class="w-4 h-4 shrink-0 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition" />
                         </button>
                     </div>
 
