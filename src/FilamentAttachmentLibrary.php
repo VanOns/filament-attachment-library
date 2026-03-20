@@ -5,12 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Livewire\Livewire;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 
 class FilamentAttachmentLibrary implements Plugin
 {
@@ -25,18 +20,6 @@ class FilamentAttachmentLibrary implements Plugin
         $panel->pages([
             AttachmentLibrary::class,
         ]);
-
-        // Register all livewire components
-        Livewire::component('attachment-browser', AttachmentBrowser::class);
-        Livewire::component('attachment-info', AttachmentInfo::class);
-
-        // Register attachment browser modal on every page start
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_END,
-            fn () => view('filament-attachment-library::components.attachment-browser-modal', [
-                'basePath' => AttachmentLibrary::getBasePath(),
-            ]),
-        );
     }
 
     public function navigationGroup(?string $navigationGroup): static

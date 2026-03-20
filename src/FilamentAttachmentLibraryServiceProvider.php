@@ -3,12 +3,33 @@
 namespace VanOns\FilamentAttachmentLibrary;
 
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 {
+    public function registeringPackage(): void
+    {
+        // Register all livewire components
+        Livewire::component('attachment-browser', AttachmentBrowser::class);
+        Livewire::component('attachment-info', AttachmentInfo::class);
+
+        // Register attachment browser modal on every page start
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::PAGE_END,
+            fn () => view('filament-attachment-library::components.attachment-browser-modal', [
+                'basePath' => AttachmentLibrary::getBasePath(),
+            ]),
+        );
+    }
+
     public function configurePackage(Package $package): void
     {
         $package
