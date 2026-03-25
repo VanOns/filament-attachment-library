@@ -5,7 +5,7 @@
         {{ __('filament-attachment-library::views.title') }}
     </x-slot>
 
-    <livewire:attachment-browser :basePath="$basePath" />
+    <livewire:attachment-browser :basePath="$basePath" lazy />
 
     <x-slot name="footer">
         <div class="flex gap-4">
