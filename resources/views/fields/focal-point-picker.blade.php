@@ -16,8 +16,9 @@
             }
         }
     }">
-        <div class="relative">
+        <div class="relative w-fit">
             <img
+                class="block max-w-full"
                 draggable="false"
                 x-on:click="setPosition($event)"
                 x-on:dragover="$event.preventDefault()"
