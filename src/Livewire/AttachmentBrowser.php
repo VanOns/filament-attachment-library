@@ -55,16 +55,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $basePath = null;
 
-    #[Url(history: true, keep: true, nullable: true)]
+    #[Url(history: true, nullable: true)]
     public ?string $currentPath = null;
 
-    #[Url(history: true, keep: true)]
+    #[Url(history: true)]
     public string $sortBy = 'name_asc';
 
-    #[Url(history: true, keep: true)]
+    #[Url(history: true)]
     public int $pageSize = 25;
 
-    #[Url(history: true, keep: true)]
+    #[Url(history: true)]
     public Layout $layout = Layout::GRID;
 
     public string $search = '';
