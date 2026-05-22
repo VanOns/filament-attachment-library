@@ -32,12 +32,12 @@ body:
       label: Environment
       description: What environment are you running in? (OS, PHP version, etc.)
       placeholder: |
-        - OS: 
-        - PHP version: 
+        - OS:
+        - PHP version:
         - ...
       value: |
-        - OS: 
-        - PHP version: 
+        - OS:
+        - PHP version:
         - ...
       render: markdown
     validations:
