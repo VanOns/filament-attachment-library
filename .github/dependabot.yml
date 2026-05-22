@@ -17,14 +17,6 @@ updates:
     labels:
       - dependencies
 
-  - package-ecosystem: github-actions
-    target-branch: 'releases/v1'
-    directory: /
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
-
   - package-ecosystem: composer
     target-branch: 'releases/v1'
     directory: /
@@ -32,3 +24,6 @@ updates:
       interval: weekly
     labels:
       - dependencies
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
