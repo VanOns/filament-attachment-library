@@ -2,7 +2,6 @@
     "name": "van-ons/filament-attachment-library",
     "description": "A Filament library for attaching files to Eloquent models.",
     "homepage": "https://github.com/VanOns/filament-attachment-library",
-    "license": "MIT",
     "keywords": [
         "laravel",
         "filament",
@@ -10,6 +9,8 @@
         "eloquent",
         "models"
     ],
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Dangelo Brusorio",
@@ -26,7 +27,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^4.0 | ^5.0",
+        "filament/filament": "^4.0|^5.0",
         "van-ons/laravel-attachment-library": "^1.2.4"
     },
     "require-dev": {
@@ -51,9 +52,9 @@
             ]
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

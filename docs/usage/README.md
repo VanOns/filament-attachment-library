@@ -1,6 +1,4 @@
-# Basic usage
-
-## Contents
+# Usage
 
 1. [Architecture](architecture.md)
 2. [Handling attachments](handling-attachments.md)
