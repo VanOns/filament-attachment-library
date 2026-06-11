@@ -30,6 +30,7 @@ return [
                     'bits' => 'Bits',
                     'channels' => 'Channels',
                 ],
+                'more' => 'More details',
                 'date' => [
                     'header' => 'Dates',
                     'created_by' => 'Uploaded by',
@@ -48,12 +49,12 @@ return [
     'actions' => [
         'attachment' => [
             'view' => 'View details',
-            'open' => 'Open file',
-            'edit' => 'Modify file',
-            'delete' => 'Remove file',
-            'upload' => 'Upload file',
-            'move' => 'Move file',
-            'replace' => 'Replace file',
+            'open' => 'Open',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+            'upload' => 'Upload',
+            'move' => 'Move',
+            'replace' => 'Replace',
         ],
         'directory' => [
             'rename' => 'Rename directory',
@@ -79,7 +80,7 @@ return [
             'mime' => 'File type',
         ],
         'mime_type' => [
-            'all' => 'All',
+            'all' => 'All types',
             'image' => 'Image',
             'video' => 'Video',
             'audio' => 'Audio',
