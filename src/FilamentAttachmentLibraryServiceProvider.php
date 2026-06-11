@@ -11,6 +11,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentFieldUploader;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
@@ -19,6 +20,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
     {
         // Register all livewire components
         Livewire::component('attachment-browser', AttachmentBrowser::class);
+        Livewire::component('attachment-field-uploader', AttachmentFieldUploader::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
 
         // Register attachment browser modal on every page start
