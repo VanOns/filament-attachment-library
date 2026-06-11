@@ -21,6 +21,8 @@ class AttachmentField extends Field
 
     public bool|Closure $reorderable = true;
 
+    public bool|Closure $compact = false;
+
     public ?string $collection;
 
     public ?string $relationship = null;
@@ -174,6 +176,21 @@ class AttachmentField extends Field
     public function getReorderable(): bool
     {
         return $this->getMultiple() && $this->evaluate($this->reorderable);
+    }
+
+    /**
+     * Render selected attachments as compact horizontal rows instead of grid cards.
+     */
+    public function compact(bool|Closure $compact = true): static
+    {
+        $this->compact = $compact;
+
+        return $this;
+    }
+
+    public function getCompact(): bool
+    {
+        return $this->evaluate($this->compact);
     }
 
     public function mime(string $mimeType): static

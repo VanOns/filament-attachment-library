@@ -1,4 +1,4 @@
-@props(['attachments', 'statePath', 'reorderable' => false])
+@props(['attachments', 'statePath', 'reorderable' => false, 'compact' => false])
 
 @php
     use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -40,34 +40,62 @@
                 }
             }"
             @endif
-            class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
+            @class([
+                'grid grid-cols-1 gap-2' => $compact,
+                'grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4' => !$compact,
+            ])
         >
             @foreach($attachments as $attachment)
-                <div data-attachment-id="{{ $attachment->id }}">
-                    <x-filament-attachment-library::attachment.grid-item :attachment="$attachment">
-                        <x-slot name="actions">
-                            <div @class([
-                                'flex-1 flex gap-1 justify-between' => $reorderable
-                            ])>
-                                @if($reorderable)
+                <div data-attachment-id="{{ $attachment->id }}" class="min-w-0">
+                    @if($compact)
+                        <x-filament-attachment-library::attachment.list-item :attachment="$attachment" :selected="false">
+                            <x-slot name="actions">
+                                <div class="flex gap-1 items-center">
+                                    @if($reorderable)
+                                        <button
+                                            data-drag-handle
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 cursor-grab"
+                                            type="button"
+                                            aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
+                                        >
+                                            <x-filament::icon icon="heroicon-o-bars-2" class="size-5"/>
+                                        </button>
+                                    @endif
                                     <button
-                                        data-drag-handle
-                                        class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition cursor-grab"
-                                        type="button"
-                                        aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10"
+                                            x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
                                     >
-                                        <x-filament::icon icon="heroicon-o-bars-2" class="size-6"/>
+                                        <x-filament::icon icon="heroicon-o-x-mark" class="size-5"/>
                                     </button>
-                                @endif
-                                <button
-                                        class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition"
-                                        x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
-                                >
-                                    <x-filament::icon icon="heroicon-o-x-mark" class="size-6"/>
-                                </button>
-                            </div>
-                        </x-slot>
-                    </x-filament-attachment-library::attachment.grid-item>
+                                </div>
+                            </x-slot>
+                        </x-filament-attachment-library::attachment.list-item>
+                    @else
+                        <x-filament-attachment-library::attachment.grid-item :attachment="$attachment">
+                            <x-slot name="actions">
+                                <div @class([
+                                    'flex-1 flex gap-1 justify-between' => $reorderable
+                                ])>
+                                    @if($reorderable)
+                                        <button
+                                            data-drag-handle
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition cursor-grab"
+                                            type="button"
+                                            aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
+                                        >
+                                            <x-filament::icon icon="heroicon-o-bars-2" class="size-6"/>
+                                        </button>
+                                    @endif
+                                    <button
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition"
+                                            x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
+                                    >
+                                        <x-filament::icon icon="heroicon-o-x-mark" class="size-6"/>
+                                    </button>
+                                </div>
+                            </x-slot>
+                        </x-filament-attachment-library::attachment.grid-item>
+                    @endif
                 </div>
             @endforeach
         </div>
