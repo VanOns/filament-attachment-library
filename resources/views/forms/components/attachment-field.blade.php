@@ -17,6 +17,7 @@
             :attachments="$getAttachments()"
             :statePath="$getStatePath()"
             :reorderable="$getReorderable()"
+            :compact="$getCompact()"
         />
 
         <x-filament::button
