@@ -6,8 +6,6 @@
 
 <div @class([$class])>
     <x-filament::section :$contained>
-        {{-- Scrolling happens inside the card so its shadow/ring is never clipped by the scrollport --}}
-        <div class="md:max-h-[calc(100vh-12rem)] md:overflow-y-auto md:-m-2 md:p-2">
         @if(!$attachment)
             <div>
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -167,7 +165,6 @@
                 </div>
             </div>
         @endif
-        </div>
     </x-filament::section>
     <x-filament-actions::modals/>
 </div>
