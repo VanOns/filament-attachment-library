@@ -1,9 +1,23 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    x-data="{ state: $wire.entangle('{{ $getStatePath() }}').live }"
 >
     <div
+        {{-- The field wrapper component does not forward attributes, so the Alpine scope lives here. --}}
+        x-data="{
+            state: $wire.entangle('{{ $getStatePath() }}').live,
+            openBrowser(highlight = null) {
+                this.$dispatch('open-attachment-modal', {
+                    mime: {{ json_encode($getMime()) }},
+                    selected: this.state,
+                    multiple: {{ json_encode($getMultiple()) }},
+                    statePath: {{ json_encode($getStatePath()) }},
+                    disableMimeFilter: {{ json_encode($getMime() !== null) }},
+                    highlight: highlight,
+                });
+                this.$dispatch('open-modal', { id: 'attachment-modal' });
+            },
+        }"
         {{-- We add events here because blade components cause issues with dynamic attribute names --}}
         x-on:attachment-removed="
             state = {{ json_encode($getMultiple()) }}
@@ -18,16 +32,11 @@
             :statePath="$getStatePath()"
             :reorderable="$getReorderable()"
             :compact="$getCompact()"
+            :disabled="$isDisabled()"
         />
 
         <x-filament::button
-            x-on:click="$dispatch('open-attachment-modal', {
-                mime: {{ json_encode($getMime()) }},
-                selected: state,
-                multiple: {{ json_encode($getMultiple()) }},
-                statePath: {{ json_encode($getStatePath()) }},
-                disableMimeFilter: {{ json_encode($getMime() !== null) }},
-            }); $dispatch('open-modal', { id: 'attachment-modal' })"
+            x-on:click="openBrowser()"
             icon="heroicon-o-document"
             :disabled="$isDisabled()"
             @class([

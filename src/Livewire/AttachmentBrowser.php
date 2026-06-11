@@ -416,7 +416,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     #[On('open-attachment-modal')]
-    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null): void
+    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null): void
     {
         $this->statePath = $statePath;
         $this->multiple = $multiple;
@@ -425,6 +425,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         if ($selected) {
             $this->selected = is_array($selected) ? $selected : [$selected];
+        }
+
+        // Dispatched server-side so it also works on the lazy first load, where the
+        // payload arrives via the modal wrapper's replay.
+        if ($highlight) {
+            $this->dispatch('highlight-attachment', id: $highlight);
         }
     }
 }

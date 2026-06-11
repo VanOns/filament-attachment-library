@@ -1,4 +1,4 @@
-@props(['attachments', 'statePath', 'reorderable' => false, 'compact' => false])
+@props(['attachments', 'statePath', 'reorderable' => false, 'compact' => false, 'disabled' => false])
 
 @php
     use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -48,7 +48,12 @@
             @foreach($attachments as $attachment)
                 <div data-attachment-id="{{ $attachment->id }}" class="min-w-0">
                     @if($compact)
-                        <x-filament-attachment-library::attachment.list-item :attachment="$attachment" :selected="false">
+                        <x-filament-attachment-library::attachment.list-item
+                            :attachment="$attachment"
+                            :selected="false"
+                            x-on:click="{{ $disabled ? '' : 'openBrowser(' . json_encode($attachment->id) . ')' }}"
+                            class="{{ $disabled ? '' : 'cursor-pointer' }}"
+                        >
                             <x-slot name="actions">
                                 <div class="flex gap-1 items-center">
                                     @if($reorderable)
@@ -71,7 +76,11 @@
                             </x-slot>
                         </x-filament-attachment-library::attachment.list-item>
                     @else
-                        <x-filament-attachment-library::attachment.grid-item :attachment="$attachment">
+                        <x-filament-attachment-library::attachment.grid-item
+                            :attachment="$attachment"
+                            x-on:click="{{ $disabled ? '' : 'openBrowser(' . json_encode($attachment->id) . ')' }}"
+                            class="{{ $disabled ? '' : 'cursor-pointer' }}"
+                        >
                             <x-slot name="actions">
                                 <div @class([
                                     'flex-1 flex gap-1 justify-between' => $reorderable
