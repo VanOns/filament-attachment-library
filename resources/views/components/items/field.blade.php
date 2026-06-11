@@ -15,30 +15,7 @@
     @else
         <div
             @if($reorderable)
-            x-data="{
-                init() {
-                    if (!window.Sortable) { return; }
-
-                    // Stop the SortableJS 'end' event from bubbling to Filament components that also sort (e.g. repeaters)
-                    this.$el.addEventListener('end', (e) => {
-                        e.stopPropagation();
-                    }, true);
-
-                    new window.Sortable(this.$el, {
-                        animation: 150,
-                        draggable: '[data-attachment-id]',
-                        handle: '[data-drag-handle]',
-                        ghostClass: 'opacity-50',
-                        group: 'attachments-{{ $statePath }}',
-                        onEnd: (event) => {
-                            const ids = Array.from(
-                                this.$el.querySelectorAll('[data-attachment-id]')
-                            ).map(el => Number(el.dataset.attachmentId));
-                            $dispatch('attachment-reordered', { ids });
-                        }
-                    });
-                }
-            }"
+            x-data="attachmentSortable({ group: @js('attachments-' . $statePath) })"
             @endif
             @class([
                 'grid grid-cols-1 gap-2' => $compact,

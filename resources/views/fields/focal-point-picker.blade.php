@@ -2,20 +2,7 @@
         :component="$getFieldWrapperView()"
         :field="$field"
 >
-    <div x-data="{
-        state: $wire.$entangle('{{ $getStatePath() }}'),
-        setPosition(event) {
-            const x = event.offsetX
-            const y = event.offsetY
-            const width = event.target.width
-            const height = event.target.height
-
-            this.state = {
-                x: Math.round((x / width) * 100),
-                y: Math.round((y / height) * 100),
-            }
-        }
-    }">
+    <div x-data="attachmentFocalPicker({ state: $wire.$entangle('{{ $getStatePath() }}') })">
         <div class="relative w-fit">
             <img
                 class="block max-w-full"

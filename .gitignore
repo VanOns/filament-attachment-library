@@ -308,3 +308,9 @@ fabric.properties
 
 .php-cs-fixer.cache
 CLAUDE.md
+
+# Package JS build artifact must be committed (the generic "dist" rule above would ignore it)
+!resources/dist
+
+# Package JS build artifact must be committed (the generic "dist" rule above would ignore it)
+!resources/dist

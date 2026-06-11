@@ -5,14 +5,7 @@
         {{ __('filament-attachment-library::views.title') }}
     </x-slot>
 
-    <div
-        {{-- The browser is lazy-loaded, so it misses events dispatched before its first load (e.g. the
-             open-attachment-modal payload carrying the statePath when the modal is first opened).
-             Buffer the latest payload and replay it once the component announces itself. --}}
-        x-data="{ pendingOpen: null }"
-        x-on:open-attachment-modal.window="pendingOpen = $event.detail"
-        x-on:attachment-browser-loaded.window="if (pendingOpen) { $dispatch('open-attachment-modal', pendingOpen); pendingOpen = null }"
-    >
+    <div x-data="attachmentModalBuffer">
         <livewire:attachment-browser :basePath="$basePath" lazy />
     </div>
 

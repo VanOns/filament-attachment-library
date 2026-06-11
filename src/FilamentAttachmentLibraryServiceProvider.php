@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -58,6 +59,10 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('filament-attachment-library', __DIR__ . '/../resources/dist/filament-attachment-library.js'),
+        ], package: 'van-ons/filament-attachment-library');
+
         FilamentAsset::registerScriptData([
             'fal' => [
                 'labels' => [

@@ -4,59 +4,23 @@
 
 <div
     class="relative"
-    x-data="{
-        dragDepth: 0,
-        uploading: false,
-        progress: 0,
-        isFileDrag(event) {
-            return Array.from(event.dataTransfer?.types ?? []).includes('Files')
-        },
+    x-data="attachmentDropZone({
         maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
-        handleDrop(event) {
-            this.dragDepth = 0
-            if ($wire.disabled || this.uploading) return
-            {{-- Directories arrive as 0-byte entries without a mime type; skip them --}}
-            let files = Array.from(event.dataTransfer.files ?? [])
-                .filter((file) => file.size > 0 || file.type !== '')
-            {{-- Pre-check Livewire's temp-upload size limit so oversized files fail per-file, by name --}}
-            if (this.maxBytes) {
-                files.filter((file) => file.size > this.maxBytes).forEach((file) => {
-                    new FilamentNotification()
-                        .title(file.name)
-                        .body(@js(__('filament-attachment-library::notifications.attachment.upload_failed_too_large', ['max' => \VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::label()])))
-                        .danger()
-                        .send()
-                })
-                files = files.filter((file) => file.size <= this.maxBytes)
-            }
-            if (! files.length) return
-            this.uploading = true
-            this.progress = 0
-            const reset = () => { this.uploading = false; this.progress = 0 }
-            this.$nextTick(() => this.updateOverlayHeight())
-            {{-- The whole batch fails together and the callback has no payload; name the batch's files --}}
-            const fail = () => {
-                reset()
-                new FilamentNotification()
-                    .title(@js(__('filament-attachment-library::notifications.attachment.upload_failed')))
-                    .body(files.map((file) => file.name).join(', '))
-                    .danger()
-                    .send()
-            }
-            $wire.uploadMultiple('droppedFiles', files, reset, fail, (e) => { this.progress = e.detail.progress })
-        },
-        {{-- The sticky box is sized to the visible window: from its current top down to the viewport bottom --}}
-        updateOverlayHeight() {
-            const box = this.$refs.dropBox
-            if (! box || (this.dragDepth === 0 && ! this.uploading)) return
-            box.style.height = Math.max(160, window.innerHeight - box.getBoundingClientRect().top - 24) + 'px'
-        },
-    }"
-    x-on:dragenter.prevent="if (isFileDrag($event) && ! $wire.disabled) { dragDepth++; $nextTick(() => updateOverlayHeight()) }"
+        mime: null,
+        wireDisabled: true,
+        nestedUploader: false,
+        measureOverlay: true,
+        messages: @js([
+            'tooLarge' => __('filament-attachment-library::notifications.attachment.upload_failed_too_large', ['max' => \VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::label()]),
+            'wrongType' => __('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'),
+            'failed' => __('filament-attachment-library::notifications.attachment.upload_failed'),
+        ]),
+    })"
+    x-on:dragenter.prevent="onDragEnter($event)"
     x-on:scroll.window="updateOverlayHeight()"
     x-on:resize.window="updateOverlayHeight()"
     x-on:dragover.prevent
-    x-on:dragleave.prevent="if (dragDepth > 0) dragDepth--"
+    x-on:dragleave.prevent="onDragLeave()"
     x-on:drop.prevent="handleDrop($event)"
 >
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
