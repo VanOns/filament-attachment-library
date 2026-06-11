@@ -5,8 +5,8 @@
 <div>
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
         <x-filament-attachment-library::breadcrumbs/>
-        <x-filament-attachment-library::header-actions :$layout/>
-        <x-filament-attachment-library::header-actions-mobile :$layout/>
+        <x-filament-attachment-library::header-actions :$layout :$disableMimeFilter/>
+        <x-filament-attachment-library::header-actions-mobile :$layout :$disableMimeFilter/>
     </div>
 
     <div wire:key="attachment-search-heading">
@@ -56,7 +56,7 @@
             @endif
         </div>
 
-        <x-filament-attachment-library::sidebar :$selected :$currentPath :$disableMimeFilter class="order-1 md:order-2"/>
+        <x-filament-attachment-library::sidebar :$selected :$currentPath class="order-1 md:order-2"/>
 
         <div class="mt-4 w-full order-3">
             <x-filament::pagination :paginator="$attachments" extreme-links/>

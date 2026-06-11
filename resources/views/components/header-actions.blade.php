@@ -7,6 +7,8 @@
     use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 @endphp
 
+@props(['layout', 'disableMimeFilter' => false])
+
 <div class="hidden flex-col gap-4 justify-end mb-2 flex-wrap mt-2 md:flex md:mt-0 min-w-full md:min-w-[initial] md:flex-row">
 
     {{-- Search --}}
@@ -30,6 +32,19 @@
 
         </x-filament::input.select>
     </x-filament::input.wrapper>
+
+    {{-- Mime-type filter --}}
+    @if(!$disableMimeFilter)
+        <x-filament::input.wrapper>
+            <x-filament::input.select wire:model.live="mime">
+
+                @foreach(AttachmentBrowser::FILTERABLE_FILE_TYPES as $type => $mime)
+                    <option value="{{$mime}}">{{__("filament-attachment-library::views.sidebar.mime_type.{$type}")}}</option>
+                @endforeach
+
+            </x-filament::input.select>
+        </x-filament::input.wrapper>
+    @endif
 
     {{-- Page size --}}
     <x-filament::input.wrapper>

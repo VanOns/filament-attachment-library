@@ -4,26 +4,19 @@ namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\BaseFileUpload;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
+use VanOns\FilamentAttachmentLibrary\Actions\CreateDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
@@ -31,22 +24,15 @@ use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Actions\UploadAttachmentsAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
-use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
-use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
-use VanOns\FilamentAttachmentLibrary\Rules\HasValidExtension;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
-use VanOns\LaravelAttachmentLibrary\Enums\DirectoryStrategies;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-/**
- * @property \Filament\Schemas\Schema $uploadAttachmentForm
- * @property \Filament\Schemas\Schema $createDirectoryForm
- */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
     use InteractsWithActionsUsingAlpineJS;
@@ -80,10 +66,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public bool $disabled = false;
 
     public ?string $statePath = null;
-
-    public ?array $createDirectoryFormState = [];
-
-    public ?array $uploadFormState = ['attachment' => []];
 
     protected $listeners = [
         'refresh-attachments' => '$refresh',
@@ -130,6 +112,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $this->dispatch('attachment-browser-loaded');
     }
 
+    public function uploadAttachmentsAction(): Action
+    {
+        return UploadAttachmentsAction::make('uploadAttachments')
+            ->setCurrentPath($this->getCurrentPath());
+    }
+
+    public function createDirectoryAction(): Action
+    {
+        return CreateDirectoryAction::make('createDirectory')
+            ->setCurrentPath($this->getCurrentPath())
+            ->setHasBasePath((bool) $this->basePath);
+    }
+
     public function deleteDirectoryAction(): Action
     {
         return DeleteDirectoryAction::make('renameDirectory');
@@ -173,100 +168,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return implode('/', array_filter([$this->basePath, $this->currentPath])) ?: null;
     }
 
-    protected function getForms(): array
-    {
-        return [
-            'uploadAttachmentForm',
-            'createDirectoryForm',
-        ];
-    }
-
-    /**
-     * Form schema for UploadAttachmentForm.
-     */
-    public function uploadAttachmentForm(Schema $schema): Schema
-    {
-        $validationMessages = Lang::get('validation');
-
-        return $schema->components([
-            FileUpload::make('attachment')
-                ->rules([
-                    new AllowedFilename(),
-                    new DestinationExists($this->getCurrentPath()),
-                    new HasValidExtension(),
-                    ...Config::get('filament-attachment-library.upload_rules', []),
-                ])
-                ->multiple()
-                ->required()
-                ->label(__('filament-attachment-library::forms.upload_attachment.name'))
-                ->fetchFileInformation()
-                ->saveUploadedFileUsing(
-                    function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-                        $attachment = AttachmentManager::upload($file, $this->getCurrentPath());
-                        $this->selectAttachment($attachment->id);
-                        $component->removeUploadedFile($file);
-                    }
-                )->validationMessages([
-                    ...(is_array($validationMessages) ? $validationMessages : []),
-                    DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
-                    AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
-                    HasValidExtension::class => __('filament-attachment-library::validation.invalid_extension'),
-                ]),
-        ])->statePath('uploadFormState');
-    }
-
-    /**
-     * Form schema for CreateDirectoryForm.
-     */
-    public function createDirectoryForm(Schema $schema): Schema
-    {
-        return $schema->components([
-            TextInput::make('name')
-                ->rules([
-                    new DestinationExists($this->getCurrentPath()),
-                    new AllowedFilename(),
-                ])->required()
-                ->autocomplete(false)
-                ->label(__('filament-attachment-library::forms.create_directory.name')),
-        ])->statePath('createDirectoryFormState');
-    }
-
-    /**
-     * Submit handler for UploadAttachmentForm.
-     */
-    public function saveUploadAttachmentForm(): void
-    {
-        $this->uploadAttachmentForm->getState();
-
-        Notification::make()
-            ->title(__('filament-attachment-library::notifications.attachment.created'))
-            ->success()
-            ->send();
-    }
-
-    /**
-     * Submit handler for CreateDirectoryForm.
-     */
-    public function saveCreateDirectoryForm(): void
-    {
-        $state = $this->createDirectoryForm->getState();
-        $path = implode('/', (array_filter([$this->getCurrentPath(), $state['name']])));
-
-        $flags = [];
-        if ($this->basePath) {
-            $flags[] = DirectoryStrategies::CREATE_PARENT_DIRECTORIES;
-        }
-
-        AttachmentManager::createDirectory($path, ...$flags);
-
-        $this->createDirectoryForm->fill();
-
-        Notification::make()
-            ->title(__('filament-attachment-library::notifications.directory.created'))
-            ->success()
-            ->send();
-    }
-
     public function selectAttachment(int|string $id): void
     {
         if ($this->disabled) {
@@ -297,6 +198,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ? trim(Str::after($path, $this->basePath), '/')
             : $path;
 
+        $this->resetPage();
+
         $this->dispatch('highlight-attachment', null);
     }
 
@@ -310,6 +213,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      * Reset page on search query update.
      */
     public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    /**
+     * Reset page on mime filter update.
+     */
+    public function updatingMime(): void
     {
         $this->resetPage();
     }
