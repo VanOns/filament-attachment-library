@@ -16,8 +16,7 @@
 >
     <button
         type="button"
-        class="text-left flex-1 min-w-0 flex flex-row items-center justify-between"
-        {{ $attributes }}
+        {{ $attributes->class(['text-left flex-1 min-w-0 flex flex-row items-center justify-between']) }}
     >
         <div class="flex items-center gap-x-3 min-w-0">
             <div class="size-12 flex-shrink-0 rounded-lg flex justify-center items-center overflow-hidden ring-1 ring-gray-950/10 dark:ring-white/10 bg-gray-100 dark:bg-gray-800">
