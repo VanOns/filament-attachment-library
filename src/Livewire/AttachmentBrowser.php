@@ -393,8 +393,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
 
     #[On('close-modal')]
-    public function closeModal(bool $save = false): void
+    public function closeModal(?string $id = null, bool $save = false): void
     {
+        // Filament dispatches close-modal for every modal on the page (e.g. the edit/move/replace
+        // action modals); only react to the attachment browser modal itself.
+        if ($id !== 'attachment-modal') {
+            return;
+        }
+
         if ($save) {
             $selected = match ($this->multiple) {
                 true => $this->selected,
