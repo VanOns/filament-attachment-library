@@ -5,7 +5,11 @@
         {{ __('filament-attachment-library::views.title') }}
     </x-slot>
 
-    <div x-data="attachmentModalBuffer">
+    <div
+        {{-- No topbar to clear inside the modal: shrink the info panel's sticky offset --}}
+        class="[--fal-info-top:1rem]"
+        x-data="attachmentModalBuffer"
+    >
         <livewire:attachment-browser :basePath="$basePath" lazy />
     </div>
 
