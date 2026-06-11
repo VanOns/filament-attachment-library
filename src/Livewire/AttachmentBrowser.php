@@ -124,6 +124,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         if (!in_array($this->layout, Layout::cases())) {
             $this->layout = Layout::GRID;
         }
+
+        // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
+        // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
+        $this->dispatch('attachment-browser-loaded');
     }
 
     public function deleteDirectoryAction(): Action
