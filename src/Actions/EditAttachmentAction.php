@@ -42,7 +42,7 @@ class EditAttachmentAction extends Action
                             FocalPointPicker::make('focal_point')
                                 ->hiddenLabel()
                                 ->image($attachment->url),
-                        ]),
+                        ])->visible($isImage),
                     Section::make()->schema([
                         TextInput::make('name')
                             ->label(__('filament-attachment-library::forms.edit_attachment.name'))
@@ -50,8 +50,7 @@ class EditAttachmentAction extends Action
                                 new DestinationExists($this->currentPath, $arguments['attachment_id']),
                                 new AllowedFilename(),
                             ], fn (?string $state) => $state !== $attachment->name)
-                            ->maxLength(255)
-                            ->visible($isImage),
+                            ->maxLength(255),
                         TextInput::make('title')
                             ->label(__('filament-attachment-library::forms.edit_attachment.title'))
                             ->maxLength(255),
