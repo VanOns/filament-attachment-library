@@ -45,7 +45,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public ?string $currentPath = null;
 
     #[Url(history: true)]
-    public string $sortBy = 'name_asc';
+    public string $sortBy = 'created_at_desc';
 
     #[Url(history: true)]
     public int $pageSize = 25;
