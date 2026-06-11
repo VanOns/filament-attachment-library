@@ -24,10 +24,11 @@
     @endif
 
     {{-- Attachment info section --}}
+    {{-- Sticky offset is a variable: the default clears the page topbar, the modal wrapper overrides it --}}
     <livewire:attachment-info
         :$selected
         :$currentPath
-        class="hidden md:block md:sticky md:top-24"
+        class="hidden md:block md:sticky md:top-[var(--fal-info-top,6rem)]"
     />
     <x-filament-attachment-library::attachment-info-modal :$selected :$currentPath/>
 </div>
