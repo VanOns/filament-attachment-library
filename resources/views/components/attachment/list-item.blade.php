@@ -12,6 +12,11 @@
     subtitle="{{$attachment->extension}} — {{ $attachment->size }} MB"
     {{ $attributes }}
 >
+    @isset($handle)
+        <x-slot name="handle">
+            {{ $handle }}
+        </x-slot>
+    @endisset
     @if($attachment->isImage())
         <img
             alt="{{ $attachment->alt }}"

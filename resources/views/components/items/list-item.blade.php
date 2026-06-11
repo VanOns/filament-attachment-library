@@ -14,6 +14,10 @@
         'ring-2 ring-primary-500' => $selected
     ])
 >
+    @isset($handle)
+        {{ $handle }}
+    @endisset
+
     <button
         type="button"
         {{ $attributes->class(['text-left flex-1 min-w-0 flex flex-row items-center justify-between']) }}

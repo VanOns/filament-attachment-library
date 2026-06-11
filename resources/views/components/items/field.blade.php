@@ -54,25 +54,26 @@
                             x-on:click="{{ $disabled ? '' : 'openBrowser(' . json_encode($attachment->id) . ')' }}"
                             class="{{ $disabled ? '' : 'cursor-pointer' }}"
                         >
-                            <x-slot name="actions">
-                                <div class="flex gap-1 items-center">
-                                    @if($reorderable)
-                                        <button
-                                            data-drag-handle
-                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 cursor-grab"
-                                            type="button"
-                                            aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
-                                        >
-                                            <x-filament::icon icon="heroicon-o-bars-2" class="size-5"/>
-                                        </button>
-                                    @endif
+                            <x-slot name="handle">
+                                @if($reorderable)
                                     <button
-                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10"
-                                            x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
+                                        data-drag-handle
+                                        type="button"
+                                        class="cursor-grab me-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition"
+                                        aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
                                     >
-                                        <x-filament::icon icon="heroicon-o-x-mark" class="size-5"/>
+                                        <x-filament::icon icon="heroicon-o-bars-2" class="size-4"/>
                                     </button>
-                                </div>
+                                @endif
+                            </x-slot>
+
+                            <x-slot name="actions">
+                                <button
+                                        class="p-1 text-gray-400 hover:text-danger-600 dark:text-gray-500 dark:hover:text-danger-400 transition"
+                                        x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
+                                >
+                                    <x-filament::icon icon="heroicon-o-x-mark" class="size-5"/>
+                                </button>
                             </x-slot>
                         </x-filament-attachment-library::attachment.list-item>
                     @else
