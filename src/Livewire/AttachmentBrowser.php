@@ -25,6 +25,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\UploadAttachmentsAction;
+use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
@@ -35,6 +36,7 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
+    use HandlesDroppedFiles;
     use InteractsWithActionsUsingAlpineJS;
     use InteractsWithForms;
     use WithPagination;
@@ -166,6 +168,21 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     protected function getCurrentPath(): ?string
     {
         return implode('/', array_filter([$this->basePath, $this->currentPath])) ?: null;
+    }
+
+    protected function droppedFilesPath(): ?string
+    {
+        return $this->getCurrentPath();
+    }
+
+    protected function handleUploadedDrop(Attachment $attachment): void
+    {
+        $this->selectAttachment($attachment->id);
+    }
+
+    protected function dropsDisabled(): bool
+    {
+        return $this->disabled;
     }
 
     public function selectAttachment(int|string $id): void

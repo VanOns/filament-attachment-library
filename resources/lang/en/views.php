@@ -2,6 +2,10 @@
 
 return [
     'browser' => [
+        'drop' => [
+            'prompt' => 'Drop files here to upload',
+            'uploading' => 'Uploading…',
+        ],
         'empty' => [
             'title' => 'No files or folders found',
             'description' => 'Upload a new file or navigate to a different path.',

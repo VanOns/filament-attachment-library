@@ -2,6 +2,10 @@
 
 return [
     'browser' => [
+        'drop' => [
+            'prompt' => 'Sleep bestanden hierheen om te uploaden',
+            'uploading' => 'Uploaden…',
+        ],
         'empty' => [
             'title' => 'Geen bestanden of mappen gevonden',
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
