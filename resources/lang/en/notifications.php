@@ -14,6 +14,7 @@ return [
         'upload_failed' => 'The file could not be uploaded.',
         'upload_failed_too_large' => 'The file exceeds the upload limit of :max.',
         'upload_failed_wrong_type' => 'This file type is not allowed here.',
+        'upload_failed_too_many' => 'No more than :max files can be selected.',
         'updated' => 'The file was successfully updated.',
         'deleted' => 'The file was successfully removed.',
         'moved' => 'The file was successfully moved.',

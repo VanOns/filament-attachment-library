@@ -13,11 +13,13 @@
             disabled: @js($isDisabled()),
             nestedUploader: true,
             maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
+            maxItems: @js($getMaxItems()),
             selectedEvent: @js('attachments-selected-' . md5($getStatePath())),
             uploadedEvent: @js('attachments-uploaded-' . md5($getStatePath())),
             messages: @js([
                 'tooLarge' => __('filament-attachment-library::notifications.attachment.upload_failed_too_large', ['max' => \VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::label()]),
                 'wrongType' => __('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'),
+                'tooMany' => __('filament-attachment-library::notifications.attachment.upload_failed_too_many', ['max' => $getMultiple() ? ($getMaxItems() ?? '∞') : 1]),
                 'failed' => __('filament-attachment-library::notifications.attachment.upload_failed'),
             ]),
         })"
@@ -30,6 +32,7 @@
     >
         <livewire:attachment-field-uploader
             :statePath="$getStatePath()"
+            :mime="$getMime()"
             :wire:key="'attachment-uploader-' . $getStatePath()"
         />
 

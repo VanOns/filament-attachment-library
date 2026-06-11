@@ -79,6 +79,9 @@ const dropZone = (config) => ({
             files = files.filter((file) => file.size <= config.maxBytes)
         }
 
+        // Components may impose a file count limit (e.g. the field's maxItems).
+        files = this.limitFiles ? this.limitFiles(files) : files
+
         if (! files.length) return
 
         const target = this.uploadTarget()
@@ -166,10 +169,33 @@ document.addEventListener('alpine:init', () => {
             this.state = event.detail.ids
         },
 
+        stateIds() {
+            return Array.isArray(this.state) ? this.state : (this.state ? [this.state] : [])
+        },
+
+        // Cap a drop to the remaining slots: 1 for single fields, maxItems minus current selection otherwise.
+        limitFiles(files) {
+            const remaining = config.multiple
+                ? (config.maxItems ? Math.max(0, config.maxItems - this.stateIds().length) : files.length)
+                : 1
+
+            if (files.length > remaining) {
+                this.notifyFile(config.messages.tooMany, files.slice(remaining).map((file) => file.name).join(', '))
+            }
+
+            return files.slice(0, remaining)
+        },
+
         mergeUploaded(ids) {
-            this.state = config.multiple
-                ? [...new Set([...(Array.isArray(this.state) ? this.state : (this.state ? [this.state] : [])), ...ids])]
-                : ids[ids.length - 1]
+            if (! config.multiple) {
+                this.state = ids[ids.length - 1]
+
+                return
+            }
+
+            const merged = [...new Set([...this.stateIds(), ...ids])]
+
+            this.state = config.maxItems ? merged.slice(0, config.maxItems) : merged
         },
     }))
 

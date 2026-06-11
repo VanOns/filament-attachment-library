@@ -2,7 +2,9 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
@@ -20,9 +22,28 @@ class AttachmentFieldUploader extends Component
 
     public string $statePath = '';
 
+    public ?string $mime = null;
+
     protected function droppedFilesPath(): ?string
     {
         return AttachmentLibrary::getBasePath();
+    }
+
+    /**
+     * Enforce the field's mime constraint on the server-detected mime type — the
+     * client-side check works off the browser-supplied type and is bypassable.
+     */
+    protected function droppedFileRules(): array
+    {
+        if (!$this->mime) {
+            return [];
+        }
+
+        return [function (string $attribute, mixed $value, Closure $fail) {
+            if (!Str::is($this->mime, (string) $value->getMimeType())) {
+                $fail(__('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'));
+            }
+        }];
     }
 
     protected function finishDroppedUploads(array $attachmentIds): void

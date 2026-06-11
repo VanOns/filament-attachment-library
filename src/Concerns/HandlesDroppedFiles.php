@@ -44,6 +44,14 @@ trait HandlesDroppedFiles
     }
 
     /**
+     * Extra validation rules applied to each dropped file.
+     */
+    protected function droppedFileRules(): array
+    {
+        return [];
+    }
+
+    /**
      * Process files dropped onto the component. Runs inside Livewire's _finishUpload request,
      * so the component re-renders with the new attachments in the same round-trip.
      */
@@ -70,6 +78,7 @@ trait HandlesDroppedFiles
                     new AllowedFilename(),
                     new DestinationExists($this->droppedFilesPath()),
                     new HasValidExtension(),
+                    ...$this->droppedFileRules(),
                     ...Config::get('filament-attachment-library.upload_rules', []),
                 ]]);
 
