@@ -16,7 +16,12 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 trait HandlesDroppedFiles
 {
-    /** @var array<int, TemporaryUploadedFile> */
+    /**
+     * Client-populated: entries are TemporaryUploadedFile after Livewire hydration,
+     * but a tampered payload can hold anything — hence the instanceof guard below.
+     *
+     * @var array<int, mixed>
+     */
     public array $droppedFiles = [];
 
     /**
