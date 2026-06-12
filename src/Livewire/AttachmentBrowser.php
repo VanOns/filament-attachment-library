@@ -54,7 +54,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $currentPath = null;
 
-    /** Display preferences persist per user session; shared by the page and modal instances. */
+    /**
+     * Display preferences persist per user session; shared by the page and modal instances.
+     */
     #[Session]
     public string $sortBy = 'created_at_desc';
 
