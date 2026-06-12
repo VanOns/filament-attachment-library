@@ -23,6 +23,9 @@
     x-on:dragleave.prevent="onDragLeave()"
     x-on:drop.prevent="handleDrop($event)"
 >
+    {{-- Target of the upload buttons: opens the OS file explorer, files go through the drop pipeline --}}
+    <input type="file" multiple class="hidden" x-ref="fileInput" x-on:change="onFilesChosen($event)">
+
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
         <x-filament-attachment-library::breadcrumbs/>
         <x-filament-attachment-library::header-actions :$layout :$disableMimeFilter/>

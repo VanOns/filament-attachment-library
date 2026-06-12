@@ -60,7 +60,7 @@ use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
 AttachmentField::make('gallery')
     ->relationship()              // defaults to the `attachments` relation
     ->collection('product_gallery') // optional; defaults to the field name
-    ->multiple()                  // also enables compact row display
+    ->multiple()
     ->reorderable()               // drag-and-drop ordering, writes `order` to pivot
     ->maxFiles(10)
     ->image();
@@ -73,8 +73,8 @@ Public methods on `AttachmentField`:
 |---|---|
 | `relationship(string = 'attachments')` | Store via a `MorphToMany` relationship instead of a column. Sets `dehydrated(false)`. |
 | `collection(?string)` | Pivot `collection` value when using `relationship()`. Defaults to the field name. |
-| `multiple(bool\|Closure = true)` | Allow multi-select. Also enables `compact()` — call `compact(false)` *afterwards* to opt out. |
-| `compact(bool\|Closure = true)` | Render selected items as compact horizontal rows instead of grid cards. On by default for `multiple()` fields. |
+| `multiple(bool\|Closure = true)` | Allow multi-select. |
+| `compact(bool\|Closure = true)` | Render selected items as compact horizontal rows instead of grid cards. |
 | `reorderable(bool\|Closure = true)` | Drag-reorder selected items. Only effective with `multiple()`. Requires the `order` column on `attachables` (shipped with the upstream migrations). |
 | `mime(string)` | Filter the picker to a MIME pattern (`'image/png'`, `'image/*'`, …). |
 | `image()` / `video()` / `audio()` / `text()` | Shortcut for `mime('image/*')` etc. |

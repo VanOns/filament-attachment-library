@@ -13,7 +13,7 @@
 
     {{-- Upload & create directory --}}
     <div class="flex gap-x-2 w-full">
-        <x-filament::button icon="heroicon-o-arrow-up-tray" class="flex-1" wire:click="mountAction('uploadAttachments')">
+        <x-filament::button icon="heroicon-o-arrow-up-tray" class="flex-1" x-on:click="openFileDialog()">
             {{ __('filament-attachment-library::views.actions.attachment.upload') }}
         </x-filament::button>
 

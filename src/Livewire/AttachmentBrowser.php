@@ -25,7 +25,6 @@ use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
-use VanOns\FilamentAttachmentLibrary\Actions\UploadAttachmentsAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
@@ -158,12 +157,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
         // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
         $this->dispatch('attachment-browser-loaded');
-    }
-
-    public function uploadAttachmentsAction(): Action
-    {
-        return UploadAttachmentsAction::make('uploadAttachments')
-            ->setCurrentPath($this->getCurrentPath());
     }
 
     public function createDirectoryAction(): Action

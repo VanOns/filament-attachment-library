@@ -8,7 +8,7 @@
 
     {{-- Upload & create directory (mobile has its own buttons in the header) --}}
     <div class="hidden md:flex flex-col gap-2 mb-4">
-        <x-filament::button icon="heroicon-o-arrow-up-tray" class="w-full" wire:click="mountAction('uploadAttachments')">
+        <x-filament::button icon="heroicon-o-arrow-up-tray" class="w-full" x-on:click="openFileDialog()">
             {{ __('filament-attachment-library::views.actions.attachment.upload') }}
         </x-filament::button>
 

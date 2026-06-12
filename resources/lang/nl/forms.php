@@ -18,7 +18,6 @@ return [
     ],
     'upload_attachment' => [
         'name' => 'Bestand',
-        'heading' => 'Uploaden',
     ],
     'replace_attachment' => [
         'helper_text' => 'Vervang het bestand door een nieuwe bestand, koppelingen blijven behouden.',

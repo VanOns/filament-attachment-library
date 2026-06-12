@@ -24,7 +24,13 @@ const dropZone = (config) => ({
     },
 
     dropDisabled() {
-        return config.wireDisabled ? this.$wire.disabled : (config.disabled ?? false)
+        if (config.wireDisabled ? this.$wire.disabled : (config.disabled ?? false)) return true
+
+        // Block drops while a modal this zone does not belong to is open (e.g. the
+        // create-directory modal above the library) — Filament marks open modals
+        // with the fi-modal-open class.
+        return Array.from(document.querySelectorAll('.fi-modal-open'))
+            .some((modal) => ! modal.contains(this.$root))
     },
 
     matchesMime(file) {
@@ -60,11 +66,28 @@ const dropZone = (config) => ({
     handleDrop(event) {
         this.dragDepth = 0
 
-        if (this.dropDisabled() || this.uploading) return
-
         // Directories arrive as 0-byte entries without a mime type; skip them.
-        let files = Array.from(event.dataTransfer.files ?? [])
+        const files = Array.from(event.dataTransfer.files ?? [])
             .filter((file) => file.size > 0 || file.type !== '')
+
+        this.uploadFiles(files)
+    },
+
+    openFileDialog() {
+        this.$refs.fileInput?.click()
+    },
+
+    onFilesChosen(event) {
+        this.uploadFiles(Array.from(event.target.files ?? []))
+
+        // Clear so picking the same file again still fires a change event.
+        event.target.value = ''
+    },
+
+    // Shared pipeline for dropped and explorer-picked files: constraint
+    // filtering, then upload into the component's droppedFiles property.
+    uploadFiles(files) {
+        if (this.dropDisabled() || this.uploading) return
 
         files.filter((file) => ! this.matchesMime(file)).forEach((file) => {
             this.notifyFile(file.name, config.messages.wrongType)
