@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 use Livewire\Component;
 use Livewire\WithPagination;
 use VanOns\FilamentAttachmentLibrary\Actions\CreateDirectoryAction;
@@ -53,10 +54,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $currentPath = null;
 
+    /** Display preferences persist per user session; shared by the page and modal instances. */
+    #[Session]
     public string $sortBy = 'created_at_desc';
 
+    #[Session]
     public int $pageSize = 25;
 
+    #[Session]
     public Layout $layout = Layout::GRID;
 
     public string $search = '';
@@ -383,9 +388,10 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         $this->dispatch('highlight-attachment', null);
 
-        // Reset everything except mount-time config — reset() falls back to class
-        // defaults, which would re-enable URL tracking and drop the tenant base path.
-        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl']));
+        // Reset everything except mount-time config (reset() falls back to class defaults,
+        // which would re-enable URL tracking and drop the tenant base path) and the
+        // session-persisted display preferences (resetting would clobber the stored values).
+        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'sortBy', 'pageSize', 'layout']));
     }
 
     #[On('open-attachment-modal')]
