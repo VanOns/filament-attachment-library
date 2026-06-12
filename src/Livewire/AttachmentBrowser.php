@@ -290,6 +290,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
+     * Reset page on page size update — the current page may not exist at the new size.
+     */
+    public function updatingPageSize(): void
+    {
+        $this->resetPage();
+    }
+
+    /**
      * Normalize path to ensure empty strings are treated as null (root directory).
      */
     public function normalizePath(?string $path): ?string
