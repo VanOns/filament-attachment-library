@@ -28,6 +28,8 @@ public function panel(Panel $panel): Panel
 
 The plugin registers the `AttachmentLibrary` page automatically. The attachment-browser modal is registered via a `PanelsRenderHook::PAGE_END` hook in the service provider — do not add it manually.
 
+The package ships a bundled JS asset registered via `FilamentAsset`. After updating the package, run `php artisan filament:assets` to republish it (the `filament:upgrade` composer hook in a default Filament app does this automatically). When developing the package itself, `npm run build` regenerates `resources/dist`.
+
 The default disk is the `public` disk; override with `ATTACHMENTS_DISK=…` in `.env`. Use a disk dedicated to attachments to avoid file conflicts.
 
 ### Tailwind / theme
@@ -82,6 +84,15 @@ Public methods on `AttachmentField`:
 The field's state is the attachment ID (or array of IDs when `multiple()`), not file paths. `getState()` returns the first ID for single-select fields and a Collection for multi.
 
 Built-in field behavior (do not re-implement): clicking a selected item opens the attachment browser with that item highlighted, and compact rows ship their own remove/reorder controls.
+
+### Drag & drop uploads
+
+Built in, zero config — do not add dropzones or `FileUpload` for this:
+
+- Dropping files on an `AttachmentField` uploads them to the library base path and selects them on the field.
+- Dropping files on the Attachment Library page or browser modal uploads them to the directory currently open and selects them.
+- Constraints are enforced on drop: the field's `mime()` filter (client-side on the browser-reported type AND server-side on the detected mime), count limits (a single field accepts one file; `maxFiles()` caps multi fields), and Livewire's temporary upload size limit. Rejected files surface as per-file danger notifications.
+- `config('filament-attachment-library.upload_rules')` also applies to dropped files.
 
 ### `FocalPointPicker` — field
 
