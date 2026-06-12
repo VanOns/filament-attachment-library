@@ -86,7 +86,7 @@ public static function form(Form $form): Form
         AttachmentField::make('gallery')
             ->relationship()           // uses the `attachments` morph relation
             ->collection('gallery')    // pivot tag; defaults to field name
-            ->multiple()
+            ->multiple()               // also enables compact row display
             ->reorderable()
             ->image()
             ->maxFiles(20),
@@ -100,7 +100,8 @@ public static function form(Form $form): Form
 |---|---|---|
 | `relationship(string = 'attachments')` | column mode | Switches to relationship mode and disables dehydration. |
 | `collection(?string)` | field name (when `relationship()` is called) | Pivot `collection` value. Set this if you want the field name and collection to differ. |
-| `multiple(bool\|Closure = true)` | `false` | Multi-select. |
+| `multiple(bool\|Closure = true)` | `false` | Multi-select. Also enables `compact()` — call `compact(false)` *afterwards* to opt out. |
+| `compact(bool\|Closure = true)` | `false` (`true` once `multiple()` is called) | Render selected items as compact horizontal rows instead of grid cards. |
 | `reorderable(bool\|Closure = true)` | `true` (only effective with `multiple()`) | Drag-and-drop ordering. Persists to the pivot's `order` column. |
 | `mime(string)` | none | MIME filter for the picker. Wildcards allowed (`'image/*'`). |
 | `image()` / `video()` / `audio()` / `text()` | — | Shortcut for `mime('image/*')` etc. |
@@ -114,6 +115,7 @@ Single attachment, lives only on this model? ─ column
 Multiple attachments?                        ─ relationship + multiple()
 Need to reuse the same attachment across models? ─ relationship (column would duplicate IDs)
 Need ordering? ─ relationship + multiple() + reorderable()
+Prefer grid cards over compact rows for a multi field? ─ multiple() + compact(false)
 ```
 
 ## Step 4 — Display attachments
@@ -161,6 +163,7 @@ State shape: `['x' => 0–100, 'y' => 0–100]` (percent). Persist to a `json` c
 - ❌ Using Filament's `FileUpload` to store attachments — bypasses the library, no `attachments` rows are created.
 - ❌ Calling `relationship()` without the `HasAttachments` trait on the model — the field can't load existing state.
 - ❌ Using `reorderable()` without `multiple()` — has no effect; reordering only applies when there are multiple selected items.
+- ❌ Calling `compact(false)` *before* `multiple()` — `multiple()` sets compact again; the opt-out must come after it.
 - ❌ Setting the `collection` to a value that overlaps with another field's collection on the same model — they will share the same pivot rows.
 - ❌ Hand-constructing `/storage/...` or Glide URLs — go through `<x-laravel-attachment-library-image>` or `$attachment->url`.
 - ❌ Assuming `getState()` returns IDs in the original order without `reorderable()` — without the `order` pivot column being maintained, ordering is not stable.

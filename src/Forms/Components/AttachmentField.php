@@ -148,10 +148,12 @@ class AttachmentField extends Field
 
     /**
      * Allow the selection of multiple attachments.
+     * Enables `compact()` by default; call `compact(false)` afterwards to opt out.
      */
     public function multiple(bool|Closure $multiple = true): static
     {
         $this->multiple = $multiple;
+        $this->compact = $multiple;
 
         return $this;
     }
