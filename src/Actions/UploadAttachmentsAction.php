@@ -30,7 +30,9 @@ class UploadAttachmentsAction extends Action
 
         $validationMessages = Lang::get('validation');
 
-        $this->schema([
+        // Lazy: setUp() runs inside make(), before setCurrentPath() — the rules must not
+        // capture $this->currentPath until the schema is actually resolved.
+        $this->schema(fn () => [
             FileUpload::make('attachments')
                 ->rules([
                     new AllowedFilename(),

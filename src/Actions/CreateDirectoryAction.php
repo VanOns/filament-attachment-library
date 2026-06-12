@@ -34,7 +34,9 @@ class CreateDirectoryAction extends Action
 
         $this->modalHeading(__('filament-attachment-library::forms.create_directory.heading'));
 
-        $this->schema([
+        // Lazy: setUp() runs inside make(), before setCurrentPath() — the rules must not
+        // capture $this->currentPath until the schema is actually resolved.
+        $this->schema(fn () => [
             TextInput::make('name')
                 ->rules([
                     new DestinationExists($this->currentPath),
