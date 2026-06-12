@@ -57,6 +57,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public string $search = '';
 
+    #[Url(history: true, nullable: true)]
     public ?string $mime = null;
 
     public bool $disableMimeFilter = false;
@@ -79,7 +80,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'updated_at',
     ];
 
-    public const PAGE_SIZES = [5, 10, 25, 50];
+    public const PAGE_SIZES = [5, 10, 25, 50, 100];
 
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
