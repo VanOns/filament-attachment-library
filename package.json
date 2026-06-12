@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "scripts": {
+        "build": "esbuild resources/js/plugin.js --bundle --minify --outfile=resources/dist/filament-attachment-library.js"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25"
+    }
+}

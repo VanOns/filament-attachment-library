@@ -170,6 +170,19 @@ Please see the [documentation](docs/README.md#contents) for detailed information
 
 Please see [Contributing](CONTRIBUTING.md) for more information about how you can contribute.
 
+### JavaScript assets
+
+The package's Alpine components live in `resources/js/plugin.js` and are bundled into the committed
+`resources/dist/filament-attachment-library.js` artifact. After changing any JS, rebuild and commit the artifact:
+
+```bash
+npm install
+npm run build
+```
+
+Consuming applications republish the bundle automatically on composer updates through Filament's standard
+`filament:upgrade` composer hook; apps without that hook must run `php artisan filament:assets` manually.
+
 ## Changelog
 
 Please see [Changelog](CHANGELOG.md) for more information about what has changed recently.

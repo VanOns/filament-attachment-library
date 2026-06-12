@@ -1,4 +1,4 @@
-@props(['attachments', 'statePath', 'reorderable' => false])
+@props(['attachments', 'statePath', 'reorderable' => false, 'compact' => false, 'disabled' => false])
 
 @php
     use VanOns\LaravelAttachmentLibrary\Facades\Glide;
@@ -15,59 +15,74 @@
     @else
         <div
             @if($reorderable)
-            x-data="{
-                init() {
-                    if (!window.Sortable) { return; }
-
-                    // Stop the SortableJS 'end' event from bubbling to Filament components that also sort (e.g. repeaters)
-                    this.$el.addEventListener('end', (e) => {
-                        e.stopPropagation();
-                    }, true);
-
-                    new window.Sortable(this.$el, {
-                        animation: 150,
-                        draggable: '[data-attachment-id]',
-                        handle: '[data-drag-handle]',
-                        ghostClass: 'opacity-50',
-                        group: 'attachments-{{ $statePath }}',
-                        onEnd: (event) => {
-                            const ids = Array.from(
-                                this.$el.querySelectorAll('[data-attachment-id]')
-                            ).map(el => Number(el.dataset.attachmentId));
-                            $dispatch('attachment-reordered', { ids });
-                        }
-                    });
-                }
-            }"
+            x-data="attachmentSortable({ group: @js('attachments-' . $statePath) })"
             @endif
-            class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4"
+            @class([
+                'grid grid-cols-1 gap-2' => $compact,
+                'grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4' => !$compact,
+            ])
         >
             @foreach($attachments as $attachment)
-                <div data-attachment-id="{{ $attachment->id }}">
-                    <x-filament-attachment-library::attachment.grid-item :attachment="$attachment">
-                        <x-slot name="actions">
-                            <div @class([
-                                'flex-1 flex gap-1 justify-between' => $reorderable
-                            ])>
+                <div data-attachment-id="{{ $attachment->id }}" class="min-w-0">
+                    @if($compact)
+                        <x-filament-attachment-library::attachment.list-item
+                            :attachment="$attachment"
+                            :selected="false"
+                            x-on:click="{{ $disabled ? '' : 'openBrowser(' . json_encode($attachment->id) . ')' }}"
+                            class="{{ $disabled ? '' : 'cursor-pointer' }}"
+                        >
+                            <x-slot name="handle">
                                 @if($reorderable)
                                     <button
                                         data-drag-handle
-                                        class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition cursor-grab"
                                         type="button"
+                                        class="cursor-grab me-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition"
                                         aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
                                     >
-                                        <x-filament::icon icon="heroicon-o-bars-2" class="size-6"/>
+                                        <x-filament::icon icon="heroicon-o-bars-2" class="size-4"/>
                                     </button>
                                 @endif
+                            </x-slot>
+
+                            <x-slot name="actions">
                                 <button
-                                        class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition"
+                                        class="p-1 text-gray-400 hover:text-danger-600 dark:text-gray-500 dark:hover:text-danger-400 transition"
                                         x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
                                 >
-                                    <x-filament::icon icon="heroicon-o-x-mark" class="size-6"/>
+                                    <x-filament::icon icon="heroicon-o-x-mark" class="size-5"/>
                                 </button>
-                            </div>
-                        </x-slot>
-                    </x-filament-attachment-library::attachment.grid-item>
+                            </x-slot>
+                        </x-filament-attachment-library::attachment.list-item>
+                    @else
+                        <x-filament-attachment-library::attachment.grid-item
+                            :attachment="$attachment"
+                            x-on:click="{{ $disabled ? '' : 'openBrowser(' . json_encode($attachment->id) . ')' }}"
+                            class="{{ $disabled ? '' : 'cursor-pointer' }}"
+                        >
+                            <x-slot name="actions">
+                                <div @class([
+                                    'flex-1 flex gap-1 justify-between' => $reorderable
+                                ])>
+                                    @if($reorderable)
+                                        <button
+                                            data-drag-handle
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition cursor-grab"
+                                            type="button"
+                                            aria-label="{{ __('filament-attachment-library::views.field.drag_to_reorder') }}"
+                                        >
+                                            <x-filament::icon icon="heroicon-o-bars-2" class="size-6"/>
+                                        </button>
+                                    @endif
+                                    <button
+                                            class="p-1 bg-white dark:bg-black shadow-xs rounded-md border border-black/10 dark:border-white/10 opacity-0 group-hover:opacity-100 transition"
+                                            x-on:click="$dispatch('attachment-removed', { id: {{ json_encode($attachment->id) }} })" type="button"
+                                    >
+                                        <x-filament::icon icon="heroicon-o-x-mark" class="size-6"/>
+                                    </button>
+                                </div>
+                            </x-slot>
+                        </x-filament-attachment-library::attachment.grid-item>
+                    @endif
                 </div>
             @endforeach
         </div>

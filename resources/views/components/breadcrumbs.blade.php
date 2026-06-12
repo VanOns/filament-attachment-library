@@ -4,7 +4,9 @@
         <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
 
             {{-- Home breadcrumb --}}
-            <li class="fi-breadcrumbs-item flex gap-x-2">
+            <li class="fi-breadcrumbs-item flex gap-x-2 items-center">
+                <x-filament::icon icon="heroicon-o-folder" class="size-4 text-gray-400 dark:text-gray-500"/>
+
                 <a
                     href="#"
                     wire:click="openPath(null)"
@@ -28,14 +30,6 @@
                     </a>
                 </li>
             @endforeach
-
-            <li class="fi-breadcrumbs-item flex gap-x-2" x-data>
-                <x-filament::icon-button
-                    icon="heroicon-o-folder-plus"
-                    tooltip="{{ __('filament-attachment-library::views.actions.directory.create') }}"
-                    x-on:click="$dispatch('open-section', { id: 'create-directory-form' })"
-                />
-            </li>
         </ol>
     </nav>
 </div>

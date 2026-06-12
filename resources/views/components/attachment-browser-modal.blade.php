@@ -6,14 +6,13 @@
     </x-slot>
 
     <div
-        {{-- The browser is lazy-loaded, so it misses events dispatched before its first load (e.g. the
-             open-attachment-modal payload carrying the statePath when the modal is first opened).
-             Buffer the latest payload and replay it once the component announces itself. --}}
-        x-data="{ pendingOpen: null }"
-        x-on:open-attachment-modal.window="pendingOpen = $event.detail"
-        x-on:attachment-browser-loaded.window="if (pendingOpen) { $dispatch('open-attachment-modal', pendingOpen); pendingOpen = null }"
+        {{-- No topbar to clear inside the modal: shrink the info panel's sticky offset --}}
+        class="[--fal-info-top:1rem]"
+        x-data="attachmentModalBuffer"
     >
-        <livewire:attachment-browser :basePath="$basePath" lazy />
+        {{-- trackUrl off: the page browser owns the query string; a second tracking
+             instance pollutes the URL and hydrates itself on every history pop --}}
+        <livewire:attachment-browser :basePath="$basePath" :trackUrl="false" lazy />
     </div>
 
     <x-slot name="footer">

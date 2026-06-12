@@ -11,6 +11,10 @@ return [
     ],
     'attachment' => [
         'created' => 'De bestanden zijn succesvol geüpload.',
+        'upload_failed' => 'Het bestand kon niet worden geüpload.',
+        'upload_failed_too_large' => 'Het bestand is groter dan de uploadlimiet van :max.',
+        'upload_failed_wrong_type' => 'Dit bestandstype is hier niet toegestaan.',
+        'upload_failed_too_many' => 'Er kunnen maximaal :max bestand(en) geselecteerd worden.',
         'updated' => 'Het bestand is succesvol bijgewerkt.',
         'deleted' => 'Het bestand is succesvol verwijderd.',
         'moved' => 'Het bestand is succesvol verplaatst.',

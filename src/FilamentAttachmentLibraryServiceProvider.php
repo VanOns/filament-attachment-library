@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -11,6 +12,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentFieldUploader;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
@@ -19,6 +21,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
     {
         // Register all livewire components
         Livewire::component('attachment-browser', AttachmentBrowser::class);
+        Livewire::component('attachment-field-uploader', AttachmentFieldUploader::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
 
         // Register attachment browser modal on every page start
@@ -56,6 +59,10 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('filament-attachment-library', __DIR__ . '/../resources/dist/filament-attachment-library.js'),
+        ], package: 'van-ons/filament-attachment-library');
+
         FilamentAsset::registerScriptData([
             'fal' => [
                 'labels' => [

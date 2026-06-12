@@ -4,26 +4,20 @@ namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\BaseFileUpload;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
+use Livewire\Attributes\Session;
 use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithPagination;
+use VanOns\FilamentAttachmentLibrary\Actions\CreateDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\DeleteDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
@@ -31,40 +25,44 @@ use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
-use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
-use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
-use VanOns\FilamentAttachmentLibrary\Rules\HasValidExtension;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
-use VanOns\LaravelAttachmentLibrary\Enums\DirectoryStrategies;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
-/**
- * @property \Filament\Schemas\Schema $uploadAttachmentForm
- * @property \Filament\Schemas\Schema $createDirectoryForm
- */
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
+    use HandlesDroppedFiles;
     use InteractsWithActionsUsingAlpineJS;
     use InteractsWithForms;
     use WithPagination;
 
     public ?string $basePath = null;
 
-    #[Url(history: true, nullable: true)]
+    /**
+     * Whether browser state (path, sort, filters, page) is synced to the URL's query string.
+     * The page browser tracks; the modal instance must not — two instances tracking the same
+     * params fight over the query string and the hidden modal hydrates on every history pop.
+     */
+    #[Locked]
+    public bool $trackUrl = true;
+
     public ?string $currentPath = null;
 
-    #[Url(history: true)]
-    public string $sortBy = 'name_asc';
+    /**
+     * Display preferences persist per user session; shared by the page and modal instances.
+     */
+    #[Session]
+    public string $sortBy = 'created_at_desc';
 
-    #[Url(history: true)]
+    #[Session]
     public int $pageSize = 25;
 
-    #[Url(history: true)]
+    #[Session]
     public Layout $layout = Layout::GRID;
 
     public string $search = '';
@@ -81,10 +79,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $statePath = null;
 
-    public ?array $createDirectoryFormState = [];
-
-    public ?array $uploadFormState = ['attachment' => []];
-
     protected $listeners = [
         'refresh-attachments' => '$refresh',
     ];
@@ -95,7 +89,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'updated_at',
     ];
 
-    public const PAGE_SIZES = [5, 10, 25, 50];
+    public const PAGE_SIZES = [5, 10, 25, 50, 100];
 
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
@@ -104,6 +98,41 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'video' => 'video/*',
         'pdf' => 'application/pdf',
     ];
+
+    /**
+     * Conditional replacement for #[Url(history: true)] attributes — the modal
+     * instance opts out via trackUrl. Nullability is inferred from the typehints.
+     *
+     * @return array<string, array{history: bool}>
+     */
+    protected function queryString(): array
+    {
+        if (!$this->trackUrl) {
+            return [];
+        }
+
+        return [
+            'currentPath' => ['history' => true],
+            'sortBy' => ['history' => true],
+            'pageSize' => ['history' => true],
+            'layout' => ['history' => true],
+            'mime' => ['history' => true],
+        ];
+    }
+
+    /**
+     * Override of the WithPagination trait hook: keep ?page out of the URL for the modal instance.
+     */
+    public function queryStringHandlesPagination(): array
+    {
+        if (!$this->trackUrl) {
+            return [];
+        }
+
+        return collect($this->paginators)->mapWithKeys(function ($page, $pageName) {
+            return ['paginators.' . $pageName => ['history' => true, 'as' => $pageName, 'keep' => false]];
+        })->toArray();
+    }
 
     public function render(): View
     {
@@ -128,6 +157,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
         // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
         $this->dispatch('attachment-browser-loaded');
+    }
+
+    public function createDirectoryAction(): Action
+    {
+        return CreateDirectoryAction::make('createDirectory')
+            ->setCurrentPath($this->getCurrentPath())
+            ->setHasBasePath((bool) $this->basePath);
     }
 
     public function deleteDirectoryAction(): Action
@@ -173,98 +209,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return implode('/', array_filter([$this->basePath, $this->currentPath])) ?: null;
     }
 
-    protected function getForms(): array
+    protected function droppedFilesPath(): ?string
     {
-        return [
-            'uploadAttachmentForm',
-            'createDirectoryForm',
-        ];
+        return $this->getCurrentPath();
     }
 
-    /**
-     * Form schema for UploadAttachmentForm.
-     */
-    public function uploadAttachmentForm(Schema $schema): Schema
+    protected function handleUploadedDrop(Attachment $attachment): void
     {
-        $validationMessages = Lang::get('validation');
-
-        return $schema->components([
-            FileUpload::make('attachment')
-                ->rules([
-                    new AllowedFilename(),
-                    new DestinationExists($this->getCurrentPath()),
-                    new HasValidExtension(),
-                    ...Config::get('filament-attachment-library.upload_rules', []),
-                ])
-                ->multiple()
-                ->required()
-                ->label(__('filament-attachment-library::forms.upload_attachment.name'))
-                ->fetchFileInformation()
-                ->saveUploadedFileUsing(
-                    function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-                        $attachment = AttachmentManager::upload($file, $this->getCurrentPath());
-                        $this->selectAttachment($attachment->id);
-                        $component->removeUploadedFile($file);
-                    }
-                )->validationMessages([
-                    ...(is_array($validationMessages) ? $validationMessages : []),
-                    DestinationExists::class => __('filament-attachment-library::validation.destination_exists'),
-                    AllowedFilename::class => __('filament-attachment-library::validation.allowed_filename'),
-                    HasValidExtension::class => __('filament-attachment-library::validation.invalid_extension'),
-                ]),
-        ])->statePath('uploadFormState');
+        $this->selectAttachment($attachment->id);
     }
 
-    /**
-     * Form schema for CreateDirectoryForm.
-     */
-    public function createDirectoryForm(Schema $schema): Schema
+    protected function dropsDisabled(): bool
     {
-        return $schema->components([
-            TextInput::make('name')
-                ->rules([
-                    new DestinationExists($this->getCurrentPath()),
-                    new AllowedFilename(),
-                ])->required()
-                ->autocomplete(false)
-                ->label(__('filament-attachment-library::forms.create_directory.name')),
-        ])->statePath('createDirectoryFormState');
-    }
-
-    /**
-     * Submit handler for UploadAttachmentForm.
-     */
-    public function saveUploadAttachmentForm(): void
-    {
-        $this->uploadAttachmentForm->getState();
-
-        Notification::make()
-            ->title(__('filament-attachment-library::notifications.attachment.created'))
-            ->success()
-            ->send();
-    }
-
-    /**
-     * Submit handler for CreateDirectoryForm.
-     */
-    public function saveCreateDirectoryForm(): void
-    {
-        $state = $this->createDirectoryForm->getState();
-        $path = implode('/', (array_filter([$this->getCurrentPath(), $state['name']])));
-
-        $flags = [];
-        if ($this->basePath) {
-            $flags[] = DirectoryStrategies::CREATE_PARENT_DIRECTORIES;
-        }
-
-        AttachmentManager::createDirectory($path, ...$flags);
-
-        $this->createDirectoryForm->fill();
-
-        Notification::make()
-            ->title(__('filament-attachment-library::notifications.directory.created'))
-            ->success()
-            ->send();
+        return $this->disabled;
     }
 
     public function selectAttachment(int|string $id): void
@@ -297,6 +254,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ? trim(Str::after($path, $this->basePath), '/')
             : $path;
 
+        $this->resetPage();
+
         $this->dispatch('highlight-attachment', null);
     }
 
@@ -304,12 +263,31 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function setMime(?string $mime): void
     {
         $this->mime = $mime;
+
+        // updatingMime() only fires for client-side updates, not this event path.
+        $this->resetPage();
     }
 
     /**
      * Reset page on search query update.
      */
     public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    /**
+     * Reset page on mime filter update.
+     */
+    public function updatingMime(): void
+    {
+        $this->resetPage();
+    }
+
+    /**
+     * Reset page on page size update — the current page may not exist at the new size.
+     */
+    public function updatingPageSize(): void
     {
         $this->resetPage();
     }
@@ -393,8 +371,14 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
 
     #[On('close-modal')]
-    public function closeModal(bool $save = false): void
+    public function closeModal(?string $id = null, bool $save = false): void
     {
+        // Filament dispatches close-modal for every modal on the page (e.g. the edit/move/replace
+        // action modals); only react to the attachment browser modal itself.
+        if ($id !== 'attachment-modal') {
+            return;
+        }
+
         if ($save) {
             $selected = match ($this->multiple) {
                 true => $this->selected,
@@ -406,19 +390,29 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         }
 
         $this->dispatch('highlight-attachment', null);
-        $this->reset();
+
+        // Reset everything except mount-time config (reset() falls back to class defaults,
+        // which would re-enable URL tracking and drop the tenant base path) and the
+        // session-persisted display preferences (resetting would clobber the stored values).
+        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'sortBy', 'pageSize', 'layout']));
     }
 
     #[On('open-attachment-modal')]
-    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null): void
+    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null): void
     {
         $this->statePath = $statePath;
-        $this->multiple = $multiple;
+        $this->multiple = $multiple ?? false;
         $this->mime = $mime;
-        $this->disableMimeFilter = $disableMimeFilter;
+        $this->disableMimeFilter = $disableMimeFilter ?? false;
 
         if ($selected) {
             $this->selected = is_array($selected) ? $selected : [$selected];
+        }
+
+        // Dispatched server-side so it also works on the lazy first load, where the
+        // payload arrives via the modal wrapper's replay.
+        if ($highlight) {
+            $this->dispatch('highlight-attachment', id: $highlight);
         }
     }
 }

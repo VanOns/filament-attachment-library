@@ -1,6 +1,6 @@
 ---
 name: attachment-field
-description: Add a Filament Attachment Library AttachmentField to a Filament form (resource, page, or relation manager). Use when the user wants to attach files/images/PDFs/videos to a model through a Filament form — picking from the attachment library rather than uploading directly via Filament's FileUpload. Covers column-backed vs relationship-backed storage, MIME filtering, multi-select, reordering, focal points, and front-end display.
+description: Add a Filament Attachment Library AttachmentField to a Filament form (resource, page, or relation manager). Use when the user wants to attach files/images/PDFs/videos to a model through a Filament form — picking from the attachment library rather than uploading directly via Filament's FileUpload. Covers column-backed vs relationship-backed storage, MIME filtering, multi-select, reordering, drag & drop uploads, focal points, and front-end display.
 ---
 
 # Add an AttachmentField to a Filament form
@@ -101,6 +101,7 @@ public static function form(Form $form): Form
 | `relationship(string = 'attachments')` | column mode | Switches to relationship mode and disables dehydration. |
 | `collection(?string)` | field name (when `relationship()` is called) | Pivot `collection` value. Set this if you want the field name and collection to differ. |
 | `multiple(bool\|Closure = true)` | `false` | Multi-select. |
+| `compact(bool\|Closure = true)` | `false` | Render selected items as compact horizontal rows instead of grid cards. |
 | `reorderable(bool\|Closure = true)` | `true` (only effective with `multiple()`) | Drag-and-drop ordering. Persists to the pivot's `order` column. |
 | `mime(string)` | none | MIME filter for the picker. Wildcards allowed (`'image/*'`). |
 | `image()` / `video()` / `audio()` / `text()` | — | Shortcut for `mime('image/*')` etc. |
@@ -114,6 +115,7 @@ Single attachment, lives only on this model? ─ column
 Multiple attachments?                        ─ relationship + multiple()
 Need to reuse the same attachment across models? ─ relationship (column would duplicate IDs)
 Need ordering? ─ relationship + multiple() + reorderable()
+Compact rows instead of grid cards? ─ compact()
 ```
 
 ## Step 4 — Display attachments
@@ -149,16 +151,29 @@ FocalPointPicker::make('focal_point')
 
 State shape: `['x' => 0–100, 'y' => 0–100]` (percent). Persist to a `json` column on the model. The `Attachment` model already has a `focal_point` json cast — use that if you're storing the focal point on the attachment itself rather than per-usage.
 
+## Drag & drop uploads
+
+Built in — no configuration, no extra components. Users can drop files directly onto the field (uploaded to the library base path and selected) or onto the library page/browser modal (uploaded to the directory currently open). The field's constraints apply to drops automatically:
+
+- `mime()` / `image()` etc. — checked client-side and re-validated server-side on the detected mime type.
+- `multiple()` / `maxFiles()` — a single field takes one file from a multi-drop; multi fields stop at the cap.
+- File size — bounded by Livewire's temporary upload limit (`livewire.temporary_file_upload.rules`).
+- `config('filament-attachment-library.upload_rules')` — applies to dropped files too.
+
+Rejected files produce per-file danger notifications; nothing else to wire up.
+
 ## Common follow-ups
 
 - **Filtering attachments by MIME on the picker**: `->mime('image/png')` or one of the shortcuts. The picker also exposes a built-in MIME filter UI; `->mime()` *restricts* the picker further.
-- **Custom upload validation**: add rules to `config/filament-attachment-library.php` `upload_rules`, not on the field. The library page uploads files outside the form's validation context.
+- **Custom upload validation**: add rules to `config/filament-attachment-library.php` `upload_rules`, not on the field. The library page uploads files outside the form's validation context — the same rules also run for drag & drop uploads.
+- **Raising the drop upload size limit**: configure `livewire.temporary_file_upload.rules` (and your PHP `upload_max_filesize`/`post_max_size`), not the field.
 - **Per-tenant base path**: `FilamentAttachmentLibrary::make()->basePath(fn () => 'tenants/' . tenant()->slug)` on the panel — see the always-loaded guidelines.
 - **Custom user display in the browser**: set `user_model` and `username_property` in `config/filament-attachment-library.php`.
 
 ## Anti-patterns
 
 - ❌ Using Filament's `FileUpload` to store attachments — bypasses the library, no `attachments` rows are created.
+- ❌ Adding a custom dropzone (or `FileUpload`) to get drag & drop — the field and the browser already accept dropped files.
 - ❌ Calling `relationship()` without the `HasAttachments` trait on the model — the field can't load existing state.
 - ❌ Using `reorderable()` without `multiple()` — has no effect; reordering only applies when there are multiple selected items.
 - ❌ Setting the `collection` to a value that overlaps with another field's collection on the same model — they will share the same pivot rows.

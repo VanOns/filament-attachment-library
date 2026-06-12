@@ -2,6 +2,10 @@
 
 return [
     'browser' => [
+        'drop' => [
+            'prompt' => 'Sleep bestanden hierheen om te uploaden',
+            'uploading' => 'Uploaden…',
+        ],
         'empty' => [
             'title' => 'Geen bestanden of mappen gevonden',
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
@@ -30,6 +34,7 @@ return [
                     'bits' => 'Bits',
                     'channels' => 'Kanalen',
                 ],
+                'more' => 'Meer details',
                 'date' => [
                     'header' => 'Data',
                     'created_by' => 'Geüpload door',
@@ -48,12 +53,12 @@ return [
     'actions' => [
         'attachment' => [
             'view' => 'Bekijk details',
-            'open' => 'Open bestand',
-            'edit' => 'Bewerk bestand',
-            'delete' => 'Verwijder bestand',
-            'upload' => 'Upload bestand',
-            'move' => 'Verplaats bestand',
-            'replace' => 'Vervang bestand',
+            'open' => 'Openen',
+            'edit' => 'Bewerken',
+            'delete' => 'Verwijderen',
+            'upload' => 'Uploaden',
+            'move' => 'Verplaatsen',
+            'replace' => 'Vervangen',
         ],
         'directory' => [
             'rename' => 'Hernoem map',
@@ -79,7 +84,7 @@ return [
             'mime' => 'Bestandstype',
         ],
         'mime_type' => [
-            'all' => 'Alle',
+            'all' => 'Alle types',
             'image' => 'Afbeelding',
             'video' => 'Video',
             'audio' => 'Audio',
