@@ -10,7 +10,9 @@
         class="[--fal-info-top:1rem]"
         x-data="attachmentModalBuffer"
     >
-        <livewire:attachment-browser :basePath="$basePath" lazy />
+        {{-- trackUrl off: the page browser owns the query string; a second tracking
+             instance pollutes the URL and hydrates itself on every history pop --}}
+        <livewire:attachment-browser :basePath="$basePath" :trackUrl="false" lazy />
     </div>
 
     <x-slot name="footer">

@@ -12,8 +12,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use VanOns\FilamentAttachmentLibrary\Actions\CreateDirectoryAction;
@@ -43,21 +43,24 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public ?string $basePath = null;
 
-    #[Url(history: true, nullable: true)]
+    /**
+     * Whether browser state (path, sort, filters, page) is synced to the URL's query string.
+     * The page browser tracks; the modal instance must not — two instances tracking the same
+     * params fight over the query string and the hidden modal hydrates on every history pop.
+     */
+    #[Locked]
+    public bool $trackUrl = true;
+
     public ?string $currentPath = null;
 
-    #[Url(history: true)]
     public string $sortBy = 'created_at_desc';
 
-    #[Url(history: true)]
     public int $pageSize = 25;
 
-    #[Url(history: true)]
     public Layout $layout = Layout::GRID;
 
     public string $search = '';
 
-    #[Url(history: true, nullable: true)]
     public ?string $mime = null;
 
     public bool $disableMimeFilter = false;
@@ -89,6 +92,41 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         'video' => 'video/*',
         'pdf' => 'application/pdf',
     ];
+
+    /**
+     * Conditional replacement for #[Url(history: true)] attributes — the modal
+     * instance opts out via trackUrl. Nullability is inferred from the typehints.
+     *
+     * @return array<string, array{history: bool}>
+     */
+    protected function queryString(): array
+    {
+        if (!$this->trackUrl) {
+            return [];
+        }
+
+        return [
+            'currentPath' => ['history' => true],
+            'sortBy' => ['history' => true],
+            'pageSize' => ['history' => true],
+            'layout' => ['history' => true],
+            'mime' => ['history' => true],
+        ];
+    }
+
+    /**
+     * Override of the WithPagination trait hook: keep ?page out of the URL for the modal instance.
+     */
+    public function queryStringHandlesPagination(): array
+    {
+        if (!$this->trackUrl) {
+            return [];
+        }
+
+        return collect($this->paginators)->mapWithKeys(function ($page, $pageName) {
+            return ['paginators.' . $pageName => ['history' => true, 'as' => $pageName, 'keep' => false]];
+        })->toArray();
+    }
 
     public function render(): View
     {
@@ -345,8 +383,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         $this->dispatch('highlight-attachment', null);
 
-        // Reset everything except basePath — it is configured at mount, not per-open.
-        $this->reset(array_diff(array_keys($this->all()), ['basePath']));
+        // Reset everything except mount-time config — reset() falls back to class
+        // defaults, which would re-enable URL tracking and drop the tenant base path.
+        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl']));
     }
 
     #[On('open-attachment-modal')]
