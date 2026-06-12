@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
+use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -79,7 +80,9 @@ class AttachmentViewModel implements Wireable
         $this->alt = $attachment->alt;
         $this->caption = $attachment->caption;
 
-        if ($metadata = $attachment->metadata) { // @phpstan-ignore-line
+        // Via the manager instead of the model's metadata attribute — the model's
+        // @property docblock mistypes the attribute as string, the manager is typed.
+        if ($metadata = AttachmentManager::getMetadata($attachment)) {
             $this->bits = $metadata->bits;
             $this->channels = $metadata->channels;
             $this->dimensions = "{$metadata->width}x{$metadata->height}";
