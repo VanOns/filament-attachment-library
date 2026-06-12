@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\Livewire;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
@@ -20,8 +21,12 @@ class AttachmentFieldUploader extends Component
     use HandlesDroppedFiles;
     use WithFileUploads;
 
+    /** Locked: a tampered statePath would route uploads to another field's event. */
+    #[Locked]
     public string $statePath = '';
 
+    /** Locked: nulling the mime client-side would bypass the server-side type check. */
+    #[Locked]
     public ?string $mime = null;
 
     protected function droppedFilesPath(): ?string

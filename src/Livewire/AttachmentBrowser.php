@@ -224,6 +224,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function setMime(?string $mime): void
     {
         $this->mime = $mime;
+
+        // updatingMime() only fires for client-side updates, not this event path.
+        $this->resetPage();
     }
 
     /**
@@ -340,16 +343,18 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         }
 
         $this->dispatch('highlight-attachment', null);
-        $this->reset();
+
+        // Reset everything except basePath — it is configured at mount, not per-open.
+        $this->reset(array_diff(array_keys($this->all()), ['basePath']));
     }
 
     #[On('open-attachment-modal')]
     public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null): void
     {
         $this->statePath = $statePath;
-        $this->multiple = $multiple;
+        $this->multiple = $multiple ?? false;
         $this->mime = $mime;
-        $this->disableMimeFilter = $disableMimeFilter;
+        $this->disableMimeFilter = $disableMimeFilter ?? false;
 
         if ($selected) {
             $this->selected = is_array($selected) ? $selected : [$selected];
