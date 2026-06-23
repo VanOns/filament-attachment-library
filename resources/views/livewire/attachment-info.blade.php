@@ -30,6 +30,7 @@
                     <video
                         src="{{ $attachment->url }}"
                         controls
+                        preload="none"
                         class="relative object-cover object-center rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
                     ></video>
                 @endif
