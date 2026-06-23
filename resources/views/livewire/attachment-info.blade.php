@@ -129,6 +129,9 @@
                         <div x-show="open" x-cloak>
                             {{-- Meta fields --}}
                             <div class="grid mt-3 grid-cols-2 gap-y-2">
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.id') }}</p>
+                                <p class="break-all">{{ $attachment->id ?: '' }}</p>
+
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.meta.title') }}</p>
                                 <p class="break-all">{{ $attachment->title ?: '' }}</p>
 
