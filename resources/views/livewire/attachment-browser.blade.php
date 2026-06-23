@@ -61,11 +61,7 @@
             @endif
 
             @if(!$attachments->isEmpty())
-                <div x-data="attachmentSelection({
-                    state: $wire.entangle('selected'),
-                    multiple: @js($multiple),
-                    disabled: @js($disabled),
-                })">
+                <div x-data="attachmentSelection({ state: $wire.entangle('selected') })">
                     <x-filament-attachment-library::items.container :layout="$layout">
                         @foreach($attachments as $attachment)
                             <div wire:key="attachment-browser-item-{{ $attachment->id }}">
