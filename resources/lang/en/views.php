@@ -22,6 +22,7 @@ return [
         'details' => [
             'sections' => [
                 'meta' => [
+                    'id' => 'ID',
                     'header' => 'File metadata',
                     'alt' => 'Alt-text',
                     'caption' => 'Caption',

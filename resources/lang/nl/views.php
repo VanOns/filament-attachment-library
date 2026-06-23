@@ -22,6 +22,7 @@ return [
         'details' => [
             'sections' => [
                 'meta' => [
+                    'id' => 'ID',
                     'header' => 'Metavelden',
                     'alt' => 'Alt-tekst',
                     'caption' => 'Onderschrift',
