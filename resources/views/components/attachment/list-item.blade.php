@@ -4,10 +4,11 @@
      */
 @endphp
 
-@props(['attachment', 'selected'])
+@props(['attachment', 'selected' => false, 'selectableId' => null])
 
 <x-filament-attachment-library::items.list-item
     :selected="$selected"
+    :selectable-id="$selectableId"
     :title="$attachment->name"
     subtitle="{{$attachment->extension}} — {{ $attachment->size }} MB"
     {{ $attributes }}

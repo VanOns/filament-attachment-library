@@ -245,6 +245,16 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
+     * Refresh the info sidebar for the clicked attachment. The selection ring itself is driven
+     * client-side (Alpine `attachmentSelection`); this only handles the sidebar highlight, while
+     * the entangled `selected` array rides along on the same commit to keep the server in sync.
+     */
+    public function highlight(?int $id): void
+    {
+        $this->dispatch('highlight-attachment', $id);
+    }
+
+    /**
      * Set current path.
      */
     #[On('open-path')]

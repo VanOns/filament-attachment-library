@@ -61,17 +61,22 @@
             @endif
 
             @if(!$attachments->isEmpty())
-                <x-filament-attachment-library::items.container :layout="$layout">
-                    @foreach($attachments as $attachment)
-                        <div wire:key="attachment-browser-item-{{ $attachment->id }}">
-                            <x-filament-attachment-library::attachment.browser-item
-                                :$attachment
-                                :layout="$layout"
-                                :selected="$attachment->isSelected($selected)"
-                            />
-                        </div>
-                    @endforeach
-                </x-filament-attachment-library::items.container>
+                <div x-data="attachmentSelection({
+                    state: $wire.entangle('selected'),
+                    multiple: @js($multiple),
+                    disabled: @js($disabled),
+                })">
+                    <x-filament-attachment-library::items.container :layout="$layout">
+                        @foreach($attachments as $attachment)
+                            <div wire:key="attachment-browser-item-{{ $attachment->id }}">
+                                <x-filament-attachment-library::attachment.browser-item
+                                    :$attachment
+                                    :layout="$layout"
+                                />
+                            </div>
+                        @endforeach
+                    </x-filament-attachment-library::items.container>
+                </div>
             @endif
 
             @if($attachments->isEmpty() && $directories->isEmpty())

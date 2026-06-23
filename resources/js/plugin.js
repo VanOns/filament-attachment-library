@@ -223,6 +223,39 @@ document.addEventListener('alpine:init', () => {
     }))
 
     /**
+     * Selection state for the attachment browser grid/list. Owns the `selected` array (entangled with
+     * the Livewire component) so the selection ring updates instantly on click, with no round-trip.
+     * The server stays authoritative: every click also fires $wire.highlight() to refresh the info
+     * sidebar, and that commit carries the entangled array back to the server for persistence/save.
+     * Config: state (entangled), multiple, disabled.
+     */
+    Alpine.data('attachmentSelection', (config) => ({
+        selected: config.state,
+        multiple: config.multiple,
+        disabled: config.disabled,
+
+        // Loose comparison on purpose: ids can arrive as numbers (json_encode) or strings (attribute
+        // bag / DB keys), and the entangled array mixes both. == keeps the ring in sync regardless.
+        isSelected(id) {
+            return this.selected.some((item) => item == id)
+        },
+
+        toggle(id) {
+            if (this.disabled) return
+
+            if (this.isSelected(id)) {
+                this.selected = this.selected.filter((item) => item != id)
+                this.$wire.highlight(null)
+
+                return
+            }
+
+            this.selected = this.multiple ? [...this.selected, id] : [id]
+            this.$wire.highlight(id)
+        },
+    }))
+
+    /**
      * Drag-to-reorder for the selected items in an AttachmentField. Config: group.
      */
     Alpine.data('attachmentSortable', (config) => ({
