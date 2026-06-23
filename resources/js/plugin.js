@@ -227,12 +227,13 @@ document.addEventListener('alpine:init', () => {
      * the Livewire component) so the selection ring updates instantly on click, with no round-trip.
      * The server stays authoritative: every click also fires $wire.highlight() to refresh the info
      * sidebar, and that commit carries the entangled array back to the server for persistence/save.
-     * Config: state (entangled), multiple, disabled.
+     *
+     * `multiple`/`disabled` are read live from $wire on every click rather than snapshotted: a single
+     * browser/modal instance is shared by every field on the page, so these flip between opens and a
+     * captured value would go stale (e.g. a multiple field stuck in single-select).
      */
     Alpine.data('attachmentSelection', (config) => ({
         selected: config.state,
-        multiple: config.multiple,
-        disabled: config.disabled,
 
         // Loose comparison on purpose: ids can arrive as numbers (json_encode) or strings (attribute
         // bag / DB keys), and the entangled array mixes both. == keeps the ring in sync regardless.
@@ -241,7 +242,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         toggle(id) {
-            if (this.disabled) return
+            if (this.$wire.get('disabled')) return
 
             if (this.isSelected(id)) {
                 this.selected = this.selected.filter((item) => item != id)
@@ -250,7 +251,7 @@ document.addEventListener('alpine:init', () => {
                 return
             }
 
-            this.selected = this.multiple ? [...this.selected, id] : [id]
+            this.selected = this.$wire.get('multiple') ? [...this.selected, id] : [id]
             // Show the info panel's loading state instantly; the Livewire fetch clears it on arrival.
             this.$dispatch('attachment-info-loading')
             this.$wire.highlight(id)
