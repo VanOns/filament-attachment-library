@@ -4,7 +4,22 @@
      */
 @endphp
 
-<div @class([$class])>
+<div
+    @class([$class, 'relative'])
+    x-data="{ loading: false }"
+    @attachment-info-loading.window="loading = true"
+    @attachment-info-ready.window="loading = false"
+>
+    {{-- Instant feedback while the Livewire fetch is in flight; cleared by attachment-info-ready --}}
+    <div
+        x-show="loading"
+        x-cloak
+        x-transition.opacity
+        class="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-[1px]"
+    >
+        <x-filament::loading-indicator class="h-8 w-8 text-primary-500" />
+    </div>
+
     <x-filament::section :$contained>
         @if(!$attachment)
             <div>

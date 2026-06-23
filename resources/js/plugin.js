@@ -251,6 +251,8 @@ document.addEventListener('alpine:init', () => {
             }
 
             this.selected = this.multiple ? [...this.selected, id] : [id]
+            // Show the info panel's loading state instantly; the Livewire fetch clears it on arrival.
+            this.$dispatch('attachment-info-loading')
             this.$wire.highlight(id)
         },
     }))

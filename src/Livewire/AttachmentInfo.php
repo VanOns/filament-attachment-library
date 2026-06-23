@@ -36,6 +36,9 @@ class AttachmentInfo extends Component implements HasActions, HasForms
     #[On('highlight-attachment')]
     public function highlightAttachment(?int $id): void
     {
+        // Clears the instant loading overlay shown by the browser the moment a selection is made.
+        $this->dispatch('attachment-info-ready');
+
         $attachment = Attachment::find($id);
 
         if (!$attachment) {
