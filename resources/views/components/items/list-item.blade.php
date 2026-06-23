@@ -4,9 +4,12 @@
      */
 @endphp
 
-@props(['title', 'subtitle', 'selected' => false])
+@props(['title', 'subtitle', 'selected' => false, 'selectableId' => null])
 
 <div
+    @if(!is_null($selectableId))
+        x-bind:class="{ 'ring-2 ring-primary-500': isSelected(@js($selectableId)) }"
+    @endif
     @class([
         'flex flex-row items-center relative h-16 w-full p-2 transition ease-in-out box-border group',
         'rounded-xl shadow border border-black/10 dark:border-white/10 bg-white dark:bg-gray-900',

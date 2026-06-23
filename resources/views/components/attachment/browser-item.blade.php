@@ -10,8 +10,8 @@
 @if($layout === Layout::GRID)
     <x-filament-attachment-library::attachment.grid-item
             :attachment="$attachment"
-            :selected="$selected"
-            wire:click="selectAttachment({{ json_encode($attachment->id) }})"
+            :selectable-id="$attachment->id"
+            x-on:click="toggle({{ json_encode($attachment->id) }})"
     >
         <x-slot name="actions">
             <x-filament-attachment-library::attachment.browser-actions
@@ -25,8 +25,8 @@
 @if($layout === Layout::LIST)
     <x-filament-attachment-library::attachment.list-item
             :attachment="$attachment"
-            :selected="$selected"
-            wire:click="selectAttachment({{ json_encode($attachment->id) }})"
+            :selectable-id="$attachment->id"
+            x-on:click="toggle({{ json_encode($attachment->id) }})"
     >
         <x-slot name="actions">
             <x-filament-attachment-library::attachment.browser-actions :attachment="$attachment" />

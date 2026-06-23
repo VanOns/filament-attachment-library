@@ -1,19 +1,20 @@
-@props(['title', 'subtitle' => null])
-
 @php
     /**
      * @var \VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel $attachment
      */
 @endphp
 
-@props(['tag' => 'div', 'selected' => false])
+@props(['title', 'subtitle' => null, 'tag' => 'div', 'selected' => false, 'selectableId' => null])
 
 <div class="relative group">
     <button
         type="button"
+        @if(!is_null($selectableId))
+            x-bind:class="{ 'ring-2 ring-primary-500 border-primary-500': isSelected(@js($selectableId)) }"
+        @endif
         {{ $attributes->class([
             'w-full text-left bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-xl border shadow-xs border-black/10 dark:border-white/10',
-            'ring-3 ring-primary-500' => $selected
+            'ring-2 ring-primary-500 border-primary-500' => $selected
         ]) }}
     >
         <div class="aspect-square w-full overflow-hidden flex justify-center items-center">
