@@ -6,7 +6,7 @@
 
 @props(['directory', 'triggerClass' => ''])
 
-<div {{ $attributes->only('class') }}>
+<div {{ $attributes }}>
     <x-filament::dropdown>
         <x-slot name="trigger">
             <button type="button" @class($triggerClass)>
