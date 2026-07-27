@@ -10,7 +10,7 @@
 <x-filament-attachment-library::items.list-item
         :title="$directory->name"
         :subtitle="trans_choice('filament-attachment-library::views.browser.file_count',  $directory->itemCount(), ['count' => $directory->itemCount()])"
-        wire:click="openPath('{{ $directory->fullPath }}')"
+        wire:click="openPath({{ Illuminate\Support\Js::from($directory->fullPath) }})"
         wire:loading.attr="disabled"
         wire:target="openPath"
 >
@@ -18,13 +18,13 @@
         icon="heroicon-o-folder"
         class="size-8"
         wire:loading.remove
-        wire:target="openPath('{{ $directory->fullPath }}')"
+        wire:target="openPath"
     />
 
     <x-filament::loading-indicator
         class="size-8"
         wire:loading
-        wire:target="openPath('{{ $directory->fullPath }}')"
+        wire:target="openPath"
     />
 
     <x-slot name="actions">

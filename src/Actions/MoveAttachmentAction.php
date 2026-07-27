@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
+use VanOns\FilamentAttachmentLibrary\Support\Path;
 use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -42,7 +43,7 @@ class MoveAttachmentAction extends Action
             $attachment = Attachment::find($arguments['attachment_id']);
 
             try {
-                AttachmentManager::move($attachment, $data['path'] ?? null);
+                AttachmentManager::move($attachment, Path::sanitize($data['path'] ?? null));
 
                 $this->getLivewire()->dispatch('refresh-attachments');
 

@@ -19,6 +19,11 @@ class AllowedFilename implements ValidationRule
             $filename = new Filename($value);
         }
 
+        if (in_array(trim((string) $filename), ['.', '..'], true)) {
+            $fail('filament-attachment-library::validation.allowed_filename')->translate();
+            return;
+        }
+
         try {
             AttachmentManager::validateBasename($filename);
         } catch (DisallowedCharacterException) {

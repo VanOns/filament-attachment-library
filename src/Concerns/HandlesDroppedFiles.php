@@ -9,6 +9,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\Rules\HasValidExtension;
+use VanOns\FilamentAttachmentLibrary\Support\SvgUploadSanitizer;
 use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Exceptions\DisallowedCharacterException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
@@ -89,6 +90,11 @@ trait HandlesDroppedFiles
 
                 if ($validator->fails()) {
                     $this->notifyDropFailure($file->getClientOriginalName(), $validator->errors()->first('file'));
+                    continue;
+                }
+
+                if (!SvgUploadSanitizer::sanitize($file)) {
+                    $this->notifyDropFailure($file->getClientOriginalName(), __('filament-attachment-library::validation.invalid_svg'));
                     continue;
                 }
 
