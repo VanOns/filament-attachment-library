@@ -18,13 +18,13 @@
         icon="heroicon-o-folder"
         class="size-8"
         wire:loading.remove
-        wire:target="openPath"
+        wire:target="openPath({{ Illuminate\Support\Js::from($directory->fullPath) }})"
     />
 
     <x-filament::loading-indicator
         class="size-8"
         wire:loading
-        wire:target="openPath"
+        wire:target="openPath({{ Illuminate\Support\Js::from($directory->fullPath) }})"
     />
 
     <x-slot name="actions">
