@@ -40,3 +40,12 @@ It is also possible to specify the minimum and maximum amount of allowed files:
 AttachmentField::make('featured_image')->minFiles(5)
 AttachmentField::make('featured_image')->maxFiles(10)
 ```
+
+## SVG sanitization
+
+SVG uploads are sanitized before they are stored. Scripts, event handlers and references to remote
+resources are stripped from the file, so the contents saved to disk may differ from what was uploaded.
+An SVG that cannot be parsed is rejected with a validation error rather than stored as-is.
+
+This applies to every upload route in the package: files dropped onto the browser or an
+`AttachmentField`, and files supplied through the replace action.
