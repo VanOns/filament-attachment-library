@@ -52,10 +52,7 @@ class ReplaceAttachmentAction extends Action
                                 ->danger()
                                 ->send();
 
-                            $fileKey = array_search($file, $component->getRawState(), true);
-                            if ($fileKey !== false) {
-                                $component->removeUploadedFile($fileKey);
-                            }
+                            $file->delete();
 
                             return;
                         }
@@ -76,10 +73,7 @@ class ReplaceAttachmentAction extends Action
                                 ->send();
                         }
 
-                        $fileKey = array_search($file, $component->getRawState(), true);
-                        if ($fileKey !== false) {
-                            $component->removeUploadedFile($fileKey);
-                        }
+                        $file->delete();
                     }
                 )->validationMessages([
                     ...(is_array($validationMessages) ? $validationMessages : []),
