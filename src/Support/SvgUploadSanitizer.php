@@ -13,14 +13,17 @@ class SvgUploadSanitizer
      */
     public static function sanitize(UploadedFile $file): bool
     {
-        if ($file->getMimeType() !== 'image/svg+xml') {
+        if (
+            $file->getMimeType() !== 'image/svg+xml'
+            && strtolower((string) $file->getClientOriginalExtension()) !== 'svg'
+        ) {
             return true;
         }
 
         $sanitizer = new Sanitizer();
         $sanitizer->removeRemoteReferences(true);
 
-        $clean = $sanitizer->sanitize((string) file_get_contents($file->getRealPath()));
+        $clean = $sanitizer->sanitize((string) $file->get());
 
         if ($clean === false) {
             return false;
