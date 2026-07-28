@@ -44,6 +44,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     use InteractsWithForms;
     use WithPagination;
 
+    /**
+     * Locked: the base path is derived server-side and is the tenancy boundary when configured
+     * as a per-tenant prefix — a tampered value would expose another tenant's directories.
+     */
+    #[Locked]
     public ?string $basePath = null;
 
     /**
@@ -198,7 +203,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function moveAttachmentAction(): Action
     {
-        return MoveAttachmentAction::make('moveAttachment');
+        return MoveAttachmentAction::make('moveAttachment')->setBasePath($this->basePath);
     }
 
     public function replaceAttachmentAction(): Action
