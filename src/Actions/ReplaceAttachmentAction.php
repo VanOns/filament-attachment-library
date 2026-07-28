@@ -13,6 +13,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Support\SvgUploadSanitizer;
 use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -45,6 +46,17 @@ class ReplaceAttachmentAction extends Action
                         /** @var Attachment $attachment */
                         $attachment = Attachment::find($arguments['attachment_id']);
 
+                        if (!SvgUploadSanitizer::sanitize($file)) {
+                            Notification::make()
+                                ->title(__('filament-attachment-library::validation.invalid_svg'))
+                                ->danger()
+                                ->send();
+
+                            $file->delete();
+
+                            return;
+                        }
+
                         try {
                             AttachmentManager::replace($file, $attachment);
 
@@ -61,7 +73,7 @@ class ReplaceAttachmentAction extends Action
                                 ->send();
                         }
 
-                        $component->removeUploadedFile($file);
+                        $file->delete();
                     }
                 )->validationMessages([
                     ...(is_array($validationMessages) ? $validationMessages : []),

@@ -23,7 +23,7 @@
 
                     <a
                         href="#"
-                        wire:click="openPath('{{ $key }}')"
+                        wire:click="openPath({{ Illuminate\Support\Js::from($key) }})"
                         class="fi-breadcrumbs-item-label text-sm font-medium text-gray-500 transition duration-75 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     >
                         {{ $breadcrumb }}

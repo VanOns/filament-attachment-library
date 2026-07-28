@@ -4,4 +4,7 @@ return [
     'destination_exists' => 'The specified path already exists.',
     'allowed_filename' => 'The file name must contain only the following characters: letters, spaces, numbers, dashes and hyphens.',
     'invalid_extension' => 'The file extension is not allowed.',
+    'invalid_svg' => 'The SVG file could not be processed.',
+    'invalid_path' => 'The specified path is invalid.',
+    'invalid_focal_point' => 'The focal point must be a coordinate between 0 and 100.',
 ];

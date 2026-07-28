@@ -16,7 +16,7 @@
         <x-filament::dropdown.list x-on:mouseleave="$refs.panel.close()">
             <x-filament::dropdown.list.item
                     icon="heroicon-o-pencil-square"
-                    wire:click="mountAction('renameDirectory', { name: '{{ $directory->name }}', full_path: '{{ $directory->fullPath }}' })"
+                    wire:click="mountAction('renameDirectory', { name: {{ Illuminate\Support\Js::from($directory->name) }}, full_path: {{ Illuminate\Support\Js::from($directory->fullPath) }} })"
             >
                 {{ __('filament-attachment-library::views.actions.directory.rename') }}
             </x-filament::dropdown.list.item>
@@ -24,7 +24,7 @@
             <x-filament::dropdown.list.item
                     icon="heroicon-o-trash"
                     color="danger"
-                    wire:click="mountAction('deleteDirectory', { full_path: '{{ $directory->fullPath }}' })"
+                    wire:click="mountAction('deleteDirectory', { full_path: {{ Illuminate\Support\Js::from($directory->fullPath) }} })"
             >
                 {{ __('filament-attachment-library::views.actions.directory.delete') }}
             </x-filament::dropdown.list.item>

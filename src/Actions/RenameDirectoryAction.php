@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Support\Path;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 
 class RenameDirectoryAction extends Action
@@ -36,7 +37,7 @@ class RenameDirectoryAction extends Action
         });
 
         $this->action(function (array $arguments, array $data) {
-            AttachmentManager::renameDirectory($arguments['full_path'], $data['name']);
+            AttachmentManager::renameDirectory(Path::sanitize($arguments['full_path']), $data['name']);
 
             Notification::make()
                 ->title(__('filament-attachment-library::notifications.directory.renamed'))

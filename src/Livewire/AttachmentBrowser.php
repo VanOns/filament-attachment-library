@@ -6,11 +6,13 @@ use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use League\Flysystem\PathTraversalDetected;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -28,6 +30,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
+use VanOns\FilamentAttachmentLibrary\Support\Path;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
@@ -41,6 +44,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     use InteractsWithForms;
     use WithPagination;
 
+    /**
+     * Locked: the base path is derived server-side and is the tenancy boundary when configured
+     * as a per-tenant prefix — a tampered value would expose another tenant's directories.
+     */
+    #[Locked]
     public ?string $basePath = null;
 
     /**
@@ -195,7 +203,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function moveAttachmentAction(): Action
     {
-        return MoveAttachmentAction::make('moveAttachment');
+        return MoveAttachmentAction::make('moveAttachment')->setBasePath($this->basePath);
     }
 
     public function replaceAttachmentAction(): Action
@@ -206,7 +214,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     protected function getCurrentPath(): ?string
     {
-        return implode('/', array_filter([$this->basePath, $this->currentPath])) ?: null;
+        $currentPath = $this->normalizePath($this->currentPath);
+
+        return implode('/', array_filter([$this->basePath, $currentPath])) ?: null;
     }
 
     protected function droppedFilesPath(): ?string
@@ -260,9 +270,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[On('open-path')]
     public function openPath(?string $path): void
     {
-        $this->currentPath = Str::startsWith($path, $this->basePath)
+        $resolved = Str::startsWith($path, $this->basePath)
             ? trim(Str::after($path, $this->basePath), '/')
             : $path;
+
+        $this->currentPath = $this->normalizePath($resolved);
 
         $this->resetPage();
 
@@ -307,10 +319,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function normalizePath(?string $path): ?string
     {
-        $path = trim($path, '/');
-        return blank($path)
-            ? null
-            : $path;
+        return Path::sanitize($path);
     }
 
     /**
@@ -335,7 +344,18 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $sortColumn = Str::beforeLast($this->sortBy, '_');
         $sortDirection = Str::afterLast($this->sortBy, '_');
 
-        return AttachmentManager::directories($this->getCurrentPath())
+        try {
+            $directories = AttachmentManager::directories($this->getCurrentPath());
+        } catch (PathTraversalDetected) {
+            Notification::make()
+                ->title(__('filament-attachment-library::validation.invalid_path'))
+                ->danger()
+                ->send();
+
+            return collect();
+        }
+
+        return $directories
             ->when($this->search, function (Collection $collection) {
                 return $collection->filter(fn (Directory $directory) => str_contains(strtolower($directory->name), strtolower($this->search)));
             })

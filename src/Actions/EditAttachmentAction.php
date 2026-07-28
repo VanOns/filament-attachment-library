@@ -14,6 +14,7 @@ use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
 use VanOns\FilamentAttachmentLibrary\Filament\Fields\FocalPointPicker;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
+use VanOns\FilamentAttachmentLibrary\Rules\ValidFocalPoint;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -41,7 +42,8 @@ class EditAttachmentAction extends Action
                         ->schema([
                             FocalPointPicker::make('focal_point')
                                 ->hiddenLabel()
-                                ->image($attachment->url),
+                                ->image($attachment->url)
+                                ->rules([new ValidFocalPoint()]),
                         ])->visible($isImage),
                     Section::make()->schema([
                         TextInput::make('name')
