@@ -209,7 +209,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     protected function getCurrentPath(): ?string
     {
-        return implode('/', array_filter([$this->basePath, $this->currentPath])) ?: null;
+        $currentPath = $this->normalizePath($this->currentPath);
+
+        return implode('/', array_filter([$this->basePath, $currentPath])) ?: null;
     }
 
     protected function droppedFilesPath(): ?string
