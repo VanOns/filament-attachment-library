@@ -29,7 +29,9 @@ class SvgUploadSanitizer
             return false;
         }
 
-        file_put_contents($file->getRealPath(), $clean);
+        if (file_put_contents($file->getRealPath(), $clean) === false) {
+            return false;
+        }
 
         return true;
     }
