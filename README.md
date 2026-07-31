@@ -6,6 +6,7 @@
 [![Total downloads](https://img.shields.io/packagist/dt/van-ons/filament-attachment-library.svg?style=flat-square)](https://packagist.org/packages/van-ons/filament-attachment-library)
 [![GitHub issues](https://img.shields.io/github/issues/VanOns/filament-attachment-library?style=flat-square)](https://github.com/VanOns/filament-attachment-library/issues)
 [![License](https://img.shields.io/github/license/VanOns/filament-attachment-library?style=flat-square)](https://github.com/VanOns/filament-attachment-library/blob/main/LICENSE.md)
+[![Plumb score](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fplumbphp.dev%2Fbadges%2Fvan-ons%2Ffilament-attachment-library%2Fcomposite.svg&search=%3Ctitle%3Eplumb%3A%5Cs%2A%28%5B%5E%3C%5D%2B%29%3C&replace=%241&label=plumb&style=flat-square)](https://plumbphp.dev/van-ons/filament-attachment-library)
 
 Filament package for easy attachment uploading and browsing.
 
