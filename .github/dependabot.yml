@@ -9,6 +9,14 @@ updates:
     labels:
       - dependencies
 
+  - package-ecosystem: npm
+    target-branch: main
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
   - package-ecosystem: composer
     target-branch: main
     directory: /
@@ -18,7 +26,7 @@ updates:
       - dependencies
 
   - package-ecosystem: composer
-    target-branch: 'releases/v1'
+    target-branch: 'release/v1'
     directory: /
     schedule:
       interval: weekly
