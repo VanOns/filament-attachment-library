@@ -29,19 +29,18 @@ const dropZone = (config) => ({
         // Block drops while a modal this zone does not belong to is open (e.g. the
         // create-directory modal above the library) — Filament marks open modals
         // with the fi-modal-open class.
-        return Array.from(document.querySelectorAll('.fi-modal-open'))
-            .some((modal) => ! modal.contains(this.$root))
+        return Array.from(document.querySelectorAll('.fi-modal-open')).some((modal) => !modal.contains(this.$root))
     },
 
     matchesMime(file) {
-        if (! config.mime) return true
+        if (!config.mime) return true
         if (config.mime.endsWith('/*')) return file.type.startsWith(config.mime.slice(0, -1))
 
         return file.type === config.mime
     },
 
     uploadTarget() {
-        if (! config.nestedUploader) return this.$wire
+        if (!config.nestedUploader) return this.$wire
 
         const marker = this.$root.querySelector('[data-attachment-uploader]')
 
@@ -53,7 +52,7 @@ const dropZone = (config) => ({
     },
 
     onDragEnter(event) {
-        if (! this.isFileDrag(event) || this.dropDisabled()) return
+        if (!this.isFileDrag(event) || this.dropDisabled()) return
 
         this.dragDepth++
         this.$nextTick(() => this.updateOverlayHeight())
@@ -67,8 +66,7 @@ const dropZone = (config) => ({
         this.dragDepth = 0
 
         // Directories arrive as 0-byte entries without a mime type; skip them.
-        const files = Array.from(event.dataTransfer.files ?? [])
-            .filter((file) => file.size > 0 || file.type !== '')
+        const files = Array.from(event.dataTransfer.files ?? []).filter((file) => file.size > 0 || file.type !== '')
 
         this.uploadFiles(files)
     },
@@ -89,26 +87,30 @@ const dropZone = (config) => ({
     uploadFiles(files) {
         if (this.dropDisabled() || this.uploading) return
 
-        files.filter((file) => ! this.matchesMime(file)).forEach((file) => {
-            this.notifyFile(file.name, config.messages.wrongType)
-        })
+        files
+            .filter((file) => !this.matchesMime(file))
+            .forEach((file) => {
+                this.notifyFile(file.name, config.messages.wrongType)
+            })
         files = files.filter((file) => this.matchesMime(file))
 
         // Pre-check Livewire's temp-upload size limit so oversized files fail per-file, by name.
         if (config.maxBytes) {
-            files.filter((file) => file.size > config.maxBytes).forEach((file) => {
-                this.notifyFile(file.name, config.messages.tooLarge)
-            })
+            files
+                .filter((file) => file.size > config.maxBytes)
+                .forEach((file) => {
+                    this.notifyFile(file.name, config.messages.tooLarge)
+                })
             files = files.filter((file) => file.size <= config.maxBytes)
         }
 
         // Components may impose a file count limit (e.g. the field's maxItems).
         files = this.limitFiles ? this.limitFiles(files) : files
 
-        if (! files.length) return
+        if (!files.length) return
 
         const target = this.uploadTarget()
-        if (! target) return
+        if (!target) return
 
         this.uploading = true
         this.progress = 0
@@ -132,15 +134,14 @@ const dropZone = (config) => ({
 
     // The sticky box is sized to the visible window: from its current top down to the viewport bottom.
     updateOverlayHeight() {
-        if (! config.measureOverlay) return
+        if (!config.measureOverlay) return
 
         const box = this.$refs.dropBox
-        if (! box || (this.dragDepth === 0 && ! this.uploading)) return
+        if (!box || (this.dragDepth === 0 && !this.uploading)) return
 
-        box.style.height = Math.max(
-            OVERLAY_MIN_HEIGHT,
-            window.innerHeight - box.getBoundingClientRect().top - OVERLAY_BOTTOM_GAP,
-        ) + 'px'
+        box.style.height =
+            Math.max(OVERLAY_MIN_HEIGHT, window.innerHeight - box.getBoundingClientRect().top - OVERLAY_BOTTOM_GAP) +
+            'px'
     },
 })
 
@@ -158,8 +159,12 @@ document.addEventListener('alpine:init', () => {
         state: config.state,
 
         init() {
-            this.onSelected = (event) => { this.state = event.detail.selected }
-            this.onUploaded = (event) => { this.mergeUploaded(event.detail.ids) }
+            this.onSelected = (event) => {
+                this.state = event.detail.selected
+            }
+            this.onUploaded = (event) => {
+                this.mergeUploaded(event.detail.ids)
+            }
 
             window.addEventListener(config.selectedEvent, this.onSelected)
             window.addEventListener(config.uploadedEvent, this.onUploaded)
@@ -183,9 +188,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         onAttachmentRemoved(event) {
-            this.state = config.multiple
-                ? this.state.filter((id) => id !== event.detail.id)
-                : null
+            this.state = config.multiple ? this.state.filter((id) => id !== event.detail.id) : null
         },
 
         onAttachmentReordered(event) {
@@ -193,24 +196,32 @@ document.addEventListener('alpine:init', () => {
         },
 
         stateIds() {
-            return Array.isArray(this.state) ? this.state : (this.state ? [this.state] : [])
+            return Array.isArray(this.state) ? this.state : this.state ? [this.state] : []
         },
 
         // Cap a drop to the remaining slots: 1 for single fields, maxItems minus current selection otherwise.
         limitFiles(files) {
             const remaining = config.multiple
-                ? (config.maxItems ? Math.max(0, config.maxItems - this.stateIds().length) : files.length)
+                ? config.maxItems
+                    ? Math.max(0, config.maxItems - this.stateIds().length)
+                    : files.length
                 : 1
 
             if (files.length > remaining) {
-                this.notifyFile(config.messages.tooMany, files.slice(remaining).map((file) => file.name).join(', '))
+                this.notifyFile(
+                    config.messages.tooMany,
+                    files
+                        .slice(remaining)
+                        .map((file) => file.name)
+                        .join(', '),
+                )
             }
 
             return files.slice(0, remaining)
         },
 
         mergeUploaded(ids) {
-            if (! config.multiple) {
+            if (!config.multiple) {
                 this.state = ids[ids.length - 1]
 
                 return
@@ -263,7 +274,7 @@ document.addEventListener('alpine:init', () => {
      */
     Alpine.data('attachmentSortable', (config) => ({
         init() {
-            if (! window.Sortable) return
+            if (!window.Sortable) return
 
             // Stop the SortableJS 'end' event from bubbling to Filament components that also sort (e.g. repeaters).
             this.$el.addEventListener('end', (event) => event.stopPropagation(), true)
@@ -275,8 +286,9 @@ document.addEventListener('alpine:init', () => {
                 ghostClass: 'opacity-50',
                 group: config.group,
                 onEnd: () => {
-                    const ids = Array.from(this.$el.querySelectorAll('[data-attachment-id]'))
-                        .map((el) => Number(el.dataset.attachmentId))
+                    const ids = Array.from(this.$el.querySelectorAll('[data-attachment-id]')).map((el) =>
+                        Number(el.dataset.attachmentId),
+                    )
                     this.$dispatch('attachment-reordered', { ids })
                 },
             })
@@ -293,9 +305,11 @@ document.addEventListener('alpine:init', () => {
         pendingOpen: null,
 
         init() {
-            this.onOpen = (event) => { this.pendingOpen = event.detail }
+            this.onOpen = (event) => {
+                this.pendingOpen = event.detail
+            }
             this.onLoaded = () => {
-                if (! this.pendingOpen) return
+                if (!this.pendingOpen) return
 
                 this.$dispatch('open-attachment-modal', this.pendingOpen)
                 this.pendingOpen = null

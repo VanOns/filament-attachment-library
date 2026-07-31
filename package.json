@@ -1,9 +1,18 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
-        "build": "esbuild resources/js/plugin.js --bundle --minify --outfile=resources/dist/filament-attachment-library.js"
+        "build": "esbuild resources/js/plugin.js --bundle --minify --outfile=resources/dist/filament-attachment-library.js",
+        "lint": "eslint resources/js",
+        "format": "prettier --write resources/js",
+        "format:check": "prettier --check resources/js"
     },
     "devDependencies": {
-        "esbuild": "^0.25"
+        "@eslint/js": "^9.39.5",
+        "esbuild": "^0.25",
+        "eslint": "^9.39.5",
+        "eslint-config-prettier": "^10.1.8",
+        "globals": "^17.8.0",
+        "prettier": "^3.9.6"
     }
 }
