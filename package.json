@@ -9,7 +9,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.39.5",
-        "esbuild": "^0.25",
+        "esbuild": "^0.28",
         "eslint": "^9.39.5",
         "eslint-config-prettier": "^10.1.8",
         "globals": "^17.8.0",
