@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+      - 'release/*'
+    paths:
+      - '**/*.php'
+      - '**/*.js'
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches-ignore:
