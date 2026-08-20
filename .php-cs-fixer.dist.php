@@ -6,6 +6,7 @@ $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude([
         'art',
+        'node_modules',
         'resources',
         'vendor',
     ]);
