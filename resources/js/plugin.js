@@ -246,23 +246,30 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('attachmentSelection', (config) => ({
         selected: config.state,
 
+        // A non-sequential PHP array (e.g. keys left behind by a filter without reindexing)
+        // round-trips through Livewire as a JS object instead of an array; guard against that
+        // shape here too, on top of keeping the PHP side reindexed.
+        selectedIds() {
+            return Array.isArray(this.selected) ? this.selected : Object.values(this.selected ?? {})
+        },
+
         // Loose comparison on purpose: ids can arrive as numbers (json_encode) or strings (attribute
         // bag / DB keys), and the entangled array mixes both. == keeps the ring in sync regardless.
         isSelected(id) {
-            return this.selected.some((item) => item == id)
+            return this.selectedIds().some((item) => item == id)
         },
 
         toggle(id) {
             if (this.$wire.get('disabled')) return
 
             if (this.isSelected(id)) {
-                this.selected = this.selected.filter((item) => item != id)
+                this.selected = this.selectedIds().filter((item) => item != id)
                 this.$wire.highlight(null)
 
                 return
             }
 
-            this.selected = this.$wire.get('multiple') ? [...this.selected, id] : [id]
+            this.selected = this.$wire.get('multiple') ? [...this.selectedIds(), id] : [id]
             // Show the info panel's loading state instantly; the Livewire fetch clears it on arrival.
             this.$dispatch('attachment-info-loading')
             this.$wire.highlight(id)

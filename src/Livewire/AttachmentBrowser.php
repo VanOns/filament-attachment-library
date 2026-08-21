@@ -241,13 +241,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         }
 
         if (in_array($id, $this->selected)) {
-            $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->toArray();
+            $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->values()->toArray();
             $this->dispatch('highlight-attachment', null);
             return;
         }
 
         $this->selected = match ($this->multiple) {
-            true => collect($this->selected)->push($id)->unique()->toArray(),
+            true => collect($this->selected)->push($id)->unique()->values()->toArray(),
             false => [$id],
         };
 
