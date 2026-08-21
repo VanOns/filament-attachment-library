@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -222,6 +223,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     protected function droppedFilesPath(): ?string
     {
         return $this->getCurrentPath();
+    }
+
+    protected function droppedFileRules(): array
+    {
+        if (!$this->mime) {
+            return [];
+        }
+
+        return [function (string $attribute, mixed $value, Closure $fail) {
+            if (!Str::is($this->mime, (string) $value->getMimeType())) {
+                $fail(__('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'));
+            }
+        }];
     }
 
     protected function handleUploadedDrop(Attachment $attachment): void
