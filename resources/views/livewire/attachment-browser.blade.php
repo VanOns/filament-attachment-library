@@ -1,5 +1,5 @@
 @php
-    use VanOns\FilamentAttachmentLibrary\Enums\Layout
+    use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 @endphp
 
 <div

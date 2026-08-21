@@ -12,7 +12,12 @@
     >
         {{-- trackUrl off: the page browser owns the query string; a second tracking
              instance pollutes the URL and hydrates itself on every history pop --}}
-        <livewire:attachment-browser :basePath="$basePath" :trackUrl="false" lazy />
+        <livewire:attachment-browser
+            :basePath="$basePath"
+            :trackUrl="false"
+            lazy
+            wire:key="attachment-browser-modal"
+        />
     </div>
 
     <x-slot name="footer">
