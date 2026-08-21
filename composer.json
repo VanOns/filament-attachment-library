@@ -27,7 +27,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "enshrined/svg-sanitize": "^0.19 || ^0.20 || ^0.21 || ^0.22",
+        "enshrined/svg-sanitize": "^0.19|^0.20|^0.21|^0.22",
         "filament/filament": "^4.0|^5.0",
         "van-ons/laravel-attachment-library": "^1.2.4"
     },
