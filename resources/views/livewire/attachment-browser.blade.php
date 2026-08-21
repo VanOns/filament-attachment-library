@@ -6,7 +6,7 @@
     class="relative"
     x-data="attachmentDropZone({
         maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
-        mime: null,
+        mime: @js($mime),
         wireDisabled: true,
         nestedUploader: false,
         measureOverlay: true,
