@@ -277,10 +277,10 @@ fabric.properties
 # Generated files
 .phpunit.result.cache
 .phpunit.cache
+.pest-cache
 
 # PHPUnit
 /app/phpunit.xml
-/phpunit.xml
 
 # Build data
 /build/
