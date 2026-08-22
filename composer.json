@@ -42,7 +42,7 @@
         "analyse": "./vendor/bin/phpstan analyse --memory-limit=1G",
         "format": "./vendor/bin/php-cs-fixer fix",
         "format:check": "./vendor/bin/php-cs-fixer check",
-        "test": "./vendor/bin/pest"
+        "test": "./vendor/bin/pest --cache-directory=.pest-cache"
     },
     "autoload": {
         "psr-4": {
