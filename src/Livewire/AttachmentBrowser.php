@@ -163,6 +163,13 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->layout = Layout::GRID;
         }
 
+        [$sortColumn, $sortDirection] = $this->resolveSort();
+        $sortBy = "{$sortColumn}_{$sortDirection}";
+
+        if ($sortBy !== $this->sortBy) {
+            $this->sortBy = $sortBy;
+        }
+
         // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
         // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
         $this->dispatch('attachment-browser-loaded');
@@ -353,10 +360,28 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return $breadcrumbs;
     }
 
+    /**
+     * Whitelists $sortBy against SORTABLE_FIELDS before it ever reaches a query —
+     * $sortBy is user-controlled (session + URL), so an unvalidated column/direction
+     * here is a SQL injection vector via orderBy() in getAttachments().
+     *
+     * @return array{0: string, 1: 'asc'|'desc'}
+     */
+    private function resolveSort(): array
+    {
+        $column = Str::beforeLast($this->sortBy, '_');
+        $direction = Str::afterLast($this->sortBy, '_');
+
+        if (!in_array($column, self::SORTABLE_FIELDS, true) || !in_array($direction, ['asc', 'desc'], true)) {
+            return ['created_at', 'desc'];
+        }
+
+        return [$column, $direction];
+    }
+
     private function getDirectories(): Collection
     {
-        $sortColumn = Str::beforeLast($this->sortBy, '_');
-        $sortDirection = Str::afterLast($this->sortBy, '_');
+        [$sortColumn, $sortDirection] = $this->resolveSort();
 
         try {
             $directories = AttachmentManager::directories($this->getCurrentPath());
@@ -388,8 +413,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     private function getAttachments(): LengthAwarePaginator
     {
-        $sortColumn = Str::beforeLast($this->sortBy, '_');
-        $sortDirection = Str::afterLast($this->sortBy, '_');
+        [$sortColumn, $sortDirection] = $this->resolveSort();
 
         $attachments = Attachment::query()
             ->when($this->search, function (Builder $query) {
