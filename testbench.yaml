@@ -1,4 +1,15 @@
 laravel: '@testbench'
 
 providers:
+  - Livewire\LivewireServiceProvider
+  - Filament\Actions\ActionsServiceProvider
+  - Filament\Support\SupportServiceProvider
+  - Filament\Notifications\NotificationsServiceProvider
+  - Filament\Schemas\SchemasServiceProvider
+  - Filament\Forms\FormsServiceProvider
+  - Filament\Infolists\InfolistsServiceProvider
+  - Filament\Tables\TablesServiceProvider
+  - Filament\Widgets\WidgetsServiceProvider
+  - Filament\FilamentServiceProvider
+  - VanOns\LaravelAttachmentLibrary\LaravelAttachmentLibraryServiceProvider
   - VanOns\FilamentAttachmentLibrary\FilamentAttachmentLibraryServiceProvider
