@@ -11,11 +11,9 @@ class HasValidExtension implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $filename = $value;
-
-        if ($value instanceof UploadedFile) {
-            $filename = new Filename($value);
-        }
+        $filename = $value instanceof UploadedFile || is_string($value)
+            ? new Filename($value)
+            : $value;
 
         if (empty($filename->extension)) {
             $fail(__('filament-attachment-library::validation.invalid_extension', ['attribute' => $attribute]));
