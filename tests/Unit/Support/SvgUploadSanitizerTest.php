@@ -12,8 +12,10 @@ it('leaves non-svg files untouched', function () {
     $file = UploadedFile::fake()->image('test.png');
     $original = file_get_contents($file->getRealPath());
 
-    expect(SvgUploadSanitizer::sanitize($file))->toBeTrue();
-    expect(file_get_contents($file->getRealPath()))->toBe($original);
+    $sanitized = SvgUploadSanitizer::sanitize($file);
+
+    expect($sanitized)->toBe($file);
+    expect($sanitized->get())->toBe($original);
 });
 
 it('strips script tags from an svg', function () {
@@ -25,8 +27,10 @@ it('strips script tags from an svg', function () {
 </svg>
 SVG);
 
-    expect(SvgUploadSanitizer::sanitize($file))->toBeTrue();
-    expect(file_get_contents($file->getRealPath()))->not->toContain('<script');
+    $sanitized = SvgUploadSanitizer::sanitize($file);
+
+    expect($sanitized)->not->toBeNull();
+    expect($sanitized->get())->not->toContain('<script');
 });
 
 it('strips event handler attributes from an svg', function () {
@@ -37,14 +41,16 @@ it('strips event handler attributes from an svg', function () {
 </svg>
 SVG);
 
-    expect(SvgUploadSanitizer::sanitize($file))->toBeTrue();
-    expect(file_get_contents($file->getRealPath()))->not->toContain('onload');
+    $sanitized = SvgUploadSanitizer::sanitize($file);
+
+    expect($sanitized)->not->toBeNull();
+    expect($sanitized->get())->not->toContain('onload');
 });
 
 it('fails when the svg cannot be parsed', function () {
     $file = fakeSvg('not valid xml at all <<<');
 
-    expect(SvgUploadSanitizer::sanitize($file))->toBeFalse();
+    expect(SvgUploadSanitizer::sanitize($file))->toBeNull();
 });
 
 it('detects an svg by extension even with a generic mime type', function () {
@@ -55,6 +61,8 @@ it('detects an svg by extension even with a generic mime type', function () {
 </svg>
 SVG)->mimeType('application/octet-stream');
 
-    expect(SvgUploadSanitizer::sanitize($file))->toBeTrue();
-    expect(file_get_contents($file->getRealPath()))->not->toContain('<script');
+    $sanitized = SvgUploadSanitizer::sanitize($file);
+
+    expect($sanitized)->not->toBeNull();
+    expect($sanitized->get())->not->toContain('<script');
 });

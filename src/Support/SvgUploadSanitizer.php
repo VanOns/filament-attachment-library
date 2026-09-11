@@ -8,16 +8,17 @@ use Illuminate\Http\UploadedFile;
 class SvgUploadSanitizer
 {
     /**
-     * Strip scripts, event handlers and external references from the file in place if it's
-     * an SVG. Returns false if the file claims to be an SVG but couldn't be parsed as one.
+     * Strip scripts, event handlers and external references from the file if it's an SVG,
+     * returning the sanitized file to use in its place. Non-SVG files are returned as-is.
+     * Returns null if the file claims to be an SVG but couldn't be parsed as one.
      */
-    public static function sanitize(UploadedFile $file): bool
+    public static function sanitize(UploadedFile $file): ?UploadedFile
     {
         if (
             $file->getMimeType() !== 'image/svg+xml'
-            && strtolower((string) $file->getClientOriginalExtension()) !== 'svg'
+            && strtolower($file->getClientOriginalExtension()) !== 'svg'
         ) {
-            return true;
+            return $file;
         }
 
         $sanitizer = new Sanitizer();
@@ -26,13 +27,21 @@ class SvgUploadSanitizer
         $clean = $sanitizer->sanitize((string) $file->get());
 
         if ($clean === false) {
-            return false;
+            return null;
         }
 
-        if (file_put_contents($file->getRealPath(), $clean) === false) {
-            return false;
+        $path = tempnam(sys_get_temp_dir(), 'svg');
+
+        if ($path === false || file_put_contents($path, $clean) === false) {
+            return null;
         }
 
-        return true;
+        register_shutdown_function(static fn () => @unlink($path));
+
+        return new UploadedFile(
+            $path,
+            $file->getClientOriginalName(),
+            $file->getMimeType(),
+        );
     }
 }

@@ -93,12 +93,13 @@ trait HandlesDroppedFiles
                     continue;
                 }
 
-                if (!SvgUploadSanitizer::sanitize($file)) {
+                $sanitizedFile = SvgUploadSanitizer::sanitize($file);
+                if ($sanitizedFile === null) {
                     $this->notifyDropFailure($file->getClientOriginalName(), __('filament-attachment-library::validation.invalid_svg'));
                     continue;
                 }
 
-                $attachment = AttachmentManager::upload($file, $this->droppedFilesPath());
+                $attachment = AttachmentManager::upload($sanitizedFile, $this->droppedFilesPath());
                 $this->handleUploadedDrop($attachment);
                 $uploadedIds[] = $attachment->id;
             } catch (DestinationAlreadyExistsException) {
