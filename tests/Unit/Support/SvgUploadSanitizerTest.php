@@ -30,7 +30,7 @@ SVG);
     $sanitized = SvgUploadSanitizer::sanitize($file);
 
     expect($sanitized)->not->toBeNull();
-    expect($sanitized->get())->not->toContain('<script');
+    expect($sanitized->getContent())->not->toContain('<script');
 });
 
 it('strips event handler attributes from an svg', function () {
@@ -44,7 +44,7 @@ SVG);
     $sanitized = SvgUploadSanitizer::sanitize($file);
 
     expect($sanitized)->not->toBeNull();
-    expect($sanitized->get())->not->toContain('onload');
+    expect($sanitized->getContent())->not->toContain('onload');
 });
 
 it('fails when the svg cannot be parsed', function () {
@@ -64,5 +64,5 @@ SVG)->mimeType('application/octet-stream');
     $sanitized = SvgUploadSanitizer::sanitize($file);
 
     expect($sanitized)->not->toBeNull();
-    expect($sanitized->get())->not->toContain('<script');
+    expect($sanitized->getContent())->not->toContain('<script');
 });
