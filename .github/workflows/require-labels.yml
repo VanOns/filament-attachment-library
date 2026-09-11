@@ -50,11 +50,9 @@ jobs:
             - `enhancement`
             - `bug`
             - `documentation`
-            - `change`
             - `dependencies`
           labels: |
             enhancement
             bug
             documentation
-            change
             dependencies
