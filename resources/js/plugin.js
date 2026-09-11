@@ -129,7 +129,9 @@ const dropZone = (config) => ({
         }
 
         files.forEach((file) => {
-            target.upload('droppedFiles', file,
+            target.upload(
+                'droppedFiles',
+                file,
                 () => {
                     fileFinished()
                 },
