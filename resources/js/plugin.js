@@ -116,19 +116,31 @@ const dropZone = (config) => ({
         this.progress = 0
         this.$nextTick(() => this.updateOverlayHeight())
 
-        const reset = () => {
-            this.uploading = false
-            this.progress = 0
+        let filesFinished = 0
+        const total = files.length
+
+        const fileFinished = () => {
+            filesFinished++
+
+            if (filesFinished >= total) {
+                this.uploading = false
+                this.progress = 0
+            }
         }
 
-        // The whole batch fails together and the callback has no payload; name the batch's files.
-        const fail = () => {
-            reset()
-            this.notifyFile(config.messages.failed, files.map((file) => file.name).join(', '))
-        }
-
-        target.uploadMultiple('droppedFiles', files, reset, fail, (event) => {
-            this.progress = event.detail.progress
+        files.forEach((file) => {
+            target.upload('droppedFiles', file,
+                () => {
+                    fileFinished()
+                },
+                () => {
+                    this.notifyFile(file.name, config.messages.failed)
+                    fileFinished()
+                },
+                (event) => {
+                    this.progress = Math.round(((filesFinished + event.detail.progress / 100) / total) * 100)
+                },
+            )
         })
     },
 
