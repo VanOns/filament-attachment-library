@@ -46,7 +46,8 @@ class ReplaceAttachmentAction extends Action
                         /** @var Attachment $attachment */
                         $attachment = Attachment::find($arguments['attachment_id']);
 
-                        if (!SvgUploadSanitizer::sanitize($file)) {
+                        $sanitizedFile = SvgUploadSanitizer::sanitize($file);
+                        if ($sanitizedFile === null) {
                             Notification::make()
                                 ->title(__('filament-attachment-library::validation.invalid_svg'))
                                 ->danger()
@@ -58,7 +59,7 @@ class ReplaceAttachmentAction extends Action
                         }
 
                         try {
-                            AttachmentManager::replace($file, $attachment);
+                            AttachmentManager::replace($sanitizedFile, $attachment);
 
                             $this->getLivewire()->dispatch('refresh-attachments');
 
