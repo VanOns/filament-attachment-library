@@ -119,12 +119,14 @@ const dropZone = (config) => ({
         let filesFinished = 0
         const total = files.length
 
-        const fileFinished = () => {
+        const fileFinished = (index) => {
             filesFinished++
 
             if (filesFinished >= total) {
                 this.uploading = false
                 this.progress = 0
+            } else {
+                uploadFile(index + 1)
             }
         }
 
@@ -139,13 +141,11 @@ const dropZone = (config) => ({
                 'droppedFiles',
                 file,
                 () => {
-                    fileFinished()
-                    uploadFile(index + 1)
+                    fileFinished(index)
                 },
                 () => {
                     this.notifyFile(file.name, config.messages.failed)
-                    fileFinished()
-                    uploadFile(index + 1)
+                    fileFinished(index)
                 },
                 (event) => {
                     this.progress = Math.round(((filesFinished + event.detail.progress / 100) / total) * 100)
