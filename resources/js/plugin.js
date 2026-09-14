@@ -119,31 +119,41 @@ const dropZone = (config) => ({
         let filesFinished = 0
         const total = files.length
 
-        const fileFinished = () => {
+        const fileFinished = (index) => {
             filesFinished++
 
             if (filesFinished >= total) {
                 this.uploading = false
                 this.progress = 0
+            } else {
+                uploadFile(index + 1)
             }
         }
 
-        files.forEach((file) => {
+        const uploadFile = (index) => {
+            if (index >= total) {
+                return
+            }
+
+            const file = files[index]
+
             target.upload(
                 'droppedFiles',
                 file,
                 () => {
-                    fileFinished()
+                    fileFinished(index)
                 },
                 () => {
                     this.notifyFile(file.name, config.messages.failed)
-                    fileFinished()
+                    fileFinished(index)
                 },
                 (event) => {
                     this.progress = Math.round(((filesFinished + event.detail.progress / 100) / total) * 100)
                 },
             )
-        })
+        }
+
+        uploadFile(0)
     },
 
     // The sticky box is sized to the visible window: from its current top down to the viewport bottom.
