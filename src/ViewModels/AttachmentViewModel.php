@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
+use VanOns\LaravelAttachmentLibrary\DataTransferObjects\FileMetadata;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
@@ -79,7 +80,10 @@ class AttachmentViewModel implements Wireable
         $this->alt = $attachment->alt;
         $this->caption = $attachment->caption;
 
-        if ($metadata = $attachment->metadata) { // @phpstan-ignore-line
+        /** @var FileMetadata|false $metadata */
+        $metadata = $attachment->metadata;
+
+        if ($metadata) {
             $this->bits = $metadata->bits;
             $this->channels = $metadata->channels;
             $this->dimensions = "{$metadata->width}x{$metadata->height}";
