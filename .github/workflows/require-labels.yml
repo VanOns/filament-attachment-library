@@ -1,0 +1,58 @@
+name: Require labels
+
+on:
+  pull_request:
+    types: [ opened, labeled, unlabeled, synchronize ]
+
+jobs:
+  version-label:
+    runs-on: ubuntu-latest
+    name: Version label
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: 🏷️ Check for exactly one version label
+        uses: mheap/github-action-required-labels@23e10fde7e062233401931a0eece796cd9bf3177 # v5.6.0
+        with:
+          mode: exactly
+          count: 1
+          add_comment: true
+          message: |
+            This pull request is missing a version label. Please add exactly one of the following, so we know how to version the next release:
+
+            - `major`
+            - `minor`
+            - `patch`
+          labels: |
+            major
+            minor
+            patch
+
+  type-label:
+    runs-on: ubuntu-latest
+    name: Type label
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: 🏷️ Check for at least one type label
+        uses: mheap/github-action-required-labels@23e10fde7e062233401931a0eece796cd9bf3177 # v5.6.0
+        with:
+          mode: minimum
+          count: 1
+          add_comment: true
+          message: |
+            This pull request is missing a type label. Please add at least one of the following, so we know what kind of change this is:
+
+            - `enhancement`
+            - `bug`
+            - `documentation`
+            - `dependencies`
+          labels: |
+            enhancement
+            bug
+            documentation
+            dependencies
