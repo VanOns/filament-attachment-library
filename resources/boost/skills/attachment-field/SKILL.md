@@ -105,6 +105,7 @@ public static function form(Form $form): Form
 | `reorderable(bool\|Closure = true)` | `true` (only effective with `multiple()`) | Drag-and-drop ordering. Persists to the pivot's `order` column. |
 | `mime(string)` | none | MIME filter for the picker. Wildcards allowed (`'image/*'`). |
 | `image()` / `video()` / `audio()` / `text()` | — | Shortcut for `mime('image/*')` etc. |
+| `extensions(array)` | none | Extension filter for the picker and uploads, e.g. `['vtt', 'srt']`. Case-insensitive. |
 | `minFiles(int)` / `maxFiles(int)` | unbounded | Wrappers for `minItems` / `maxItems` from `CanLimitItemsLength`. |
 | Standard Filament rules (`required`, `nullable`, …) | — | Work as usual. See [Filament validation docs](https://filamentphp.com/docs/forms/validation). |
 

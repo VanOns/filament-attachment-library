@@ -7,8 +7,8 @@
 <div
     @class([$class, 'relative'])
     x-data="{ loading: false }"
-    @attachment-info-loading.window="loading = true"
-    @attachment-info-ready.window="loading = false"
+    @attachment-info-loading.window="if ($event.detail.scope === $wire.scope) loading = true"
+    @attachment-info-ready.window="if ($event.detail.scope === $wire.scope) loading = false"
 >
     {{-- Instant feedback while the Livewire fetch is in flight; cleared by attachment-info-ready --}}
     <div
@@ -44,10 +44,23 @@
                 @if($attachment->isVideo())
                     <video
                         src="{{ $attachment->url }}"
+                        @if($posterUrl = $attachment->posterUrl())
+                            poster="{{ $posterUrl }}"
+                        @endif
                         controls
                         preload="none"
                         class="relative object-cover object-center rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
-                    ></video>
+                    >
+                        @foreach($attachment->attachment->captions as $caption)
+                            <track
+                                kind="captions"
+                                src="{{ $caption->url }}"
+                                srclang="{{ $caption->pivot->language }}"
+                                label="{{ $caption->pivot->label ?: $caption->pivot->language }}"
+                                @if($caption->pivot->is_default) default @endif
+                            >
+                        @endforeach
+                    </video>
                 @endif
 
 
@@ -91,25 +104,25 @@
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-pencil-square" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'editAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'editAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.edit') }}
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-arrow-right-circle" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'moveAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'moveAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.move') }}
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-arrow-path" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'replaceAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'replaceAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.replace') }}
                         </x-filament::button>
 
                         <x-filament::button color="danger" icon="heroicon-o-trash" class="col-span-2 relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'deleteAttachment', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'deleteAttachment', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.delete') }}
                         </x-filament::button>
@@ -176,6 +189,17 @@
 
                                     <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.image.bits') }}</p>
                                     <p>{{ $attachment->bits }}</p>
+                                @endif
+
+                                @if($attachment->isVideo())
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.dimensions') }}</p>
+                                    <p>{{ $attachment->dimensions ?: '-' }}</p>
+
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.duration') }}</p>
+                                    <p>{{ $attachment->duration ?: '-' }}</p>
+
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.captions') }}</p>
+                                    <p>{{ $attachment->attachment->captions->map(fn ($caption) => $caption->pivot->label ?: $caption->pivot->language)->implode(', ') ?: '-' }}</p>
                                 @endif
                             </div>
                         </div>

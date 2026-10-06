@@ -7,6 +7,7 @@
     x-data="attachmentDropZone({
         maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
         mime: @js($mime),
+        extensions: @js($extensions),
         wireDisabled: true,
         nestedUploader: false,
         measureOverlay: true,
@@ -80,7 +81,7 @@
             @endif
         </div>
 
-        <x-filament-attachment-library::sidebar :$selected :$currentPath class="order-1 md:order-2"/>
+        <x-filament-attachment-library::sidebar :$selected :$currentPath :$scope class="order-1 md:order-2"/>
 
         <div class="mt-4 w-full order-3">
             <x-filament::pagination :paginator="$attachments" extreme-links/>

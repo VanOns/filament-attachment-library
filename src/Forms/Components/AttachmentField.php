@@ -31,6 +31,11 @@ class AttachmentField extends Field
 
     public ?string $mime = null;
 
+    /**
+     * @var array<int, string>
+     */
+    public array $extensions = [];
+
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
     protected function setUp(): void
@@ -203,6 +208,26 @@ class AttachmentField extends Field
     public function getMime(): ?string
     {
         return $this->evaluate($this->mime);
+    }
+
+    /**
+     * Restrict picking and uploading to files with one of the given extensions.
+     *
+     * @param  array<int, string>  $extensions
+     */
+    public function extensions(array $extensions): static
+    {
+        $this->extensions = array_map(fn (string $extension) => strtolower(ltrim($extension, '.')), $extensions);
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getExtensions(): array
+    {
+        return $this->extensions;
     }
 
     /**

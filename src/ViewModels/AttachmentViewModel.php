@@ -55,6 +55,8 @@ class AttachmentViewModel implements Wireable
 
     public ?string $dimensions = null;
 
+    public ?string $duration = null;
+
     public function __construct(Attachment $attachment)
     {
         $userModel = Config::get('filament-attachment-library.user_model', User::class);
@@ -80,9 +82,11 @@ class AttachmentViewModel implements Wireable
         $this->alt = $attachment->alt;
         $this->caption = $attachment->caption;
 
-        // Via the manager instead of the model's metadata attribute — the model's
-        // @property docblock mistypes the attribute as string, the manager is typed.
-        if ($metadata = AttachmentManager::getMetadata($attachment)) {
+        // Videos are probed on upload; reading the metadata would run ffprobe for every listed video.
+        if ($this->isVideo()) {
+            $this->dimensions = $attachment->width ? "{$attachment->width}x{$attachment->height}" : null;
+            $this->duration = $attachment->duration !== null ? $this->formatDuration($attachment->duration) : null;
+        } elseif ($metadata = AttachmentManager::getMetadata($attachment)) {
             $this->bits = $metadata->bits;
             $this->channels = $metadata->channels;
             $this->dimensions = "{$metadata->width}x{$metadata->height}";
@@ -125,6 +129,26 @@ class AttachmentViewModel implements Wireable
             true => Resizer::src($this->attachment)->height(320)->resize()['url'] ?? null,
             default => $this->attachment->url,
         };
+    }
+
+    public function posterUrl(): ?string
+    {
+        $poster = $this->attachment->poster;
+
+        if (!$poster) {
+            return null;
+        }
+
+        return Resizer::src($poster)->height(320)->resize()['url'] ?? $poster->url;
+    }
+
+    protected function formatDuration(float $duration): string
+    {
+        $seconds = (int) round($duration);
+
+        return $seconds >= 3600
+            ? sprintf('%d:%02d:%02d', intdiv($seconds, 3600), intdiv($seconds % 3600, 60), $seconds % 60)
+            : sprintf('%d:%02d', intdiv($seconds, 60), $seconds % 60);
     }
 
     public function toLivewire()

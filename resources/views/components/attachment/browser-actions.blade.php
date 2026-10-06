@@ -17,8 +17,8 @@
             icon="heroicon-o-eye"
             class="flex md:hidden"
             x-on:click="
-                $dispatch('highlight-attachment', { id: {{ json_encode($attachment->attachment->id) }} });
-                $dispatch('open-modal', { id: 'attachment-info-modal' });
+                $wire.highlight({{ json_encode($attachment->attachment->id) }});
+                $dispatch('open-modal', { id: 'attachment-info-modal-' + $wire.scope });
             "
         >
             {{ __('filament-attachment-library::views.actions.attachment.view') }}

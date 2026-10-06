@@ -2,7 +2,6 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -12,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use League\Flysystem\PathTraversalDetected;
 use Livewire\Attributes\Computed;
@@ -28,9 +28,11 @@ use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\RenameDirectoryAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Concerns\DispatchesToScope;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
+use VanOns\FilamentAttachmentLibrary\Rules\MatchesFileFilter;
 use VanOns\FilamentAttachmentLibrary\Support\Path;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
@@ -40,6 +42,7 @@ use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentBrowser extends Component implements HasActions, HasForms
 {
+    use DispatchesToScope;
     use HandlesDroppedFiles;
     use InteractsWithActionsUsingAlpineJS;
     use InteractsWithForms;
@@ -77,6 +80,11 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public string $search = '';
 
     public ?string $mime = null;
+
+    /**
+     * @var array<int, string>
+     */
+    public array $extensions = [];
 
     public bool $disableMimeFilter = false;
 
@@ -172,7 +180,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
         // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
-        $this->dispatch('attachment-browser-loaded');
+        $this->dispatch('attachment-browser-loaded', scope: $this->scope);
     }
 
     public function createDirectoryAction(): Action
@@ -234,15 +242,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     protected function droppedFileRules(): array
     {
-        if (!$this->mime) {
-            return [];
-        }
-
-        return [function (string $attribute, mixed $value, Closure $fail) {
-            if (!Str::is($this->mime, (string) $value->getMimeType())) {
-                $fail(__('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'));
-            }
-        }];
+        return [new MatchesFileFilter($this->mime, $this->extensions)];
     }
 
     protected function handleUploadedDrop(Attachment $attachment): void
@@ -263,7 +263,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         if (in_array($id, $this->selected)) {
             $this->selected = collect($this->selected)->filter(fn ($item) => $item !== $id)->values()->toArray();
-            $this->dispatch('highlight-attachment', null);
+            $this->highlight(null);
             return;
         }
 
@@ -272,7 +272,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             false => [$id],
         };
 
-        $this->dispatch('highlight-attachment', $id);
+        $this->highlight($id);
     }
 
     /**
@@ -282,7 +282,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
      */
     public function highlight(?int $id): void
     {
-        $this->dispatch('highlight-attachment', $id);
+        $this->dispatchToScope('highlight-attachment', $id);
     }
 
     /**
@@ -299,7 +299,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         $this->resetPage();
 
-        $this->dispatch('highlight-attachment', null);
+        $this->highlight(null);
     }
 
     #[On('set-mime')]
@@ -416,6 +416,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         [$sortColumn, $sortDirection] = $this->resolveSort();
 
         $attachments = Attachment::query()
+            ->with('poster')
             ->when($this->search, function (Builder $query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             })
@@ -424,6 +425,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             })
             ->when($this->mime, function (Builder $query) {
                 $query->where('mime_type', 'like', str_replace('*', '%', $this->mime));
+            })
+            ->when($this->extensions, function (Builder $query) {
+                $query->whereIn(DB::raw('lower(extension)'), $this->extensions);
             })
             ->orderBy($sortColumn, $sortDirection)
             ->paginate($this->pageSize);
@@ -442,8 +446,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function closeModal(?string $id = null, bool $save = false): void
     {
         // Filament dispatches close-modal for every modal on the page (e.g. the edit/move/replace
-        // action modals); only react to the attachment browser modal itself.
-        if ($id !== 'attachment-modal') {
+        // action modals and the other browser levels); only react to this browser's own modal.
+        if ($id !== $this->scope) {
             return;
         }
 
@@ -457,20 +461,29 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->dispatch('attachments-selected-' . md5($this->statePath), statePath: $this->statePath, selected: $selected);
         }
 
-        $this->dispatch('highlight-attachment', null);
+        $this->highlight(null);
 
         // Reset everything except mount-time config (reset() falls back to class defaults,
         // which would re-enable URL tracking and drop the tenant base path) and the
         // session-persisted display preferences (resetting would clobber the stored values).
-        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'sortBy', 'pageSize', 'layout']));
+        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'scope', 'sortBy', 'pageSize', 'layout']));
     }
 
+    /**
+     * Open this browser as a picker. Payloads for other browser levels are ignored; a payload
+     * without a modal id targets the first level, for code that opens the modal itself.
+     */
     #[On('open-attachment-modal')]
-    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null): void
+    public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null, ?string $modalId = null, ?array $extensions = null): void
     {
+        if (($modalId ?? AttachmentModalStack::modalId(0)) !== $this->scope) {
+            return;
+        }
+
         $this->statePath = $statePath;
         $this->multiple = $multiple ?? false;
         $this->mime = $mime;
+        $this->extensions = $extensions ?? [];
         $this->disableMimeFilter = $disableMimeFilter ?? false;
 
         if ($selected) {
@@ -480,7 +493,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         // Dispatched server-side so it also works on the lazy first load, where the
         // payload arrives via the modal wrapper's replay.
         if ($highlight) {
-            $this->dispatch('highlight-attachment', id: $highlight);
+            $this->highlight((int) $highlight);
         }
     }
 }

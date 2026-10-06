@@ -10,6 +10,7 @@
             statePath: @js($getStatePath()),
             multiple: @js($getMultiple()),
             mime: @js($getMime()),
+            extensions: @js($getExtensions()),
             disabled: @js($isDisabled()),
             nestedUploader: true,
             maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
@@ -33,6 +34,7 @@
         <livewire:attachment-field-uploader
             :statePath="$getStatePath()"
             :mime="$getMime()"
+            :extensions="$getExtensions()"
             :wire:key="'attachment-uploader-' . $getStatePath()"
         />
 

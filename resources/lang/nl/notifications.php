@@ -19,5 +19,7 @@ return [
         'deleted' => 'Het bestand is succesvol verwijderd.',
         'moved' => 'Het bestand is succesvol verplaatst.',
         'replaced' => 'Het bestand is succesvol vervangen.',
+        'poster_generated' => 'Het eerste frame is nu de posterafbeelding.',
+        'poster_failed' => 'Het eerste frame van de video kon niet worden gelezen.',
     ],
 ];

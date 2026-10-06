@@ -19,5 +19,7 @@ return [
         'deleted' => 'The file was successfully removed.',
         'moved' => 'The file was successfully moved.',
         'replaced' => 'The file was successfully replaced.',
+        'poster_generated' => 'The first frame is now the poster image.',
+        'poster_failed' => 'The first frame of the video could not be read.',
     ],
 ];

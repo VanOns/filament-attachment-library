@@ -26,6 +26,17 @@ AttachmentField::make('featured_image')->text()
 
 By using these methods, you can increase readability and make it easier to oversee the use of specific file types.
 
+## Restricting extensions
+
+Some file types have no reliable MIME-type, such as `.vtt` and `.srt` captions. Restrict those by extension instead:
+
+```php
+AttachmentField::make('captions')->extensions(['vtt', 'srt'])
+```
+
+Extensions are matched case-insensitively, both when picking from the library and when uploading. They can be combined
+with a MIME-type filter.
+
 ## Multiple attachments
 
 The `AttachmentField` can accept multiple attachments by calling the `multiple` method:

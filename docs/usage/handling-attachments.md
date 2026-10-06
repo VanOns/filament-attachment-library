@@ -74,3 +74,11 @@ Glide is used to scale the image up or down. The `src` argument may be an Attach
 ```
 
 For more information refer to the [Laravel Attachment Library documentation](https://github.com/VanOns/laravel-attachment-library).
+
+## Videos
+
+When editing a video in the library, you can set a poster image and add caption tracks (`.vtt`, or `.srt`, which is
+converted to `.vtt`). With `ffmpeg` installed on the server, the dimensions, duration and a first-frame poster are stored
+automatically on upload, and a "Use first frame" button is available. See the
+[Laravel Attachment Library video docs](https://github.com/VanOns/laravel-attachment-library/blob/main/docs/basic-usage/videos.md)
+for rendering videos on the frontend.

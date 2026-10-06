@@ -7,4 +7,5 @@ return [
     'invalid_svg' => 'The SVG file could not be processed.',
     'invalid_path' => 'The specified path is invalid.',
     'invalid_focal_point' => 'The focal point must be a coordinate between 0 and 100.',
+    'single_default_caption' => 'Only one captions track can be shown by default.',
 ];

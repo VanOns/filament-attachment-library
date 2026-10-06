@@ -15,11 +15,13 @@ use VanOns\FilamentAttachmentLibrary\Actions\EditAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\MoveAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\OpenAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
+use VanOns\FilamentAttachmentLibrary\Concerns\DispatchesToScope;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
 class AttachmentInfo extends Component implements HasActions, HasForms
 {
+    use DispatchesToScope;
     use InteractsWithActions;
     use InteractsWithForms;
 
@@ -33,11 +35,11 @@ class AttachmentInfo extends Component implements HasActions, HasForms
 
     public array $selected = [];
 
-    #[On('highlight-attachment')]
+    #[On('highlight-attachment.{scope}')]
     public function highlightAttachment(?int $id): void
     {
         // Clears the instant loading overlay shown by the browser the moment a selection is made.
-        $this->dispatch('attachment-info-ready');
+        $this->dispatch('attachment-info-ready', scope: $this->scope);
 
         $attachment = Attachment::find($id);
 
@@ -49,7 +51,7 @@ class AttachmentInfo extends Component implements HasActions, HasForms
         $this->attachment = new AttachmentViewModel($attachment);
     }
 
-    #[On('dehighlight-attachment')]
+    #[On('dehighlight-attachment.{scope}')]
     public function dehighlightAttachment(int $id): void
     {
         if (isset($this->attachment) && $this->attachment->id !== $id) {

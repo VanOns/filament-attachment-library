@@ -26,4 +26,20 @@ return [
         'label' => 'Focal point',
         'description' => 'Select the focal point of the image to ensure important parts remain visible when cropped.',
     ],
+    'video' => [
+        'label' => 'Video',
+        'description' => 'The poster is shown before the video plays. Captions make the video accessible.',
+        'poster' => 'Poster image',
+        'generate_poster' => 'Use first frame',
+    ],
+    'captions' => [
+        'label' => 'Captions',
+        'add' => 'Add captions',
+        'file' => 'Captions file (.vtt or .srt)',
+        'language' => 'Language',
+        'language_help' => 'Language code, for example en or nl-BE.',
+        'track_label' => 'Label',
+        'track_label_help' => 'Shown in the video player, for example English.',
+        'default' => 'Show by default',
+    ],
 ];

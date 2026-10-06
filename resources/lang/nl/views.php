@@ -35,6 +35,12 @@ return [
                     'bits' => 'Bits',
                     'channels' => 'Kanalen',
                 ],
+                'video' => [
+                    'header' => 'Videometadata',
+                    'dimensions' => 'Afmetingen',
+                    'duration' => 'Duur',
+                    'captions' => 'Ondertiteling',
+                ],
                 'more' => 'Meer details',
                 'date' => [
                     'header' => 'Data',
