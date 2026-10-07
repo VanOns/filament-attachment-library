@@ -11,6 +11,16 @@ across such a case, please let us know by [opening an issue][issues], or by addi
 * Run `php artisan filament-attachment-library:install` to publish new migrations.
 * Run `php artisan migrate` to update the database.
 
+# v2.6 to v2.7
+
+* Require `van-ons/laravel-attachment-library` `^1.7` and follow its [upgrade notes](https://github.com/VanOns/laravel-attachment-library/blob/main/UPGRADING.md):
+  publish and run its new migrations for video dimensions, posters and captions.
+* Run `php artisan filament:assets` to publish the new stylesheet.
+* Rebuild your panel theme, so the classes used by the new views are included.
+* Optionally install `ffmpeg` and `ffprobe` on the server to store video dimensions and generate posters.
+* The attachment browser's Livewire events are now scoped per browser (e.g. `highlight-attachment.{scope}`).
+  Update any custom code that dispatches `highlight-attachment`, `dehighlight-attachment` or `mount-action` itself.
+
 <!-- EXAMPLE -->
 <!--
 # v1 to v2
