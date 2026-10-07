@@ -40,7 +40,7 @@
         <span class="block truncate text-sm text-gray-500 dark:text-gray-400">{{ implode(' · ', $meta) }}</span>
     </span>
 
-    <span class="flex shrink-0 items-center gap-1">
+    <span class="flex shrink-0 items-center gap-2">
         <x-filament::icon-button
             icon="heroicon-o-arrow-top-right-on-square"
             color="gray"
@@ -72,6 +72,6 @@
             :tooltip="__('filament-attachment-library::views.actions.attachment.delete')"
             wire:click="mountAction('delete')"
         />
-        <span class="mx-2 h-6 w-px bg-gray-200 dark:bg-white/10"></span>
+        <span class="ms-2 h-6 w-px bg-gray-200 dark:bg-white/10"></span>
     </span>
 </span>

@@ -2,6 +2,7 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
@@ -64,6 +65,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
     {
         FilamentAsset::register([
             Js::make('filament-attachment-library', __DIR__ . '/../resources/dist/filament-attachment-library.js'),
+            Css::make('filament-attachment-library', __DIR__ . '/../resources/css/plugin.css'),
         ], package: 'van-ons/filament-attachment-library');
 
         FilamentAsset::registerScriptData([
