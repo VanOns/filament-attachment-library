@@ -4,6 +4,7 @@ namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -54,6 +55,10 @@ class AttachmentViewModel implements Wireable
 
     public ?int $channels = null;
 
+    public ?int $width = null;
+
+    public ?int $height = null;
+
     public ?string $dimensions = null;
 
     public ?string $duration = null;
@@ -85,13 +90,17 @@ class AttachmentViewModel implements Wireable
 
         // Videos are probed on upload; reading the metadata would run ffprobe for every listed video.
         if ($this->isVideo()) {
-            $this->dimensions = $attachment->width ? "{$attachment->width}x{$attachment->height}" : null;
+            $this->width = $attachment->width;
+            $this->height = $attachment->height;
             $this->duration = $attachment->duration !== null ? $this->formatDuration($attachment->duration) : null;
         } elseif ($metadata = AttachmentManager::getMetadata($attachment)) {
             $this->bits = $metadata->bits;
             $this->channels = $metadata->channels;
-            $this->dimensions = "{$metadata->width}x{$metadata->height}";
+            $this->width = $metadata->width;
+            $this->height = $metadata->height;
         }
+
+        $this->dimensions = $this->width ? "{$this->width}x{$this->height}" : null;
     }
 
     public function isAttachment(): bool
@@ -160,7 +169,7 @@ class AttachmentViewModel implements Wireable
 
         $preview = [];
 
-        while (count($preview) < $lines && ($line = fgets($stream)) !== false) {
+        while (count($preview) < $lines && ($line = fgets($stream, 1024)) !== false) {
             $preview[] = rtrim($line, "\r\n");
         }
 
@@ -174,22 +183,29 @@ class AttachmentViewModel implements Wireable
      */
     public function aspectRatioLabel(): ?string
     {
-        [$width, $height] = [$this->attachment->width, $this->attachment->height];
-
-        if ($this->isImage() && ($metadata = AttachmentManager::getMetadata($this->attachment))) {
-            [$width, $height] = [$metadata->width, $metadata->height];
-        }
-
-        if (!$width || !$height) {
+        if (!$this->width || !$this->height) {
             return null;
         }
 
         return collect(['1:1', '5:4', '4:3', '3:2', '16:10', '16:9', '21:9', '4:5', '3:4', '2:3', '9:16'])
-            ->first(function (string $label) use ($width, $height) {
+            ->first(function (string $label) {
                 [$x, $y] = array_map('intval', explode(':', $label));
 
-                return abs(($width / $height) / ($x / $y) - 1) < 0.01;
+                return abs(($this->width / $this->height) / ($x / $y) - 1) < 0.01;
             });
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function captionLabels(): Collection
+    {
+        return $this->attachment->captions->map(fn (Attachment $caption) => static::captionLabel($caption));
+    }
+
+    public static function captionLabel(Attachment $caption): string
+    {
+        return $caption->pivot->label ?: $caption->pivot->language;
     }
 
     public function isDocument(): bool

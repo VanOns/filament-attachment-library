@@ -5,7 +5,6 @@ namespace VanOns\FilamentAttachmentLibrary\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -22,7 +21,7 @@ class DeleteAttachmentAction extends Action
 
         $this->color('danger');
 
-        $this->action(function (array $arguments, AttachmentBrowser|AttachmentInfo $livewire) {
+        $this->action(function (array $arguments, AttachmentBrowser $livewire) {
             $livewire->dispatchToScope('dehighlight-attachment', $arguments['attachment_id']);
 
             /** @var Attachment $attachment */

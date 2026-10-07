@@ -42,25 +42,11 @@
                 @endif
 
                 @if($attachment->isVideo())
-                    <video
-                        src="{{ $attachment->url }}"
-                        @if($posterUrl = $attachment->posterUrl())
-                            poster="{{ $posterUrl }}"
-                        @endif
-                        controls
+                    <x-filament-attachment-library::video
+                        :$attachment
                         preload="none"
                         class="relative object-cover object-center rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
-                    >
-                        @foreach($attachment->attachment->captions as $caption)
-                            <track
-                                kind="captions"
-                                src="{{ $caption->url }}"
-                                srclang="{{ $caption->pivot->language }}"
-                                label="{{ $caption->pivot->label ?: $caption->pivot->language }}"
-                                @if($caption->pivot->is_default) default @endif
-                            >
-                        @endforeach
-                    </video>
+                    />
                 @endif
 
 
@@ -202,7 +188,7 @@
                                     <p>{{ $attachment->duration ?: '-' }}</p>
 
                                     <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.captions') }}</p>
-                                    <p>{{ $attachment->attachment->captions->map(fn ($caption) => $caption->pivot->label ?: $caption->pivot->language)->implode(', ') ?: '-' }}</p>
+                                    <p>{{ $attachment->captionLabels()->implode(', ') ?: '-' }}</p>
                                 @endif
                             </div>
                         </div>
@@ -212,5 +198,4 @@
             </div>
         @endif
     </x-filament::section>
-    <x-filament-actions::modals/>
 </div>

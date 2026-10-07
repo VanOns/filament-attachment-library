@@ -10,6 +10,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -486,9 +487,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $this->extensions = $extensions ?? [];
         $this->disableMimeFilter = $disableMimeFilter ?? false;
 
-        if ($selected) {
-            $this->selected = is_array($selected) ? $selected : [$selected];
-        }
+        $this->selected = Arr::wrap($selected);
 
         // Dispatched server-side so it also works on the lazy first load, where the
         // payload arrives via the modal wrapper's replay.

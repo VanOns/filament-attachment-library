@@ -236,7 +236,10 @@ document.addEventListener('alpine:init', () => {
         // Opens the next stack level, so picking from inside a browser modal (e.g. its edit
         // action) keeps the state of the browser below.
         async openBrowser(highlight = null) {
-            const level = document.querySelectorAll('[data-attachment-modal-level].fi-modal-open').length
+            const level = Math.min(
+                document.querySelectorAll('[data-attachment-modal-level].fi-modal-open').length,
+                window.filamentData.fal.maxModalLevels - 1,
+            )
             const id = (await attachmentModal(level)).dataset.fiModalId
 
             this.$dispatch('open-attachment-modal', {

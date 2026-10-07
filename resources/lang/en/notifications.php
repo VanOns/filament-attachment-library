@@ -19,7 +19,8 @@ return [
         'deleted' => 'The file was successfully removed.',
         'moved' => 'The file was successfully moved.',
         'replaced' => 'The file was successfully replaced.',
-        'poster_generated' => 'The first frame is now the poster image.',
+        'poster_generated' => 'The first frame was saved as a poster image. Save the form to use it.',
         'poster_failed' => 'The first frame of the video could not be read.',
+        'caption_missing' => 'A caption file could not be found. Remove or replace it and try again.',
     ],
 ];

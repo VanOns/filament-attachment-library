@@ -73,6 +73,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
                 'labels' => [
                     'clipboardSuccess' => __('filament-attachment-library::notifications.clipboard.success'),
                 ],
+                'maxModalLevels' => AttachmentModalStack::MAX_LEVELS,
             ],
         ]);
     }

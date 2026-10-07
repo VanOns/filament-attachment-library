@@ -10,16 +10,19 @@ use Livewire\Component;
 /**
  * Renders one attachment browser modal per nesting level. A picker opened while a browser modal
  * is already open (e.g. from the edit action inside it) gets the next level, so every level keeps
- * its own browser state. Levels are added on demand and kept for reuse.
+ * its own browser state. Levels are added on demand, up to MAX_LEVELS, and kept for reuse.
  */
 class AttachmentModalStack extends Component
 {
+    public const MAX_LEVELS = 5;
+
     /**
      * Locked: the base path is the tenancy boundary, see AttachmentBrowser::$basePath.
      */
     #[Locked]
     public ?string $basePath = null;
 
+    #[Locked]
     public int $levels = 1;
 
     public static function modalId(int $level): string
@@ -30,7 +33,7 @@ class AttachmentModalStack extends Component
     #[On('grow-attachment-modal-stack')]
     public function grow(int $level): void
     {
-        $this->levels = max($this->levels, $level + 1);
+        $this->levels = min(self::MAX_LEVELS, max($this->levels, $level + 1));
     }
 
     public function render(): View

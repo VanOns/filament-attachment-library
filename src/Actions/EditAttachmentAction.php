@@ -16,12 +16,12 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
@@ -29,7 +29,6 @@ use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
 use VanOns\FilamentAttachmentLibrary\Filament\Fields\FocalPointPicker;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
-use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
 use VanOns\FilamentAttachmentLibrary\Rules\AllowedFilename;
 use VanOns\FilamentAttachmentLibrary\Rules\DestinationExists;
 use VanOns\FilamentAttachmentLibrary\Rules\ValidFocalPoint;
@@ -52,9 +51,9 @@ class EditAttachmentAction extends Action
 
         // Registered as child actions so they open on top of the slide-over and can close it.
         $this->registerModalActions([
-            fn (array $arguments, AttachmentBrowser|AttachmentInfo $livewire) => collect([
+            fn (array $arguments, AttachmentBrowser $livewire) => collect([
                 ReplaceAttachmentAction::make('replace')->setCurrentPath($this->currentPath),
-                MoveAttachmentAction::make('move')->setBasePath($livewire instanceof AttachmentBrowser ? $livewire->basePath : null),
+                MoveAttachmentAction::make('move')->setBasePath($livewire->basePath),
                 DeleteAttachmentAction::make('delete'),
             ])->map(fn (Action $action) => $action->arguments($arguments)->overlayParentActions())->all(),
         ]);
@@ -105,9 +104,23 @@ class EditAttachmentAction extends Action
             ]);
         });
 
-        $this->action(function (array $arguments, array $data, AttachmentBrowser|AttachmentInfo $livewire) {
+        $this->action(function (array $arguments, array $data, AttachmentBrowser $livewire) {
             /** @var Attachment $attachment */
             $attachment = Attachment::find($arguments['attachment_id']);
+
+            // Synced first, so a missing caption file stops the edit before anything else is saved.
+            if ($attachment->isType(AttachmentType::PREVIEWABLE_VIDEO)) {
+                try {
+                    AttachmentManager::syncCaptions($attachment, $data['captions'] ?? []);
+                } catch (FileNotFoundException) {
+                    Notification::make()
+                        ->title(__('filament-attachment-library::notifications.attachment.caption_missing'))
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+                }
+            }
 
             if ($data['name'] !== $attachment->name) {
                 AttachmentManager::rename($attachment, $data['name']);
@@ -115,10 +128,6 @@ class EditAttachmentAction extends Action
 
             $attachment->fill(Arr::except($data, ['captions']));
             $attachment->save();
-
-            if ($attachment->isType(AttachmentType::PREVIEWABLE_VIDEO)) {
-                AttachmentManager::syncCaptions($attachment, $data['captions'] ?? []);
-            }
 
             $livewire->dispatchToScope('highlight-attachment', $arguments['attachment_id']);
 
@@ -171,8 +180,6 @@ class EditAttachmentAction extends Action
 
     protected function fileSection(AttachmentViewModel $viewModel): Section
     {
-        $attachment = $viewModel->attachment;
-
         return Section::make(__('filament-attachment-library::forms.edit_attachment.sections.file'))
             ->compact()
             ->schema([
@@ -191,8 +198,8 @@ class EditAttachmentAction extends Action
 
                 TextEntry::make('file_captions')
                     ->label(__('filament-attachment-library::views.info.details.sections.video.captions'))
-                    ->state($attachment->captions->map(fn (Attachment $caption) => $caption->pivot->label ?: $caption->pivot->language)->implode(', '))
-                    ->visible($viewModel->isVideo() && $attachment->captions->isNotEmpty()),
+                    ->state($viewModel->captionLabels()->implode(', '))
+                    ->visible($viewModel->isVideo() && $viewModel->attachment->captions->isNotEmpty()),
 
                 TextEntry::make('file_type')
                     ->label(__('filament-attachment-library::views.info.details.mime_type'))
@@ -240,14 +247,14 @@ class EditAttachmentAction extends Action
                     ->badge()
                     ->color('warning')
                     ->icon(Heroicon::OutlinedExclamationTriangle)
-                    ->visible(fn (Get $get) => blank($get('alt'))),
+                    ->visibleJs(<<<'JS'
+                        ! $get('alt')
+                        JS),
             ])
             ->schema([
                 Textarea::make('alt')
                     ->label(__('filament-attachment-library::forms.edit_attachment.alt'))
                     ->helperText(__('filament-attachment-library::forms.edit_attachment.alt_help'))
-                    ->hint(fn (?string $state) => mb_strlen((string) $state) . ' / 255')
-                    ->live(debounce: 500)
                     ->rows(2)
                     ->maxLength(255),
 
@@ -285,7 +292,8 @@ class EditAttachmentAction extends Action
                             ->extensions(['vtt', 'srt'])
                             ->layout(AttachmentFieldLayout::INPUT)
                             ->helperText(null)
-                            ->required(),
+                            ->required()
+                            ->distinct(),
 
                         TextInput::make('language')
                             ->placeholder('en')
