@@ -26,6 +26,9 @@ class ReplaceAttachmentAction extends Action
     {
         $this->label(__('filament-attachment-library::views.actions.attachment.replace'));
 
+        // Closes the edit slide-over this may be opened from, whose form would otherwise be stale.
+        $this->cancelParentActions();
+
         $this->color('gray');
 
         $validationMessages = Lang::get('validation');

@@ -411,5 +411,14 @@ document.addEventListener('alpine:init', () => {
                 y: Math.round((event.offsetY / event.target.height) * 100),
             }
         },
+
+        reset() {
+            this.state = { x: 50, y: 50 }
+        },
+
+        // Used by the crop previews, so they follow the marker.
+        objectPosition() {
+            return `${this.state?.x ?? 50}% ${this.state?.y ?? 50}%`
+        },
     }))
 })

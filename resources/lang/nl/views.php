@@ -57,6 +57,16 @@ return [
             'modal_title' => 'Bestandsinformatie',
         ],
     ],
+    'edit' => [
+        'file' => 'Bestand',
+        'uploaded' => 'Geüpload op :date door :user',
+        'edited' => 'Bewerkt op :date door :user',
+        'uploaded_at' => 'Geüpload op :date',
+        'edited_at' => 'Bewerkt op :date',
+        'root' => '/ (hoofdmap)',
+        'preview' => 'Voorbeeld',
+        'preview_lines' => 'Eerste :count regels',
+    ],
     'actions' => [
         'attachment' => [
             'view' => 'Bekijk details',

@@ -22,6 +22,9 @@ class MoveAttachmentAction extends Action
     {
         $this->label(__('filament-attachment-library::views.actions.attachment.move'));
 
+        // Closes the edit slide-over this may be opened from, whose form would otherwise be stale.
+        $this->cancelParentActions();
+
         $this->color('gray');
 
         // Lazy: setUp() runs inside make(), before setBasePath() — the options must not

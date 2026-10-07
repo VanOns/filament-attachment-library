@@ -15,6 +15,9 @@ class DeleteAttachmentAction extends Action
     {
         $this->label(__('filament-attachment-library::views.actions.attachment.delete'));
 
+        // Closes the edit slide-over this may be opened from, whose form would otherwise be stale.
+        $this->cancelParentActions();
+
         $this->requiresConfirmation();
 
         $this->color('danger');

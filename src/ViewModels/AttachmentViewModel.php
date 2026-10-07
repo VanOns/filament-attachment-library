@@ -5,6 +5,7 @@ namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
@@ -111,6 +112,64 @@ class AttachmentViewModel implements Wireable
     public function isVideo(): bool
     {
         return $this->attachment->isType(AttachmentType::PREVIEWABLE_VIDEO);
+    }
+
+    /**
+     * Plain-text files, including subtitles, which are stored with varying mime types.
+     */
+    public function isText(): bool
+    {
+        return Str::startsWith((string) $this->mimeType, 'text/')
+            || in_array(strtolower($this->attachment->extension), ['srt', 'vtt']);
+    }
+
+    /**
+     * Return the first lines of a text file, or null for other files.
+     */
+    public function textPreview(int $lines = 10): ?string
+    {
+        if (!$this->isText()) {
+            return null;
+        }
+
+        $stream = Storage::disk($this->attachment->disk)->readStream($this->attachment->full_path);
+
+        if (!$stream) {
+            return null;
+        }
+
+        $preview = [];
+
+        while (count($preview) < $lines && ($line = fgets($stream)) !== false) {
+            $preview[] = rtrim($line, "\r\n");
+        }
+
+        fclose($stream);
+
+        return implode("\n", $preview);
+    }
+
+    /**
+     * Return the closest common aspect ratio (e.g. 16:9), or null when none is close.
+     */
+    public function aspectRatioLabel(): ?string
+    {
+        [$width, $height] = [$this->attachment->width, $this->attachment->height];
+
+        if ($this->isImage() && ($metadata = AttachmentManager::getMetadata($this->attachment))) {
+            [$width, $height] = [$metadata->width, $metadata->height];
+        }
+
+        if (!$width || !$height) {
+            return null;
+        }
+
+        return collect(['1:1', '5:4', '4:3', '3:2', '16:10', '16:9', '21:9', '4:5', '3:4', '2:3', '9:16'])
+            ->first(function (string $label) use ($width, $height) {
+                [$x, $y] = array_map('intval', explode(':', $label));
+
+                return abs(($width / $height) / ($x / $y) - 1) < 0.01;
+            });
     }
 
     public function isDocument(): bool
