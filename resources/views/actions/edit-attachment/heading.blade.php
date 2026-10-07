@@ -10,7 +10,7 @@
             'date' => $attachment->createdAt->translatedFormat('j M Y'),
             'user' => $attachment->createdBy,
         ]) : null,
-        $attachment->updatedAt && $attachment->updatedAt->ne($attachment->createdAt) ? __('filament-attachment-library::views.edit.' . ($attachment->updatedBy ? 'edited' : 'edited_at'), [
+        $attachment->updatedAt && $attachment->createdAt && $attachment->updatedAt->ne($attachment->createdAt) ? __('filament-attachment-library::views.edit.' . ($attachment->updatedBy ? 'edited' : 'edited_at'), [
             'date' => $attachment->updatedAt->translatedFormat('j M Y'),
             'user' => $attachment->updatedBy,
         ]) : null,
