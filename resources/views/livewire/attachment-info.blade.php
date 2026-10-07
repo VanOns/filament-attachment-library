@@ -65,13 +65,16 @@
 
 
                 @if($attachment->isDocument())
-                    <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
+                    <x-filament::icon :icon="$attachment->icon()" class="w-8 h-8" />
                 @endif
 
                 {{-- Details --}}
                 <div class="mt-6">
                     <h2 class="break-words text-xl font-medium text-gray-900 dark:text-gray-100">{{ $attachment->name }}</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $attachment->extension }} — {{ $attachment->size }} MB</p>
+                    <p class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                        <x-filament::icon :icon="$attachment->icon()" class="size-4 shrink-0"/>
+                        {{ $attachment->extension }} — {{ $attachment->size }} MB
+                    </p>
 
                     <hr class="mt-3 border-gray-200 dark:border-white/10">
 

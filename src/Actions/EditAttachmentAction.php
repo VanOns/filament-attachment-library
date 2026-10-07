@@ -129,7 +129,7 @@ class EditAttachmentAction extends Action
         });
 
         $this->modalSubmitActionLabel(__('filament-attachment-library::forms.edit_attachment.save'));
-        $this->modalWidth(Width::FiveExtraLarge);
+        $this->modalWidth(Width::SixExtraLarge);
         $this->extraModalWindowAttributes(['class' => 'fal-edit-attachment-modal']);
         $this->slideOver();
     }

@@ -10,6 +10,7 @@
     :selected="$selected"
     :selectable-id="$selectableId"
     :title="$attachment->name"
+    :subtitle-icon="$attachment->icon()"
     subtitle="{{ implode(' — ', array_filter([$attachment->extension, $attachment->duration, $attachment->size . ' MB'])) }}"
     {{ $attributes }}
 >
@@ -39,13 +40,13 @@
             >
         @else
             <div class="relative size-full flex items-center justify-center">
-                <x-filament::icon icon="heroicon-o-film" class="size-8" />
+                <x-filament::icon :icon="$attachment->icon()" class="size-8" />
             </div>
         @endif
     @endif
 
     @if($attachment->isDocument())
-        <x-filament::icon icon="heroicon-o-document-text" class="size-8" />
+        <x-filament::icon :icon="$attachment->icon()" class="size-8" />
     @endif
 
     @isset($actions)

@@ -16,10 +16,10 @@
         ]) : null,
     ]);
 
-    [$icon, $type, $color] = match (true) {
-        $attachment->isImage() => ['heroicon-o-photo', __('filament-attachment-library::views.sidebar.mime_type.image'), 'primary'],
-        $attachment->isVideo() => ['heroicon-o-video-camera', __('filament-attachment-library::views.sidebar.mime_type.video'), 'primary'],
-        default => ['heroicon-o-document-text', __('filament-attachment-library::views.edit.file'), 'gray'],
+    [$type, $color] = match (true) {
+        $attachment->isImage() => [__('filament-attachment-library::views.sidebar.mime_type.image'), 'primary'],
+        $attachment->isVideo() => [__('filament-attachment-library::views.sidebar.mime_type.video'), 'primary'],
+        default => [__('filament-attachment-library::views.edit.file'), 'gray'],
     };
 @endphp
 
@@ -29,7 +29,7 @@
         'bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400' => $color === 'primary',
         'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-400' => $color === 'gray',
     ])>
-        <x-filament::icon :icon="$icon" class="size-5"/>
+        <x-filament::icon :icon="$attachment->icon()" class="size-5"/>
     </span>
 
     <span class="block min-w-0 flex-1">

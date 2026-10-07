@@ -119,8 +119,28 @@ class AttachmentViewModel implements Wireable
      */
     public function isText(): bool
     {
-        return Str::startsWith((string) $this->mimeType, 'text/')
-            || in_array(strtolower($this->attachment->extension), ['srt', 'vtt']);
+        return Str::startsWith((string) $this->mimeType, 'text/') || $this->isSubtitle();
+    }
+
+    /**
+     * Subtitle files are recognised by extension, since their mime type varies.
+     */
+    public function isSubtitle(): bool
+    {
+        return in_array(strtolower($this->attachment->extension), ['srt', 'vtt']);
+    }
+
+    /**
+     * Return the icon that represents the attachment's type.
+     */
+    public function icon(): string
+    {
+        return match (true) {
+            $this->isImage() => 'heroicon-o-photo',
+            $this->isVideo() => 'heroicon-o-video-camera',
+            $this->isSubtitle() => 'heroicon-o-chat-bubble-bottom-center-text',
+            default => 'heroicon-o-document-text',
+        };
     }
 
     /**

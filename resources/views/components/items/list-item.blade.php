@@ -4,7 +4,7 @@
      */
 @endphp
 
-@props(['title', 'subtitle', 'selected' => false, 'selectableId' => null])
+@props(['title', 'subtitle', 'subtitleIcon' => null, 'selected' => false, 'selectableId' => null])
 
 <div
     @if(!is_null($selectableId))
@@ -37,7 +37,12 @@
                 </p>
 
                 @if($subtitle)
-                    <p class="block text-sm font-medium opacity-60">{{ $subtitle }}</p>
+                    <p class="flex items-center gap-1 text-sm font-medium opacity-60">
+                        @if($subtitleIcon)
+                            <x-filament::icon :icon="$subtitleIcon" class="size-4 shrink-0"/>
+                        @endif
+                        <span class="truncate">{{ $subtitle }}</span>
+                    </p>
                 @endif
             </div>
         </div>

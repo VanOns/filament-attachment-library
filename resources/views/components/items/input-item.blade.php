@@ -9,12 +9,6 @@
         $attachment?->isVideo() => $attachment->posterUrl(),
         default => null,
     };
-
-    $icon = match (true) {
-        $attachment?->isImage() => 'heroicon-o-photo',
-        $attachment?->isVideo() => 'heroicon-o-video-camera',
-        default => 'heroicon-o-document-text',
-    };
 @endphp
 
 <x-filament::input.wrapper :disabled="$disabled" :valid="$valid" {{ $attributes->class(['overflow-hidden']) }}>
@@ -44,7 +38,7 @@
                 @if($thumbnailUrl)
                     <img src="{{ $thumbnailUrl }}" alt="" class="size-5 shrink-0 rounded object-cover ring-1 ring-gray-950/10 dark:ring-white/10">
                 @else
-                    <x-filament::icon :icon="$icon" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"/>
+                    <x-filament::icon :icon="$attachment->icon()" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"/>
                 @endif
 
                 <span class="min-w-0 flex-1 truncate text-gray-950 dark:text-white" title="{{ $attachment->filename }}">{{ $attachment->name }}</span>
