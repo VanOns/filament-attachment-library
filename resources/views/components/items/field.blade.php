@@ -1,8 +1,9 @@
-@props(['attachments', 'statePath', 'reorderable' => false, 'compact' => false, 'disabled' => false])
+@props(['attachments', 'statePath', 'reorderable' => false, 'layout', 'multiple' => false, 'maxItems' => null, 'disabled' => false, 'valid' => true])
 
 @php
-    use VanOns\LaravelAttachmentLibrary\Facades\Glide;
-    use VanOns\LaravelAttachmentLibrary\Facades\Resizer;
+    use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
+
+    $compact = $layout === AttachmentFieldLayout::LIST;
     /**
      * @var \Illuminate\Support\Collection<\VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel> $attachments
      * @var bool $reorderable
@@ -10,7 +11,34 @@
 @endphp
 
 <div>
-    @if($attachments->isEmpty())
+    @if($layout === AttachmentFieldLayout::INPUT)
+        <div
+            @if($reorderable)
+            x-data="attachmentSortable({ group: @js('attachments-' . $statePath) })"
+            @endif
+            class="flex flex-col gap-2"
+        >
+            @foreach($attachments as $attachment)
+                <div data-attachment-id="{{ $attachment->id }}" class="min-w-0">
+                    <x-filament-attachment-library::items.input-item
+                        :attachment="$attachment"
+                        :reorderable="$reorderable"
+                        :disabled="$disabled"
+                        :valid="$valid"
+                    />
+                </div>
+            @endforeach
+        </div>
+
+        @if($attachments->isEmpty() || ($multiple && ! $disabled && (! $maxItems || $attachments->count() < $maxItems)))
+            <x-filament-attachment-library::items.input-item
+                :placeholder="__('filament-attachment-library::forms.attachment_field.' . ($attachments->isEmpty() ? 'choose' : 'add'))"
+                :disabled="$disabled"
+                :valid="$valid"
+                @class(['mt-2' => $attachments->isNotEmpty()])
+            />
+        @endif
+    @elseif($attachments->isEmpty())
         <p class="inline-block border-2 border-dashed border-gray-300 dark:border-gray-600 p-4 rounded-xl font-medium text-gray-900 dark:text-gray-100">{{ __('filament-attachment-library::forms.attachment_field.no_file_selected') }}</p>
     @else
         <div

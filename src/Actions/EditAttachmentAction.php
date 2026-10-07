@@ -25,6 +25,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use VanOns\FilamentAttachmentLibrary\Actions\Traits\HasCurrentPath;
+use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
 use VanOns\FilamentAttachmentLibrary\Filament\Fields\FocalPointPicker;
 use VanOns\FilamentAttachmentLibrary\Forms\Components\AttachmentField;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
@@ -156,7 +157,7 @@ class EditAttachmentAction extends Action
                 AttachmentField::make('poster_id')
                     ->label(__('filament-attachment-library::forms.video.poster'))
                     ->image()
-                    ->compact()
+                    ->layout(AttachmentFieldLayout::INPUT)
                     ->helperText(null)
                     ->hintAction($this->generatePosterAction($viewModel->attachment)),
             ];
@@ -274,15 +275,15 @@ class EditAttachmentAction extends Action
                         }
                     })
                     ->table([
-                        TableColumn::make(__('filament-attachment-library::forms.captions.file'))->markAsRequired()->width('13rem'),
+                        TableColumn::make(__('filament-attachment-library::forms.captions.file'))->markAsRequired(),
                         TableColumn::make(__('filament-attachment-library::forms.captions.language'))->markAsRequired()->width('5rem'),
-                        TableColumn::make(__('filament-attachment-library::forms.captions.track_label')),
+                        TableColumn::make(__('filament-attachment-library::forms.captions.track_label'))->width('9rem'),
                         TableColumn::make(__('filament-attachment-library::forms.captions.default'))->width('4.5rem'),
                     ])
                     ->schema([
                         AttachmentField::make('caption_id')
                             ->extensions(['vtt', 'srt'])
-                            ->compact()
+                            ->layout(AttachmentFieldLayout::INPUT)
                             ->helperText(null)
                             ->required(),
 

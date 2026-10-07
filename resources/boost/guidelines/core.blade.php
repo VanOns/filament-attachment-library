@@ -74,7 +74,8 @@ Public methods on `AttachmentField`:
 | `relationship(string = 'attachments')` | Store via a `MorphToMany` relationship instead of a column. Sets `dehydrated(false)`. |
 | `collection(?string)` | Pivot `collection` value when using `relationship()`. Defaults to the field name. |
 | `multiple(bool\|Closure = true)` | Allow multi-select. |
-| `compact(bool\|Closure = true)` | Render selected items as compact horizontal rows instead of grid cards. |
+| `layout(AttachmentFieldLayout\|Closure)` | `GRID` cards (default), `LIST` rows, or `INPUT` rows that look like a text input. |
+| `compact(bool\|Closure = true)` | Shortcut for `layout(AttachmentFieldLayout::LIST)`. |
 | `reorderable(bool\|Closure = true)` | Drag-reorder selected items. Only effective with `multiple()`. Requires the `order` column on `attachables` (shipped with the upstream migrations). |
 | `mime(string)` | Filter the picker to a MIME pattern (`'image/png'`, `'image/*'`, …). |
 | `image()` / `video()` / `audio()` / `text()` | Shortcut for `mime('image/*')` etc. |

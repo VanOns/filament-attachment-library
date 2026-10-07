@@ -101,7 +101,8 @@ public static function form(Form $form): Form
 | `relationship(string = 'attachments')` | column mode | Switches to relationship mode and disables dehydration. |
 | `collection(?string)` | field name (when `relationship()` is called) | Pivot `collection` value. Set this if you want the field name and collection to differ. |
 | `multiple(bool\|Closure = true)` | `false` | Multi-select. |
-| `compact(bool\|Closure = true)` | `false` | Render selected items as compact horizontal rows instead of grid cards. |
+| `layout(AttachmentFieldLayout\|Closure)` | `AttachmentFieldLayout::GRID` | How selected items are shown: `GRID` cards, `LIST` rows, or `INPUT` rows that look like a text input (thumbnail or icon, name, type badge; click to pick, no separate button). |
+| `compact(bool\|Closure = true)` | `false` | Shortcut for `layout(AttachmentFieldLayout::LIST)`. |
 | `reorderable(bool\|Closure = true)` | `true` (only effective with `multiple()`) | Drag-and-drop ordering. Persists to the pivot's `order` column. |
 | `mime(string)` | none | MIME filter for the picker. Wildcards allowed (`'image/*'`). |
 | `image()` / `video()` / `audio()` / `text()` | — | Shortcut for `mime('image/*')` etc. |
@@ -117,6 +118,7 @@ Multiple attachments?                        ─ relationship + multiple()
 Need to reuse the same attachment across models? ─ relationship (column would duplicate IDs)
 Need ordering? ─ relationship + multiple() + reorderable()
 Compact rows instead of grid cards? ─ compact()
+Small, input-like field (forms, table repeaters)? ─ layout(AttachmentFieldLayout::INPUT)
 ```
 
 ## Step 4 — Display attachments

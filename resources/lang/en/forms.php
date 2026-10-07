@@ -4,6 +4,9 @@ return [
     'attachment_field' => [
         'help' => 'Only the following types are resizable: :types. All other file types will be rendered normally.',
         'no_file_selected' => 'No file has been selected',
+        'choose' => 'Choose a file…',
+        'add' => 'Add a file…',
+        'remove' => 'Remove',
     ],
     'create_directory' => [
         'name' => 'Name',

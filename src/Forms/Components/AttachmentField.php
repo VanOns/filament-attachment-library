@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use ReflectionProperty;
+use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -21,7 +22,7 @@ class AttachmentField extends Field
 
     public bool|Closure $reorderable = true;
 
-    public bool|Closure $compact = false;
+    protected AttachmentFieldLayout|Closure $layout = AttachmentFieldLayout::GRID;
 
     public ?string $collection;
 
@@ -184,18 +185,31 @@ class AttachmentField extends Field
     }
 
     /**
-     * Render selected attachments as compact horizontal rows instead of grid cards.
+     * Render selected attachments as grid cards, list rows or compact input rows.
      */
-    public function compact(bool|Closure $compact = true): static
+    public function layout(AttachmentFieldLayout|Closure $layout): static
     {
-        $this->compact = $compact;
+        $this->layout = $layout;
 
         return $this;
     }
 
+    public function getLayout(): AttachmentFieldLayout
+    {
+        return $this->evaluate($this->layout);
+    }
+
+    /**
+     * Shortcut for the list layout.
+     */
+    public function compact(bool|Closure $compact = true): static
+    {
+        return $this->layout(fn () => $this->evaluate($compact) ? AttachmentFieldLayout::LIST : AttachmentFieldLayout::GRID);
+    }
+
     public function getCompact(): bool
     {
-        return $this->evaluate($this->compact);
+        return $this->getLayout() === AttachmentFieldLayout::LIST;
     }
 
     public function mime(string $mimeType): static

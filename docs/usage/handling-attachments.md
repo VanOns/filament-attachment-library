@@ -75,6 +75,22 @@ Glide is used to scale the image up or down. The `src` argument may be an Attach
 
 For more information refer to the [Laravel Attachment Library documentation](https://github.com/VanOns/laravel-attachment-library).
 
+## Layouts
+
+Selected attachments are shown as grid cards by default. Use `layout()` to change this:
+
+```php
+use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
+
+AttachmentField::make('featured_image')->layout(AttachmentFieldLayout::INPUT);
+```
+
+- `AttachmentFieldLayout::GRID` (default): cards with a large preview.
+- `AttachmentFieldLayout::LIST`: horizontal rows with a small preview. `compact()` is a shortcut for this layout.
+- `AttachmentFieldLayout::INPUT`: rows that look like a text input, showing a thumbnail or icon, the name and the file type.
+  Click a row to pick or change the file; there is no separate "Choose files" button. With `multiple()`, an extra row
+  adds files until `maxFiles()` is reached. This layout fits well in narrow places, such as table repeaters.
+
 ## Videos
 
 When editing a video in the library, you can set a poster image and add caption tracks (`.vtt`, or `.srt`, which is
