@@ -1,6 +1,31 @@
 const OVERLAY_BOTTOM_GAP = 24
 const OVERLAY_MIN_HEIGHT = 160
 
+const findAttachmentModal = (level) => document.querySelector(`[data-attachment-modal-level="${level}"]`)
+
+/**
+ * Resolve the browser modal of the given stack level, asking the modal stack to render it first
+ * when it does not exist yet.
+ */
+const attachmentModal = (level) => {
+    const existing = findAttachmentModal(level)
+    if (existing) return Promise.resolve(existing)
+
+    return new Promise((resolve) => {
+        const observer = new MutationObserver(() => {
+            const modal = findAttachmentModal(level)
+            if (!modal) return
+
+            observer.disconnect()
+            // Let Alpine initialise the new modal before it receives the open events.
+            Alpine.nextTick(() => resolve(modal))
+        })
+
+        observer.observe(document.body, { childList: true, subtree: true })
+        Livewire.dispatch('grow-attachment-modal-stack', { level })
+    })
+}
+
 /**
  * Shared drop-to-upload pipeline, used by the attachment browser (uploads to its own
  * Livewire component) and the attachment field (uploads to its nested uploader component).
@@ -8,6 +33,7 @@ const OVERLAY_MIN_HEIGHT = 160
  * Config:
  * - maxBytes: ?int        Livewire temp-upload limit; oversized files are rejected client-side
  * - mime: ?string         mime pattern ('image/*' or exact); null accepts everything
+ * - extensions: string[]  lowercase extensions; empty accepts everything
  * - disabled: bool        static disabled flag (field)
  * - wireDisabled: bool    read `disabled` from the Livewire component instead (browser)
  * - nestedUploader: bool  upload to the nested attachment-field-uploader instead of $wire
@@ -26,13 +52,21 @@ const dropZone = (config) => ({
     dropDisabled() {
         if (config.wireDisabled ? this.$wire.disabled : (config.disabled ?? false)) return true
 
-        // Block drops while a modal this zone does not belong to is open (e.g. the
-        // create-directory modal above the library) — Filament marks open modals
-        // with the fi-modal-open class.
-        return Array.from(document.querySelectorAll('.fi-modal-open')).some((modal) => !modal.contains(this.$root))
+        // Block drops while a modal above this zone is open (e.g. the create-directory modal
+        // above the library, or a nested browser level) — Filament marks open modals with the
+        // fi-modal-open class, and later modals in the document render on top.
+        return Array.from(document.querySelectorAll('.fi-modal-open')).some(
+            (modal) =>
+                !modal.contains(this.$root) &&
+                this.$root.compareDocumentPosition(modal) & Node.DOCUMENT_POSITION_FOLLOWING,
+        )
     },
 
-    matchesMime(file) {
+    // The extension is checked on the name: browsers often report no type for e.g. .srt files.
+    matchesFilter(file) {
+        const extensions = config.extensions ?? []
+        if (extensions.length && !extensions.includes(file.name.split('.').pop().toLowerCase())) return false
+
         if (!config.mime) return true
         if (config.mime.endsWith('/*')) return file.type.startsWith(config.mime.slice(0, -1))
 
@@ -88,11 +122,11 @@ const dropZone = (config) => ({
         if (this.dropDisabled() || this.uploading) return
 
         files
-            .filter((file) => !this.matchesMime(file))
+            .filter((file) => !this.matchesFilter(file))
             .forEach((file) => {
                 this.notifyFile(file.name, config.messages.wrongType)
             })
-        files = files.filter((file) => this.matchesMime(file))
+        files = files.filter((file) => this.matchesFilter(file))
 
         // Pre-check Livewire's temp-upload size limit so oversized files fail per-file, by name.
         if (config.maxBytes) {
@@ -199,16 +233,26 @@ document.addEventListener('alpine:init', () => {
             window.removeEventListener(config.uploadedEvent, this.onUploaded)
         },
 
-        openBrowser(highlight = null) {
+        // Opens the next stack level, so picking from inside a browser modal (e.g. its edit
+        // action) keeps the state of the browser below.
+        async openBrowser(highlight = null) {
+            const level = Math.min(
+                document.querySelectorAll('[data-attachment-modal-level].fi-modal-open').length,
+                window.filamentData.fal.maxModalLevels - 1,
+            )
+            const id = (await attachmentModal(level)).dataset.fiModalId
+
             this.$dispatch('open-attachment-modal', {
                 mime: config.mime,
                 selected: this.state,
                 multiple: config.multiple,
                 statePath: config.statePath,
-                disableMimeFilter: config.mime !== null,
+                extensions: config.extensions,
+                disableMimeFilter: config.mime !== null || config.extensions.length > 0,
                 highlight: highlight,
+                modalId: id,
             })
-            this.$dispatch('open-modal', { id: 'attachment-modal' })
+            this.$dispatch('open-modal', { id })
         },
 
         onAttachmentRemoved(event) {
@@ -295,7 +339,7 @@ document.addEventListener('alpine:init', () => {
 
             this.selected = this.$wire.get('multiple') ? [...this.selectedIds(), id] : [id]
             // Show the info panel's loading state instantly; the Livewire fetch clears it on arrival.
-            this.$dispatch('attachment-info-loading')
+            this.$dispatch('attachment-info-loading', { scope: this.$wire.scope })
             this.$wire.highlight(id)
         },
     }))
@@ -330,17 +374,19 @@ document.addEventListener('alpine:init', () => {
      * The attachment browser inside the modal is lazy-loaded, so it misses events dispatched
      * before its first load (e.g. the open-attachment-modal payload carrying the statePath when
      * the modal is first opened). Buffer the latest payload and replay it once the component
-     * announces itself via attachment-browser-loaded.
+     * announces itself via attachment-browser-loaded. Config: scope (the modal id).
      */
-    Alpine.data('attachmentModalBuffer', () => ({
+    Alpine.data('attachmentModalBuffer', (config) => ({
         pendingOpen: null,
 
         init() {
             this.onOpen = (event) => {
+                if ((event.detail.modalId ?? 'attachment-modal') !== config.scope) return
+
                 this.pendingOpen = event.detail
             }
-            this.onLoaded = () => {
-                if (!this.pendingOpen) return
+            this.onLoaded = (event) => {
+                if (event.detail.scope !== config.scope || !this.pendingOpen) return
 
                 this.$dispatch('open-attachment-modal', this.pendingOpen)
                 this.pendingOpen = null
@@ -367,6 +413,15 @@ document.addEventListener('alpine:init', () => {
                 x: Math.round((event.offsetX / event.target.width) * 100),
                 y: Math.round((event.offsetY / event.target.height) * 100),
             }
+        },
+
+        reset() {
+            this.state = { x: 50, y: 50 }
+        },
+
+        // Used by the crop previews, so they follow the marker.
+        objectPosition() {
+            return `${this.state?.x ?? 50}% ${this.state?.y ?? 50}%`
         },
     }))
 })

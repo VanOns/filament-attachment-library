@@ -4,7 +4,7 @@
      */
 @endphp
 
-@props(['title', 'subtitle' => null, 'tag' => 'div', 'selected' => false, 'selectableId' => null])
+@props(['title', 'subtitle' => null, 'subtitleIcon' => null, 'tag' => 'div', 'selected' => false, 'selectableId' => null])
 
 <div class="relative group">
     <button
@@ -24,7 +24,12 @@
         <div class="p-2 bg-white dark:bg-gray-900 group-hover:bg-gray-100 dark:group-hover:bg-black border-t border-black/10 dark:border-white/10 text-sm transition">
             <p class="font-semibold line-clamp-1" title="{{ $title }}">{{ $title }}</p>
             @if($subtitle)
-                <p class="opacity-60">{{ $subtitle }}</p>
+                <p class="flex items-center gap-1 opacity-60">
+                    @if($subtitleIcon)
+                        <x-filament::icon :icon="$subtitleIcon" class="size-4 shrink-0"/>
+                    @endif
+                    <span class="truncate">{{ $subtitle }}</span>
+                </p>
             @endif
         </div>
     </button>

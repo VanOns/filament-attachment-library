@@ -1,7 +1,8 @@
 @props([
     'class' => '',
     'currentPath' => null,
-    'selected' => []
+    'selected' => [],
+    'scope',
 ])
 
 <div @class([ 'flex-1 max-w-md', $class ])>
@@ -28,7 +29,8 @@
     <livewire:attachment-info
         :$selected
         :$currentPath
+        :$scope
         class="hidden md:block md:sticky md:top-[var(--fal-info-top,6rem)]"
     />
-    <x-filament-attachment-library::attachment-info-modal :$selected :$currentPath/>
+    <x-filament-attachment-library::attachment-info-modal :$selected :$currentPath :$scope/>
 </div>

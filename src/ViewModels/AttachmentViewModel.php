@@ -4,7 +4,9 @@ namespace VanOns\FilamentAttachmentLibrary\ViewModels;
 
 use Carbon\CarbonInterface;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
 use VanOns\LaravelAttachmentLibrary\Enums\AttachmentType;
@@ -53,7 +55,13 @@ class AttachmentViewModel implements Wireable
 
     public ?int $channels = null;
 
+    public ?int $width = null;
+
+    public ?int $height = null;
+
     public ?string $dimensions = null;
+
+    public ?string $duration = null;
 
     public function __construct(Attachment $attachment)
     {
@@ -80,13 +88,19 @@ class AttachmentViewModel implements Wireable
         $this->alt = $attachment->alt;
         $this->caption = $attachment->caption;
 
-        // Via the manager instead of the model's metadata attribute — the model's
-        // @property docblock mistypes the attribute as string, the manager is typed.
-        if ($metadata = AttachmentManager::getMetadata($attachment)) {
+        // Videos are probed on upload; reading the metadata would run ffprobe for every listed video.
+        if ($this->isVideo()) {
+            $this->width = $attachment->width;
+            $this->height = $attachment->height;
+            $this->duration = $attachment->duration !== null ? $this->formatDuration($attachment->duration) : null;
+        } elseif ($metadata = AttachmentManager::getMetadata($attachment)) {
             $this->bits = $metadata->bits;
             $this->channels = $metadata->channels;
-            $this->dimensions = "{$metadata->width}x{$metadata->height}";
+            $this->width = $metadata->width;
+            $this->height = $metadata->height;
         }
+
+        $this->dimensions = $this->width ? "{$this->width}x{$this->height}" : null;
     }
 
     public function isAttachment(): bool
@@ -109,6 +123,91 @@ class AttachmentViewModel implements Wireable
         return $this->attachment->isType(AttachmentType::PREVIEWABLE_VIDEO);
     }
 
+    /**
+     * Plain-text files, including subtitles, which are stored with varying mime types.
+     */
+    public function isText(): bool
+    {
+        return Str::startsWith((string) $this->mimeType, 'text/') || $this->isSubtitle();
+    }
+
+    /**
+     * Subtitle files are recognised by extension, since their mime type varies.
+     */
+    public function isSubtitle(): bool
+    {
+        return in_array(strtolower($this->attachment->extension), ['srt', 'vtt']);
+    }
+
+    /**
+     * Return the icon that represents the attachment's type.
+     */
+    public function icon(): string
+    {
+        return match (true) {
+            $this->isImage() => 'heroicon-o-photo',
+            $this->isVideo() => 'heroicon-o-video-camera',
+            $this->isSubtitle() => 'heroicon-o-chat-bubble-bottom-center-text',
+            default => 'heroicon-o-document-text',
+        };
+    }
+
+    /**
+     * Return the first lines of a text file, or null for other files.
+     */
+    public function textPreview(int $lines = 10): ?string
+    {
+        if (!$this->isText()) {
+            return null;
+        }
+
+        $stream = Storage::disk($this->attachment->disk)->readStream($this->attachment->full_path);
+
+        if (!$stream) {
+            return null;
+        }
+
+        $preview = [];
+
+        while (count($preview) < $lines && ($line = fgets($stream, 1024)) !== false) {
+            $preview[] = rtrim($line, "\r\n");
+        }
+
+        fclose($stream);
+
+        return implode("\n", $preview);
+    }
+
+    /**
+     * Return the closest common aspect ratio (e.g. 16:9), or null when none is close.
+     */
+    public function aspectRatioLabel(): ?string
+    {
+        if (!$this->width || !$this->height) {
+            return null;
+        }
+
+        return collect(['1:1', '5:4', '4:3', '3:2', '16:10', '16:9', '21:9', '4:5', '3:4', '2:3', '9:16'])
+            ->first(function (string $label) {
+                [$x, $y] = array_map('intval', explode(':', $label));
+
+                return abs(($this->width / $this->height) / ($x / $y) - 1) < 0.01;
+            });
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function captionLabels(): Collection
+    {
+        return $this->attachment->captions->map(fn (Attachment $caption) => static::captionLabel($caption));
+    }
+
+    public static function captionLabel(Attachment $caption): string
+    {
+        return $caption->pivot->label ?: $caption->pivot->language;
+    }
+
     public function isDocument(): bool
     {
         return !$this->isVideo() && !$this->isImage();
@@ -125,6 +224,26 @@ class AttachmentViewModel implements Wireable
             true => Resizer::src($this->attachment)->height(320)->resize()['url'] ?? null,
             default => $this->attachment->url,
         };
+    }
+
+    public function posterUrl(): ?string
+    {
+        $poster = $this->attachment->poster;
+
+        if (!$poster) {
+            return null;
+        }
+
+        return Resizer::src($poster)->height(320)->resize()['url'] ?? $poster->url;
+    }
+
+    protected function formatDuration(float $duration): string
+    {
+        $seconds = (int) round($duration);
+
+        return $seconds >= 3600
+            ? sprintf('%d:%02d:%02d', intdiv($seconds, 3600), intdiv($seconds % 3600, 60), $seconds % 60)
+            : sprintf('%d:%02d', intdiv($seconds, 60), $seconds % 60);
     }
 
     public function toLivewire()

@@ -2,14 +2,13 @@
 
 namespace VanOns\FilamentAttachmentLibrary\Livewire;
 
-use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
+use VanOns\FilamentAttachmentLibrary\Rules\MatchesFileFilter;
 
 /**
  * Invisible companion component for the AttachmentField: receives files dropped onto the
@@ -33,26 +32,22 @@ class AttachmentFieldUploader extends Component
     #[Locked]
     public ?string $mime = null;
 
+    /**
+     * Locked: for the same reason as the mime.
+     *
+     * @var array<int, string>
+     */
+    #[Locked]
+    public array $extensions = [];
+
     protected function droppedFilesPath(): ?string
     {
         return AttachmentLibrary::getBasePath();
     }
 
-    /**
-     * Enforce the field's mime constraint on the server-detected mime type — the
-     * client-side check works off the browser-supplied type and is bypassable.
-     */
     protected function droppedFileRules(): array
     {
-        if (!$this->mime) {
-            return [];
-        }
-
-        return [function (string $attribute, mixed $value, Closure $fail) {
-            if (!Str::is($this->mime, (string) $value->getMimeType())) {
-                $fail(__('filament-attachment-library::notifications.attachment.upload_failed_wrong_type'));
-            }
-        }];
+        return [new MatchesFileFilter($this->mime, $this->extensions)];
     }
 
     protected function finishDroppedUploads(array $attachmentIds): void

@@ -35,6 +35,12 @@ return [
                     'bits' => 'Bits',
                     'channels' => 'Channels',
                 ],
+                'video' => [
+                    'header' => 'Video metadata',
+                    'dimensions' => 'Dimensions',
+                    'duration' => 'Duration',
+                    'captions' => 'Captions',
+                ],
                 'more' => 'More details',
                 'date' => [
                     'header' => 'Dates',
@@ -50,6 +56,16 @@ return [
             'url' => 'Link',
             'modal_title' => 'File information',
         ],
+    ],
+    'edit' => [
+        'file' => 'File',
+        'uploaded' => 'Uploaded :date by :user',
+        'edited' => 'Edited :date by :user',
+        'uploaded_at' => 'Uploaded :date',
+        'edited_at' => 'Edited :date',
+        'root' => '/ (root)',
+        'preview' => 'Preview',
+        'preview_lines' => 'First :count lines',
     ],
     'actions' => [
         'attachment' => [

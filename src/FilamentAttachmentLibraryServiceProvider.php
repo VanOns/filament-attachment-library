@@ -2,10 +2,12 @@
 
 namespace VanOns\FilamentAttachmentLibrary;
 
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -14,6 +16,7 @@ use VanOns\FilamentAttachmentLibrary\Filament\Pages\AttachmentLibrary;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentFieldUploader;
 use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentInfo;
+use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentModalStack;
 
 class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 {
@@ -23,11 +26,12 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
         Livewire::component('attachment-browser', AttachmentBrowser::class);
         Livewire::component('attachment-field-uploader', AttachmentFieldUploader::class);
         Livewire::component('attachment-info', AttachmentInfo::class);
+        Livewire::component('attachment-modal-stack', AttachmentModalStack::class);
 
-        // Register attachment browser modal on every page start
+        // Register the attachment browser modals on every page
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_END,
-            fn () => view('filament-attachment-library::components.attachment-browser-modal', [
+            fn () => Blade::render('<livewire:attachment-modal-stack :basePath="$basePath" />', [
                 'basePath' => AttachmentLibrary::getBasePath(),
             ]),
         );
@@ -61,6 +65,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
     {
         FilamentAsset::register([
             Js::make('filament-attachment-library', __DIR__ . '/../resources/dist/filament-attachment-library.js'),
+            Css::make('filament-attachment-library', __DIR__ . '/../resources/css/plugin.css'),
         ], package: 'van-ons/filament-attachment-library');
 
         FilamentAsset::registerScriptData([
@@ -68,6 +73,7 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
                 'labels' => [
                     'clipboardSuccess' => __('filament-attachment-library::notifications.clipboard.success'),
                 ],
+                'maxModalLevels' => AttachmentModalStack::MAX_LEVELS,
             ],
         ]);
     }

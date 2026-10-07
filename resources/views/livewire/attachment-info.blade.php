@@ -7,8 +7,8 @@
 <div
     @class([$class, 'relative'])
     x-data="{ loading: false }"
-    @attachment-info-loading.window="loading = true"
-    @attachment-info-ready.window="loading = false"
+    @attachment-info-loading.window="if ($event.detail.scope === $wire.scope) loading = true"
+    @attachment-info-ready.window="if ($event.detail.scope === $wire.scope) loading = false"
 >
     {{-- Instant feedback while the Livewire fetch is in flight; cleared by attachment-info-ready --}}
     <div
@@ -42,23 +42,25 @@
                 @endif
 
                 @if($attachment->isVideo())
-                    <video
-                        src="{{ $attachment->url }}"
-                        controls
+                    <x-filament-attachment-library::video
+                        :$attachment
                         preload="none"
                         class="relative object-cover object-center rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-full max-h-48"
-                    ></video>
+                    />
                 @endif
 
 
                 @if($attachment->isDocument())
-                    <x-filament::icon icon="heroicon-o-document" class="w-8 h-8" />
+                    <x-filament::icon :icon="$attachment->icon()" class="w-8 h-8" />
                 @endif
 
                 {{-- Details --}}
                 <div class="mt-6">
                     <h2 class="break-words text-xl font-medium text-gray-900 dark:text-gray-100">{{ $attachment->name }}</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $attachment->extension }} — {{ $attachment->size }} MB</p>
+                    <p class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                        <x-filament::icon :icon="$attachment->icon()" class="size-4 shrink-0"/>
+                        {{ $attachment->extension }} — {{ $attachment->size }} MB
+                    </p>
 
                     <hr class="mt-3 border-gray-200 dark:border-white/10">
 
@@ -91,25 +93,25 @@
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-pencil-square" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'editAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'editAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.edit') }}
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-arrow-right-circle" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'moveAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'moveAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.move') }}
                         </x-filament::button>
 
                         <x-filament::button color="gray" icon="heroicon-o-arrow-path" class="relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'replaceAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'replaceAttachmentAction', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.replace') }}
                         </x-filament::button>
 
                         <x-filament::button color="danger" icon="heroicon-o-trash" class="col-span-2 relative [&>.fi-icon]:absolute [&>.fi-icon]:start-2 [&>.fi-icon]:top-1/2 [&>.fi-icon]:-translate-y-1/2"
-                            x-on:click="$dispatch('mount-action', { name: 'deleteAttachment', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
+                            x-on:click="$dispatch('mount-action.' + $wire.scope, { name: 'deleteAttachment', arguments: { attachment_id: {{ json_encode($attachment->id) }} } })"
                         >
                             {{ __('filament-attachment-library::views.actions.attachment.delete') }}
                         </x-filament::button>
@@ -177,6 +179,17 @@
                                     <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.image.bits') }}</p>
                                     <p>{{ $attachment->bits }}</p>
                                 @endif
+
+                                @if($attachment->isVideo())
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.dimensions') }}</p>
+                                    <p>{{ $attachment->dimensions ?: '-' }}</p>
+
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.duration') }}</p>
+                                    <p>{{ $attachment->duration ?: '-' }}</p>
+
+                                    <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.video.captions') }}</p>
+                                    <p>{{ $attachment->captionLabels()->implode(', ') ?: '-' }}</p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -185,5 +198,4 @@
             </div>
         @endif
     </x-filament::section>
-    <x-filament-actions::modals/>
 </div>

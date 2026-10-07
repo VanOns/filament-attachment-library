@@ -1,0 +1,14 @@
+/* Filament wraps a modal heading in a div that only fits its content; let the edit header span the full width, leaving room for the close button. */
+.fal-edit-attachment-modal .fi-modal-header {
+    padding-inline-end: 4rem;
+}
+
+.fal-edit-attachment-modal .fi-modal-header > div:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Centre the close button on the header row, which is taller than a plain heading. */
+.fal-edit-attachment-modal .fi-modal-close-btn {
+    top: 1.875rem;
+}

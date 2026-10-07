@@ -19,5 +19,8 @@ return [
         'deleted' => 'Het bestand is succesvol verwijderd.',
         'moved' => 'Het bestand is succesvol verplaatst.',
         'replaced' => 'Het bestand is succesvol vervangen.',
+        'poster_generated' => 'Het eerste frame is opgeslagen als posterafbeelding. Sla het formulier op om deze te gebruiken.',
+        'poster_failed' => 'Het eerste frame van de video kon niet worden gelezen.',
+        'caption_missing' => 'Een ondertitelbestand kon niet worden gevonden. Verwijder of vervang het en probeer het opnieuw.',
     ],
 ];

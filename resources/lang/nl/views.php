@@ -35,6 +35,12 @@ return [
                     'bits' => 'Bits',
                     'channels' => 'Kanalen',
                 ],
+                'video' => [
+                    'header' => 'Videometadata',
+                    'dimensions' => 'Afmetingen',
+                    'duration' => 'Duur',
+                    'captions' => 'Ondertiteling',
+                ],
                 'more' => 'Meer details',
                 'date' => [
                     'header' => 'Data',
@@ -50,6 +56,16 @@ return [
             'url' => 'Link',
             'modal_title' => 'Bestandsinformatie',
         ],
+    ],
+    'edit' => [
+        'file' => 'Bestand',
+        'uploaded' => 'Geüpload op :date door :user',
+        'edited' => 'Bewerkt op :date door :user',
+        'uploaded_at' => 'Geüpload op :date',
+        'edited_at' => 'Bewerkt op :date',
+        'root' => '/ (hoofdmap)',
+        'preview' => 'Voorbeeld',
+        'preview_lines' => 'Eerste :count regels',
     ],
     'actions' => [
         'attachment' => [

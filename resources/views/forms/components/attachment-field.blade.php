@@ -10,6 +10,7 @@
             statePath: @js($getStatePath()),
             multiple: @js($getMultiple()),
             mime: @js($getMime()),
+            extensions: @js($getExtensions()),
             disabled: @js($isDisabled()),
             nestedUploader: true,
             maxBytes: @js(\VanOns\FilamentAttachmentLibrary\Support\TemporaryUploadLimit::bytes()),
@@ -33,6 +34,7 @@
         <livewire:attachment-field-uploader
             :statePath="$getStatePath()"
             :mime="$getMime()"
+            :extensions="$getExtensions()"
             :wire:key="'attachment-uploader-' . $getStatePath()"
         />
 
@@ -40,10 +42,14 @@
             :attachments="$getAttachments()"
             :statePath="$getStatePath()"
             :reorderable="$getReorderable()"
-            :compact="$getCompact()"
+            :layout="$getLayout()"
+            :multiple="$getMultiple()"
+            :maxItems="$getMaxItems()"
             :disabled="$isDisabled()"
+            :valid="! $errors->has($getStatePath())"
         />
 
+        @if($getLayout() !== \VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout::INPUT)
         <x-filament::button
             x-on:click="openBrowser()"
             icon="heroicon-o-document"
@@ -55,22 +61,30 @@
         >
             {{ __('filament-attachment-library::views.field.pick') }}
         </x-filament::button>
+        @endif
 
-        {{-- Drop overlay --}}
+        {{-- Drop overlay; the input layout can be a single input row high, so it only fits one line of text --}}
+        @php($isInputLayout = $getLayout() === \VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout::INPUT)
         <div
             x-cloak
             x-show="dragDepth > 0 || uploading"
-            class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-primary-500 bg-white/85 backdrop-blur-sm dark:bg-gray-900/85"
+            @class([
+                'absolute inset-0 z-10 flex flex-col items-center justify-center gap-1.5 border-2 border-dashed border-primary-500 bg-white/85 backdrop-blur-sm dark:bg-gray-900/85',
+                'rounded-lg px-3' => $isInputLayout,
+                'rounded-xl' => ! $isInputLayout,
+            ])
         >
-            <div class="rounded-full bg-primary-100 p-2 dark:bg-primary-500/20">
-                <x-filament::icon icon="heroicon-o-arrow-up-tray" class="h-5 w-5 text-primary-600 dark:text-primary-400"/>
-            </div>
+            @unless($isInputLayout)
+                <div class="rounded-full bg-primary-100 p-2 dark:bg-primary-500/20">
+                    <x-filament::icon icon="heroicon-o-arrow-up-tray" class="h-5 w-5 text-primary-600 dark:text-primary-400"/>
+                </div>
+            @endunless
 
-            <span x-show="! uploading" class="text-sm font-semibold text-gray-900 dark:text-white">
+            <span x-show="! uploading" class="max-w-full truncate text-sm font-semibold text-gray-900 dark:text-white">
                 {{ __('filament-attachment-library::views.browser.drop.prompt') }}
             </span>
 
-            <span x-show="uploading" class="text-sm font-semibold text-gray-900 dark:text-white">
+            <span x-show="uploading" class="max-w-full truncate text-sm font-semibold text-gray-900 dark:text-white">
                 {{ __('filament-attachment-library::views.browser.drop.uploading') }} <span x-text="progress + '%'"></span>
             </span>
         </div>

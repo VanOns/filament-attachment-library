@@ -7,7 +7,12 @@ Before installing and using the Filament Attachment Library, please ensure your 
 The package has been tested and verified to work with the following versions:
 - PHP: 8.2
 - Laravel: 11
-- Filament: 3.2
+- Filament: 4 and 5
+
+## Optional
+
+- `ffmpeg` and `ffprobe`, to store video dimensions and generate poster images. See the
+  [Laravel Attachment Library video docs](https://github.com/VanOns/laravel-attachment-library/blob/main/docs/basic-usage/videos.md).
 
 ## Compatibility
 

@@ -7,4 +7,5 @@ return [
     'invalid_svg' => 'Het SVG-bestand kon niet worden verwerkt.',
     'invalid_path' => 'Het opgegeven pad is ongeldig.',
     'invalid_focal_point' => 'Het focuspunt moet een coördinaat tussen 0 en 100 zijn.',
+    'single_default_caption' => 'Er kan maar één ondertiteling standaard getoond worden.',
 ];

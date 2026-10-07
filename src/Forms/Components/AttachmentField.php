@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use ReflectionProperty;
+use VanOns\FilamentAttachmentLibrary\Enums\AttachmentFieldLayout;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\LaravelAttachmentLibrary\Facades\Glide;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
@@ -21,7 +22,7 @@ class AttachmentField extends Field
 
     public bool|Closure $reorderable = true;
 
-    public bool|Closure $compact = false;
+    protected AttachmentFieldLayout|Closure $layout = AttachmentFieldLayout::GRID;
 
     public ?string $collection;
 
@@ -30,6 +31,11 @@ class AttachmentField extends Field
     public bool $showActions = false;
 
     public ?string $mime = null;
+
+    /**
+     * @var array<int, string>
+     */
+    public array $extensions = [];
 
     protected string $view = 'filament-attachment-library::forms.components.attachment-field';
 
@@ -179,18 +185,31 @@ class AttachmentField extends Field
     }
 
     /**
-     * Render selected attachments as compact horizontal rows instead of grid cards.
+     * Render selected attachments as grid cards, list rows or compact input rows.
      */
-    public function compact(bool|Closure $compact = true): static
+    public function layout(AttachmentFieldLayout|Closure $layout): static
     {
-        $this->compact = $compact;
+        $this->layout = $layout;
 
         return $this;
     }
 
+    public function getLayout(): AttachmentFieldLayout
+    {
+        return $this->evaluate($this->layout);
+    }
+
+    /**
+     * Shortcut for the list layout.
+     */
+    public function compact(bool|Closure $compact = true): static
+    {
+        return $this->layout(fn () => $this->evaluate($compact) ? AttachmentFieldLayout::LIST : AttachmentFieldLayout::GRID);
+    }
+
     public function getCompact(): bool
     {
-        return $this->evaluate($this->compact);
+        return $this->getLayout() === AttachmentFieldLayout::LIST;
     }
 
     public function mime(string $mimeType): static
@@ -203,6 +222,26 @@ class AttachmentField extends Field
     public function getMime(): ?string
     {
         return $this->evaluate($this->mime);
+    }
+
+    /**
+     * Restrict picking and uploading to files with one of the given extensions.
+     *
+     * @param  array<int, string>  $extensions
+     */
+    public function extensions(array $extensions): static
+    {
+        $this->extensions = array_map(fn (string $extension) => strtolower(ltrim($extension, '.')), $extensions);
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getExtensions(): array
+    {
+        return $this->extensions;
     }
 
     /**
