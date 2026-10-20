@@ -1,4 +1,4 @@
-<p align="center" class="filament-hidden"><img src="art/social-card.png" alt="Social card of Filament attachment library"></p>
+<p align="center" class="filament-hidden"><img src="https://raw.githubusercontent.com/VanOns/filament-attachment-library/main/art/social-card.png" alt="Social card of Filament attachment library"></p>
 
 # Filament Attachment Library
 
@@ -12,7 +12,7 @@ Filament package for easy attachment uploading and browsing.
 
 ## Quick start
 
-> For Filament version compatibility, see [Compatibility](docs/compatibility.md).
+> For Filament version compatibility, see [Compatibility](https://github.com/VanOns/filament-attachment-library/blob/main/docs/compatibility.md).
 
 ### Installation
 
@@ -165,11 +165,11 @@ For more information refer to the [Laravel Attachment Library documentation](htt
 
 ## Documentation
 
-Please see the [documentation](docs/README.md#contents) for detailed information about installation and usage.
+Please see the [documentation](https://github.com/VanOns/filament-attachment-library/blob/main/docs/README.md#contents) for detailed information about installation and usage.
 
 ## Contributing
 
-Please see [Contributing](CONTRIBUTING.md) for more information about how you can contribute.
+Please see [Contributing](https://github.com/VanOns/filament-attachment-library/blob/main/CONTRIBUTING.md) for more information about how you can contribute.
 
 ### JavaScript assets
 
@@ -186,25 +186,25 @@ Consuming applications republish the bundle automatically on composer updates th
 
 ## Changelog
 
-Please see [Changelog](CHANGELOG.md) for more information about what has changed recently.
+Please see [Changelog](https://github.com/VanOns/filament-attachment-library/blob/main/CHANGELOG.md) for more information about what has changed recently.
 
 ## Upgrading
 
-Please see [Upgrading](UPGRADING.md) for more information about how to upgrade.
+Please see [Upgrading](https://github.com/VanOns/filament-attachment-library/blob/main/UPGRADING.md) for more information about how to upgrade.
 
 ## Security
 
-Please see [Security](SECURITY.md) for more information about how we deal with security.
+Please see [Security](https://github.com/VanOns/filament-attachment-library/blob/main/SECURITY.md) for more information about how we deal with security.
 
 ## Credits
 
 We would like to thank the following contributors for their contributions to this project:
 
-- [All contributors](../../contributors)
+- [All contributors](https://github.com/VanOns/filament-attachment-library/graphs/contributors)
 
 ## License
 
-The scripts and documentation in this project are released under the [MIT License](LICENSE.md).
+The scripts and documentation in this project are released under the [MIT License](https://github.com/VanOns/filament-attachment-library/blob/main/LICENSE.md).
 
 ---
 
