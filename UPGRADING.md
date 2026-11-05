@@ -21,6 +21,11 @@ across such a case, please let us know by [opening an issue][issues], or by addi
 * The attachment browser's Livewire events are now scoped per browser (e.g. `highlight-attachment.{scope}`).
   Update any custom code that dispatches `highlight-attachment`, `dehighlight-attachment` or `mount-action` itself.
 
+# v2.7 to v2.8
+
+* The translations can now be published with `--tag=filament-attachment-library-lang`, like our other packages.
+  `--tag=filament-attachment-library-translations` keeps working.
+
 <!-- EXAMPLE -->
 <!--
 # v1 to v2
