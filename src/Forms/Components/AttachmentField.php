@@ -170,7 +170,7 @@ class AttachmentField extends Field
     /**
      * Allow drag-and-drop reordering of selected attachments.
      * When used with a relationship, requires the `order` column on the pivot table.
-     * Publish and run the package migration: vendor:publish --tag=filament-attachment-library-migrations
+     * Publish and run the migrations of van-ons/laravel-attachment-library: vendor:publish --tag=attachment-library-migrations
      */
     public function reorderable(bool|Closure $reorderable = true): static
     {

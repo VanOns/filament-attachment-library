@@ -63,6 +63,14 @@ class FilamentAttachmentLibraryServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // Named like the translations tag of our other packages; Spatie's -translations tag keeps working.
+        if ($this->app->runningInConsole()) {
+            $this->publishes(
+                static::pathsToPublish(static::class, 'filament-attachment-library-translations'),
+                'filament-attachment-library-lang',
+            );
+        }
+
         FilamentAsset::register([
             Js::make('filament-attachment-library', __DIR__ . '/../resources/dist/filament-attachment-library.js'),
             Css::make('filament-attachment-library', __DIR__ . '/../resources/css/plugin.css'),
