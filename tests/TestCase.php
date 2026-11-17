@@ -25,10 +25,11 @@ abstract class TestCase extends BaseTestCase
 
     protected function getPackageProviders($app): array
     {
+        // Livewire after Filament, as a real app discovers them: older Filament 4 versions bind
+        // Livewire's data store unshared, and only Livewire registering its own afterwards undoes that.
         return [
             BladeIconsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
-            LivewireServiceProvider::class,
             ActionsServiceProvider::class,
             SupportServiceProvider::class,
             NotificationsServiceProvider::class,
@@ -38,6 +39,7 @@ abstract class TestCase extends BaseTestCase
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             FilamentServiceProvider::class,
+            LivewireServiceProvider::class,
             LaravelAttachmentLibraryServiceProvider::class,
             FilamentAttachmentLibraryServiceProvider::class,
         ];
