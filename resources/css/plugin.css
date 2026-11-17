@@ -64,8 +64,8 @@
     transform: rotate(90deg);
 }
 
-/* Below Tailwind's md the tree is used by touch: rows a finger can hit. */
-@media not all and (min-width: 48rem) {
+/* As a block above the files (Tailwind's @max-2xl) the tree is mostly used by touch: rows a finger can hit. */
+@container (width < 42rem) {
     .fal-tree-row,
     .fal-tree-toggle,
     .fal-tree-menu,

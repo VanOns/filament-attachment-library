@@ -281,7 +281,7 @@ document.addEventListener('alpine:init', () => {
         menu: null,
         // The directory that was just clicked, until the server has opened it.
         pending: null,
-        // Only matters on a narrow screen, where the tree is a block above the files that opens on demand.
+        // Only matters while the tree is a block above the files, which opens on demand.
         narrowOpen: false,
         springPath: null,
         springTimer: null,

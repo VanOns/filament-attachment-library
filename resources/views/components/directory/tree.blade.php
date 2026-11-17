@@ -7,9 +7,9 @@
      */
 @endphp
 
-{{-- On a narrow screen the tree is a block right above the files; beside them from md up. --}}
+{{-- A block above the files until the browser has room for the tree beside them. --}}
 <div
-    {{ $attributes->class(['order-2 w-full shrink-0 md:order-none md:w-auto md:self-start md:sticky md:top-[var(--fal-info-top,6rem)]']) }}
+    {{ $attributes->class(['w-full shrink-0 @2xl:w-auto @2xl:self-start @2xl:sticky @2xl:top-[var(--fal-info-top,6rem)]']) }}
     x-data="attachmentDirectoryTree({
         expanded: $wire.entangle('expandedDirectories'),
         collapsed: $wire.entangle('treeCollapsed'),
@@ -18,13 +18,13 @@
 >
     {{-- Collapsed: only the buttons, with the toggle where it sits in the open tree.
          Filament pulls icon buttons outwards with a negative margin; fal-tree-button gives them their own room.
-         Collapsing is for md and up, so it is a class there rather than x-show. --}}
+         Collapsing only applies beside the files, so it is a class for that layout rather than x-show. --}}
     <div
         @class([
             'hidden flex-col gap-1 rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-            'md:flex' => $collapsed,
+            '@2xl:flex' => $collapsed,
         ])
-        x-bind:class="{ 'md:flex': collapsed }"
+        x-bind:class="{ '@2xl:flex': collapsed }"
     >
         <x-filament::icon-button
             icon="heroicon-m-chevron-double-right"
@@ -49,13 +49,13 @@
     <nav
         aria-label="{{ __('filament-attachment-library::views.tree.heading') }}"
         @class([
-            'relative flex w-full flex-col gap-2 rounded-xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-gray-950/5 md:w-64 md:pb-3 dark:bg-gray-900 dark:ring-white/10',
-            'md:hidden' => $collapsed,
+            'relative flex w-full flex-col gap-2 rounded-xl bg-white px-2 py-1.5 shadow-sm ring-1 ring-gray-950/5 @2xl:w-[clamp(16rem,28cqw,20rem)] @2xl:pb-3 dark:bg-gray-900 dark:ring-white/10',
+            '@2xl:hidden' => $collapsed,
         ])
-        x-bind:class="{ 'md:hidden': collapsed }"
+        x-bind:class="{ '@2xl:hidden': collapsed }"
     >
         <div class="-ms-0.5 flex items-center gap-1.5">
-            <div class="hidden md:flex">
+            <div class="hidden @2xl:flex">
                 <x-filament::icon-button
                     icon="heroicon-m-chevron-double-left"
                     color="gray"
@@ -67,14 +67,14 @@
                 />
             </div>
 
-            <span class="hidden flex-1 text-sm font-semibold text-gray-950 md:block dark:text-white">
+            <span class="hidden flex-1 text-sm font-semibold text-gray-950 @2xl:block dark:text-white">
                 {{ __('filament-attachment-library::views.tree.heading') }}
             </span>
 
-            {{-- Narrow screens: the heading opens the tree, and names the open directory while it is closed --}}
+            {{-- Above the files: the heading opens the tree, and names the open directory while it is closed --}}
             <button
                 type="button"
-                class="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 text-start text-sm font-semibold text-gray-950 md:hidden dark:text-white"
+                class="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 text-start text-sm font-semibold text-gray-950 @2xl:hidden dark:text-white"
                 x-on:click="toggleNarrow()"
                 x-bind:aria-expanded="narrowOpen"
             >
@@ -102,7 +102,7 @@
             />
         </div>
 
-        <div class="flex flex-col gap-2 pb-1.5 max-md:hidden md:pb-0" x-bind:class="{ 'max-md:hidden': ! narrowOpen }">
+        <div class="flex flex-col gap-2 pb-1.5 @max-2xl:hidden @2xl:pb-0" x-bind:class="{ '@max-2xl:hidden': ! narrowOpen }">
             <x-filament::input.wrapper prefix-icon="heroicon-m-magnifying-glass">
                 <x-filament::input
                     type="search"
@@ -115,7 +115,7 @@
             {{-- One set of listeners for every row: the rows themselves stay as light as possible --}}
             <div
                 x-ref="scroller"
-                class="max-h-80 overflow-y-auto md:max-h-[calc(100vh-var(--fal-info-top,6rem)-9rem)]"
+                class="max-h-80 overflow-y-auto @2xl:max-h-[calc(100vh-var(--fal-info-top,6rem)-9rem)]"
                 x-bind:data-pending="pending !== null"
                 x-on:click="onTreeClick($event)"
                 x-on:keydown="onTreeKeydown($event)"
