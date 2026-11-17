@@ -43,6 +43,12 @@ abstract class TestCase extends BaseTestCase
         ];
     }
 
+    protected function defineEnvironment($app): void
+    {
+        // Rendering a Livewire component encrypts its child components' state.
+        $app['config']->set('app.key', 'base64:' . base64_encode(str_repeat('a', 32)));
+    }
+
     protected function afterRefreshingDatabase(): void
     {
         $migrationsPath = __DIR__ . '/../vendor/van-ons/laravel-attachment-library/database/migrations';

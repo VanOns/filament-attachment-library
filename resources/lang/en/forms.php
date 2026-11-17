@@ -8,6 +8,9 @@ return [
         'add' => 'Add a file…',
         'remove' => 'Remove',
     ],
+    'delete_directory' => [
+        'description' => 'The directory ":directory" will be deleted, with every file and directory in it.',
+    ],
     'create_directory' => [
         'name' => 'Name',
         'heading' => 'Create directory',

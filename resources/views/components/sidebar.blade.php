@@ -3,9 +3,10 @@
     'currentPath' => null,
     'selected' => [],
     'scope',
+    'treeNavigation' => false,
 ])
 
-<div @class([ 'flex-1 max-w-md', $class ])>
+<div @class([ 'flex-1 max-w-md' => ! $treeNavigation, 'md:w-72 md:flex-none' => $treeNavigation, $class ])>
 
     {{-- Upload & create directory (mobile has its own buttons in the header) --}}
     <div class="hidden md:flex flex-col gap-2 mb-4">
@@ -13,9 +14,12 @@
             {{ __('filament-attachment-library::views.actions.attachment.upload') }}
         </x-filament::button>
 
-        <x-filament::button color="gray" icon="heroicon-o-folder-plus" class="w-full" wire:click="mountAction('createDirectory')">
-            {{ __('filament-attachment-library::views.actions.directory.create') }}
-        </x-filament::button>
+        {{-- With the tree, creating a directory is one of its own buttons --}}
+        @unless($treeNavigation)
+            <x-filament::button color="gray" icon="heroicon-o-folder-plus" class="w-full" wire:click="mountAction('createDirectory')">
+                {{ __('filament-attachment-library::views.actions.directory.create') }}
+            </x-filament::button>
+        @endunless
     </div>
 
     @if(count($selected) > 1)

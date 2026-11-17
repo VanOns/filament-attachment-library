@@ -13,11 +13,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use League\Flysystem\PathTraversalDetected;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Renderless;
 use Livewire\Attributes\Session;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -32,12 +34,16 @@ use VanOns\FilamentAttachmentLibrary\Actions\ReplaceAttachmentAction;
 use VanOns\FilamentAttachmentLibrary\Concerns\DispatchesToScope;
 use VanOns\FilamentAttachmentLibrary\Concerns\HandlesDroppedFiles;
 use VanOns\FilamentAttachmentLibrary\Concerns\InteractsWithActionsUsingAlpineJS;
+use VanOns\FilamentAttachmentLibrary\Enums\DirectoryNavigation;
 use VanOns\FilamentAttachmentLibrary\Enums\Layout;
 use VanOns\FilamentAttachmentLibrary\Rules\MatchesFileFilter;
+use VanOns\FilamentAttachmentLibrary\Support\DirectoryTree;
 use VanOns\FilamentAttachmentLibrary\Support\Path;
 use VanOns\FilamentAttachmentLibrary\ViewModels\AttachmentViewModel;
 use VanOns\FilamentAttachmentLibrary\ViewModels\DirectoryViewModel;
+use VanOns\LaravelAttachmentLibrary\AttachmentQueryBuilder;
 use VanOns\LaravelAttachmentLibrary\DataTransferObjects\Directory;
+use VanOns\LaravelAttachmentLibrary\Exceptions\DestinationAlreadyExistsException;
 use VanOns\LaravelAttachmentLibrary\Facades\AttachmentManager;
 use VanOns\LaravelAttachmentLibrary\Models\Attachment;
 
@@ -78,6 +84,20 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[Session]
     public Layout $layout = Layout::GRID;
 
+    /**
+     * Relative paths of the directories that are open in the directory tree, and whether the tree
+     * itself is collapsed. Both are kept in the session, the open directories per base path so that
+     * switching tenants never shows another tenant's state.
+     *
+     * Not #[Session]: that writes on every request of every instance, and the page and the modals
+     * share these, so an instance that was not touched would put its older state back.
+     *
+     * @var array<int, string>
+     */
+    public array $expandedDirectories = [];
+
+    public bool $treeCollapsed = false;
+
     public string $search = '';
 
     public ?string $mime = null;
@@ -108,6 +128,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     ];
 
     public const PAGE_SIZES = [5, 10, 25, 50, 100];
+
+    /**
+     * The most attachments one drag may move, and the most open directories that are remembered.
+     */
+    public const MAX_MOVED_ATTACHMENTS = 100;
+
+    public const MAX_EXPANDED_DIRECTORIES = 500;
+
+    protected const UNDO_MOVE_SESSION_KEY = 'filament-attachment-library.undo-move';
+
+    protected const UNDO_MOVE_DURATION = 10000;
+
+    protected const TREE_COLLAPSED_SESSION_KEY = 'filament-attachment-library.tree-collapsed';
 
     public const FILTERABLE_FILE_TYPES = [
         'all' => '',
@@ -158,8 +191,12 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
         $attachments = $this->getAttachments();
         $directories = $this->getDirectories();
+        $tree = DirectoryNavigation::configured()->isTree() ? $this->directoryTree() : null;
 
-        return view('filament-attachment-library::livewire.attachment-browser', compact('attachments', 'directories'));
+        // The tree has its own search for directories; this one then only finds files.
+        $searchPlaceholder = $tree ? __('filament-attachment-library::views.search_files') : null;
+
+        return view('filament-attachment-library::livewire.attachment-browser', compact('attachments', 'directories', 'tree', 'searchPlaceholder'));
     }
 
     public function mount(): void
@@ -179,6 +216,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             $this->sortBy = $sortBy;
         }
 
+        $this->restoreTreeState();
+
         // When lazy-loaded, mount() runs on the deferred load request; announce readiness so the
         // modal wrapper can replay an open-attachment-modal payload dispatched before the load.
         $this->dispatch('attachment-browser-loaded', scope: $this->scope);
@@ -193,13 +232,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public function deleteDirectoryAction(): Action
     {
-        return DeleteDirectoryAction::make('renameDirectory');
+        return DeleteDirectoryAction::make('deleteDirectory')
+            ->setBasePath($this->basePath)
+            ->after(fn (array $arguments) => $this->forgetDirectory($arguments['full_path'] ?? null));
     }
 
     public function renameDirectoryAction(): Action
     {
         return RenameDirectoryAction::make('renameDirectory')
-            ->setCurrentPath($this->getCurrentPath());
+            ->setBasePath($this->basePath)
+            ->after(fn (array $arguments, array $data) => $this->followRenamedDirectory(
+                $arguments['full_path'] ?? null,
+                $data['name'] ?? null,
+            ));
     }
 
     public function deleteAttachmentAction(): Action
@@ -231,9 +276,32 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     protected function getCurrentPath(): ?string
     {
-        $currentPath = $this->normalizePath($this->currentPath);
+        return $this->fullPath($this->currentPath);
+    }
 
-        return implode('/', array_filter([$this->basePath, $currentPath])) ?: null;
+    /**
+     * The path on the disk of a path the client navigates with, which is relative to the base path.
+     */
+    protected function fullPath(?string $relativePath): ?string
+    {
+        return Path::join(Path::sanitize($this->basePath), $this->normalizePath($relativePath));
+    }
+
+    /**
+     * The path the client navigates with for a path on the disk.
+     */
+    public function relativePath(?string $path): ?string
+    {
+        return Path::relativeTo($this->normalizePath($path), $this->basePath);
+    }
+
+    /**
+     * Whether a path on the disk is the base path or lies below it. Everything a client asks for by
+     * path or by id has to pass this, or a tenant could reach into another tenant's directories.
+     */
+    protected function isWithinBasePath(?string $path): bool
+    {
+        return Path::isWithin($path, $this->basePath);
     }
 
     protected function droppedFilesPath(): ?string
@@ -292,15 +360,38 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     #[On('open-path')]
     public function openPath(?string $path): void
     {
-        $resolved = Str::startsWith($path, $this->basePath)
-            ? trim(Str::after($path, $this->basePath), '/')
-            : $path;
-
-        $this->currentPath = $this->normalizePath($resolved);
+        $this->currentPath = $this->relativePath($path);
 
         $this->resetPage();
 
         $this->highlight(null);
+    }
+
+    /**
+     * Open a directory from the tree. Unlike openPath(), which also takes paths on the disk, this
+     * only takes a path below the base path: a directory named like the base path stays what it is.
+     */
+    public function openDirectory(?string $path = null): void
+    {
+        $this->currentPath = $this->normalizePath($path);
+
+        // The tree shows where you are; search results from every directory would contradict it.
+        $this->search = '';
+
+        $this->resetPage();
+
+        $this->highlight(null);
+    }
+
+    /**
+     * Create a directory inside a directory of the tree. Opening it and asking for the name happen
+     * in one request, so a click on another row in between cannot change where the directory lands.
+     */
+    public function createSubdirectory(?string $path = null): void
+    {
+        $this->openDirectory($path);
+
+        $this->mountAction('createDirectory');
     }
 
     #[On('set-mime')]
@@ -334,6 +425,314 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public function updatingPageSize(): void
     {
         $this->resetPage();
+    }
+
+    /**
+     * Everything the directory tree shows: its nested nodes and the number of files directly in the root.
+     *
+     * @return array{nodes: list<array<string, mixed>>, rootCount: int}
+     */
+    protected function directoryTree(): array
+    {
+        $counts = $this->directoryCounts();
+
+        return [
+            'nodes' => DirectoryTree::build($this->allDirectories(), $this->basePath, $counts),
+            'rootCount' => $counts[(string) Path::sanitize($this->basePath)] ?? 0,
+        ];
+    }
+
+    /**
+     * Every directory below the base path, in one listing. The tree is read straight from the disk
+     * rather than through the attachment manager, which lists one level at a time and syncs each
+     * directory it passes: far too much to repeat on every render.
+     *
+     * Listed once per request. Nothing may ask for it before it changes a directory in that request.
+     *
+     * @return array<int, string>
+     */
+    protected function allDirectories(): array
+    {
+        return once(function () {
+            try {
+                return Storage::disk(config('attachment-library.disk', 'public'))->allDirectories($this->basePath);
+            } catch (PathTraversalDetected) {
+                return [];
+            }
+        });
+    }
+
+    /**
+     * The number of files directly inside each directory, by full path, in one query.
+     *
+     * @return array<string, int>
+     */
+    protected function directoryCounts(): array
+    {
+        $basePath = Path::sanitize($this->basePath);
+
+        return Attachment::query()
+            // Nested: the scope ends in an orWhere.
+            ->when($basePath !== null, fn (Builder $query) => $query->where(
+                fn (AttachmentQueryBuilder $query) => $query->whereInPath($basePath)
+            ))
+            ->groupBy('path')
+            // Files in the root have no path; '' keeps them from becoming a null array key.
+            ->selectRaw("coalesce(path, '') as directory, count(*) as aggregate")
+            ->pluck('aggregate', 'directory')
+            ->map(fn ($count) => (int) $count)
+            ->all();
+    }
+
+    /**
+     * Called by the tree after a directory or the tree itself is opened or closed. It does nothing
+     * by itself: the request carries the new state, and the updated hooks below store it.
+     */
+    #[Renderless]
+    public function rememberTree(): void
+    {
+    }
+
+    public function updatedExpandedDirectories(): void
+    {
+        $this->expandedDirectories = $this->sanitizeExpandedDirectories($this->expandedDirectories);
+
+        $this->storeExpandedDirectories();
+    }
+
+    public function updatedTreeCollapsed(): void
+    {
+        session()->put(self::TREE_COLLAPSED_SESSION_KEY, $this->treeCollapsed);
+    }
+
+    /**
+     * Take over what the tree looked like when it was last changed, in this browser or another one.
+     */
+    protected function restoreTreeState(): void
+    {
+        $this->expandedDirectories = $this->storedExpandedDirectories();
+        $this->treeCollapsed = (bool) session()->get(self::TREE_COLLAPSED_SESSION_KEY, false);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function storedExpandedDirectories(): array
+    {
+        return $this->sanitizeExpandedDirectories(session()->get($this->expandedDirectoriesSessionKey(), []));
+    }
+
+    protected function storeExpandedDirectories(): void
+    {
+        session()->put($this->expandedDirectoriesSessionKey(), $this->expandedDirectories);
+    }
+
+    /**
+     * The open directories arrive from the client and from the session: keep clean relative paths only.
+     *
+     * @return array<int, string>
+     */
+    protected function sanitizeExpandedDirectories(mixed $paths): array
+    {
+        return collect(Arr::wrap($paths))
+            ->filter(fn ($path) => is_string($path))
+            ->map(fn (string $path) => Path::sanitize($path))
+            ->filter()
+            ->unique()
+            ->take(self::MAX_EXPANDED_DIRECTORIES)
+            ->values()
+            ->all();
+    }
+
+    protected function expandedDirectoriesSessionKey(): string
+    {
+        return 'filament-attachment-library.expanded-directories.' . md5((string) $this->basePath);
+    }
+
+    /**
+     * Move attachments into a directory, as dropped on it in the tree or on a directory card.
+     *
+     * @param  array<int, int|string>  $ids
+     * @param  string|null  $path  Relative to the base path; null for the root.
+     */
+    public function moveAttachments(array $ids, ?string $path = null): void
+    {
+        if ($this->disabled) {
+            return;
+        }
+
+        $path = $this->normalizePath($path);
+        $target = $this->fullPath($path);
+
+        // Only the base path itself or a directory the tree lists: nothing the client can make up.
+        if ($path !== null && ! in_array($target, $this->allDirectories(), true)) {
+            Notification::make()
+                ->title(__('filament-attachment-library::validation.invalid_path'))
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $ids = collect($ids)->map(fn ($id) => (int) $id)->filter()->unique()->take(self::MAX_MOVED_ATTACHMENTS);
+
+        $moved = [];
+        $conflicts = 0;
+
+        foreach (Attachment::query()->whereKey($ids->all())->get() as $attachment) {
+            if (! $this->isWithinBasePath($attachment->path) || $attachment->path === $target) {
+                continue;
+            }
+
+            $origin = $attachment->path;
+
+            try {
+                AttachmentManager::move($attachment, $target);
+
+                $moved[$attachment->id] = $origin;
+            } catch (DestinationAlreadyExistsException) {
+                $conflicts++;
+            }
+        }
+
+        $directory = $path === null
+            ? __('filament-attachment-library::views.home')
+            : Path::name($path);
+
+        if ($conflicts > 0) {
+            Notification::make()
+                ->title(trans_choice('filament-attachment-library::notifications.attachment.move_conflict', $conflicts, [
+                    'count' => $conflicts,
+                    'directory' => $directory,
+                ]))
+                ->danger()
+                ->send();
+        }
+
+        if ($moved === []) {
+            return;
+        }
+
+        $token = (string) Str::uuid();
+        session()->put(self::UNDO_MOVE_SESSION_KEY, ['token' => $token, 'moves' => $moved]);
+
+        // The selection stays: a moved attachment is still the same attachment to a field that picked it.
+        $this->highlight(null);
+
+        Notification::make()
+            ->title(trans_choice('filament-attachment-library::notifications.attachment.moved_to', count($moved), [
+                'count' => count($moved),
+                'directory' => $directory,
+            ]))
+            ->success()
+            ->actions([
+                Action::make('undo')
+                    ->label(__('filament-attachment-library::views.actions.attachment.undo'))
+                    ->button()
+                    ->color('gray')
+                    ->dispatch("undo-attachment-move.{$this->scope}", ['token' => $token])
+                    ->close(),
+            ])
+            // Longer than a plain notification: this is the only chance to undo.
+            ->duration(self::UNDO_MOVE_DURATION)
+            ->send();
+    }
+
+    /**
+     * Put the attachments of the last move back. Only that move is kept, and only on the server:
+     * the client hands back a token, never the paths.
+     */
+    #[On('undo-attachment-move.{scope}')]
+    public function undoMove(string $token): void
+    {
+        $undo = session()->get(self::UNDO_MOVE_SESSION_KEY);
+
+        if (! is_array($undo) || ($undo['token'] ?? null) !== $token) {
+            Notification::make()
+                ->title(__('filament-attachment-library::notifications.attachment.move_undo_expired'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        session()->forget(self::UNDO_MOVE_SESSION_KEY);
+
+        $attachments = Attachment::query()->whereKey(array_keys($undo['moves']))->get()->keyBy('id');
+        $restored = 0;
+
+        foreach ($undo['moves'] as $id => $origin) {
+            $attachment = $attachments->get($id);
+
+            if (! $attachment || ! $this->isWithinBasePath($attachment->path) || ! $this->isWithinBasePath($origin)) {
+                continue;
+            }
+
+            try {
+                AttachmentManager::move($attachment, $origin);
+
+                $restored++;
+            } catch (DestinationAlreadyExistsException) {
+                // Something else took the old place in the meantime; the file stays where it is.
+            }
+        }
+
+        if ($restored < count($undo['moves'])) {
+            Notification::make()
+                ->title(__('filament-attachment-library::notifications.attachment.move_undo_incomplete'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        Notification::make()
+            ->title(__('filament-attachment-library::notifications.attachment.move_undone'))
+            ->success()
+            ->send();
+    }
+
+    /**
+     * The tree can delete the directory that is open, or one above it: step out to what is left.
+     */
+    protected function forgetDirectory(?string $fullPath): void
+    {
+        $deleted = $this->relativePath($fullPath);
+
+        if ($deleted === null) {
+            return;
+        }
+
+        // From what is stored, not from this instance: another browser may have changed the tree since.
+        $this->expandedDirectories = array_values(array_filter(
+            $this->storedExpandedDirectories(),
+            fn (string $path) => ! Path::isWithin($path, $deleted),
+        ));
+        $this->storeExpandedDirectories();
+
+        if (Path::isWithin($this->currentPath, $deleted)) {
+            $this->openDirectory(Path::parent($deleted));
+        }
+    }
+
+    /**
+     * The tree can rename the directory that is open, or one above it: keep pointing at the same directory.
+     */
+    protected function followRenamedDirectory(?string $fullPath, ?string $name): void
+    {
+        $old = $this->relativePath($fullPath);
+
+        if ($old === null || blank($name)) {
+            return;
+        }
+
+        $new = Path::join(Path::parent($old), $name);
+
+        $rename = fn (?string $path) => Path::isWithin($path, $old) ? $new . substr($path, strlen($old)) : $path;
+
+        $this->expandedDirectories = array_values(array_map($rename, $this->storedExpandedDirectories()));
+        $this->storeExpandedDirectories();
+        $this->currentPath = $rename($this->currentPath);
     }
 
     /**
@@ -382,8 +781,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     private function getDirectories(): Collection
     {
-        [$sortColumn, $sortDirection] = $this->resolveSort();
-
         try {
             $directories = AttachmentManager::directories($this->getCurrentPath());
         } catch (PathTraversalDetected) {
@@ -402,11 +799,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->when(!$this->search, function (Collection $collection) {
                 return $collection->filter(fn (Directory $directory) => $directory->path === $this->getCurrentPath());
             })
-            ->when($sortColumn === 'name', function (Collection $collection) use ($sortDirection) {
-                return $sortDirection === 'desc'
-                    ? $collection->sortByDesc('name')
-                    : $collection->sortBy('name');
-            })->map(fn (Directory $directory) => new DirectoryViewModel($directory));
+            // Always A to Z and never by case, whatever the files are sorted by.
+            ->sortBy(fn (Directory $directory) => $directory->name, SORT_NATURAL | SORT_FLAG_CASE)
+            ->map(fn (Directory $directory) => new DirectoryViewModel($directory));
     }
 
     /**
@@ -430,7 +825,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             ->when($this->extensions, function (Builder $query) {
                 $query->whereIn(DB::raw('lower(extension)'), $this->extensions);
             })
-            ->orderBy($sortColumn, $sortDirection)
+            // lower(): whether a plain order by name ignores case depends on the database and its collation.
+            ->orderBy($sortColumn === 'name' ? DB::raw('lower(name)') : $sortColumn, $sortDirection)
             ->paginate($this->pageSize);
 
         $collection = $attachments->getCollection()
@@ -467,7 +863,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         // Reset everything except mount-time config (reset() falls back to class defaults,
         // which would re-enable URL tracking and drop the tenant base path) and the
         // session-persisted display preferences (resetting would clobber the stored values).
-        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'scope', 'sortBy', 'pageSize', 'layout']));
+        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'scope', 'sortBy', 'pageSize', 'layout', 'expandedDirectories', 'treeCollapsed']));
     }
 
     /**
@@ -480,6 +876,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         if (($modalId ?? AttachmentModalStack::modalId(0)) !== $this->scope) {
             return;
         }
+
+        // This browser may have been loaded long before it is opened.
+        $this->restoreTreeState();
 
         $this->statePath = $statePath;
         $this->multiple = $multiple ?? false;

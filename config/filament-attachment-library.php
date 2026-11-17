@@ -19,4 +19,11 @@ return [
         // 'extensions:jpg,png',
     ],
 
+    /**
+     * How the attachment browser lets a user move between directories:
+     * 'cards' shows the directories as cards above the files,
+     * 'tree' shows a collapsible directory tree beside the files.
+     */
+    'directory_navigation' => 'cards',
+
 ];

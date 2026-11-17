@@ -1,6 +1,17 @@
 const OVERLAY_BOTTOM_GAP = 24
 const OVERLAY_MIN_HEIGHT = 160
 
+// Marks a drag of attachments inside the browser, as opposed to files dragged in from the desktop.
+const ATTACHMENT_DRAG_TYPE = 'application/x-attachment-library'
+const MAX_DIRECTORY_RESULTS = 50
+// How long a drag has to rest on a closed directory before the tree opens it.
+const SPRING_LOAD_DELAY = 700
+// How long the tree waits after the last open or close before it has the server store its state.
+const REMEMBER_DELAY = 400
+
+// A PHP array can round-trip through Livewire as an object.
+const asArray = (value) => (Array.isArray(value) ? value : Object.values(value ?? {}))
+
 const findAttachmentModal = (level) => document.querySelector(`[data-attachment-modal-level="${level}"]`)
 
 /**
@@ -203,8 +214,367 @@ const dropZone = (config) => ({
     },
 })
 
+/**
+ * Moving attachments by dropping them on a directory: a directory card or a row of the directory
+ * tree. Paths are relative to the base path, '' being the root; the server resolves and checks them.
+ */
+const moveTargets = () => ({
+    dropPath: null,
+
+    isAttachmentDrag(event) {
+        return Array.from(event.dataTransfer?.types ?? []).includes(ATTACHMENT_DRAG_TYPE)
+    },
+
+    onMoveOver(event, path) {
+        if (!this.isAttachmentDrag(event) || this.$wire.disabled) return
+
+        event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
+        this.dropPath = path
+    },
+
+    onMoveLeave(event, path) {
+        // Moving between the children of a target is not leaving it.
+        if (event.currentTarget.contains(event.relatedTarget)) return
+
+        if (this.dropPath === path) this.dropPath = null
+    },
+
+    onMoveDrop(event, path) {
+        if (!this.isAttachmentDrag(event)) return
+
+        event.preventDefault()
+        // The browser around the target is a drop zone for uploads; this drop is not one.
+        event.stopPropagation()
+        this.dropPath = null
+
+        let ids
+        try {
+            ids = JSON.parse(event.dataTransfer.getData(ATTACHMENT_DRAG_TYPE))
+        } catch {
+            return
+        }
+
+        if (!Array.isArray(ids) || !ids.length || this.$wire.disabled) return
+
+        this.$wire.moveAttachments(ids, path === '' ? null : path)
+    },
+})
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('attachmentDropZone', dropZone)
+
+    /**
+     * The attachment browser: the drop zone for uploads, plus the directories as targets for
+     * attachments dragged inside it.
+     */
+    Alpine.data('attachmentBrowser', (config) => ({
+        ...dropZone(config),
+        ...moveTargets(),
+    }))
+
+    /**
+     * The directory tree beside the files. Opening and closing a directory, and searching, happen
+     * here without a round-trip; the open directories ride along to the server on its next request.
+     *
+     * Every row carries its path in data-directory and its controls a data-tree-action, and the
+     * tree listens once for all of them. Config: expanded and collapsed (both entangled).
+     */
+    Alpine.data('attachmentDirectoryTree', (config) => ({
+        expanded: config.expanded,
+        collapsed: config.collapsed,
+        query: '',
+        // The row whose menu is open, and where the menu goes: { path, top }.
+        menu: null,
+        // The directory that was just clicked, until the server has opened it.
+        pending: null,
+        springPath: null,
+        springTimer: null,
+        rememberTimer: null,
+
+        init() {
+            this.reveal(this.currentPath())
+
+            this.$watch('$wire.currentPath', () => {
+                this.pending = null
+                this.reveal(this.currentPath())
+            })
+            this.$watch('expanded', () => this.remember())
+            this.$watch('collapsed', () => this.remember())
+        },
+
+        destroy() {
+            this.clearSpring()
+            clearTimeout(this.rememberTimer)
+        },
+
+        // The entangled state only travels with the next request; without one, a reload would lose it.
+        remember() {
+            clearTimeout(this.rememberTimer)
+            this.rememberTimer = setTimeout(() => this.$wire.rememberTree(), REMEMBER_DELAY)
+        },
+
+        currentPath() {
+            return this.$wire.currentPath ?? ''
+        },
+
+        expandedPaths() {
+            return asArray(this.expanded)
+        },
+
+        isExpanded(path) {
+            return path === '' || this.expandedPaths().includes(path)
+        },
+
+        // A clicked directory counts as the current one right away, so the click is never left unanswered.
+        isCurrent(path) {
+            return (this.pending ?? this.currentPath()) === path
+        },
+
+        expand(path) {
+            if (!this.isExpanded(path)) this.expanded = [...this.expandedPaths(), path]
+        },
+
+        toggle(path) {
+            if (path === '') return
+
+            this.expanded = this.isExpanded(path)
+                ? this.expandedPaths().filter((item) => item !== path)
+                : [...this.expandedPaths(), path]
+        },
+
+        parentPath(path) {
+            return path.split('/').slice(0, -1).join('/')
+        },
+
+        // Open every directory above a path and scroll to the current row, so it can be seen.
+        reveal(path) {
+            const segments = path.split('/').filter(Boolean)
+
+            segments.slice(0, -1).forEach((segment, index) => this.expand(segments.slice(0, index + 1).join('/')))
+            this.$nextTick(() => this.scrollToCurrent())
+        },
+
+        rowOf(path) {
+            return this.$refs.tree.querySelector(`.fal-tree-row[data-directory="${CSS.escape(path)}"]`)
+        },
+
+        // Moves the tree's own scroll area only: scrollIntoView() would scroll the page along.
+        scrollToCurrent() {
+            const scroller = this.$refs.scroller
+            const row = this.rowOf(this.pending ?? this.currentPath())
+            if (!row || row.offsetParent === null) return
+
+            const top = row.getBoundingClientRect().top - scroller.getBoundingClientRect().top
+            if (top >= 0 && top + row.offsetHeight <= scroller.clientHeight) return
+
+            scroller.scrollTop += top - (scroller.clientHeight - row.offsetHeight) / 2
+        },
+
+        // Called for a path the server is asked to open, with the request that asks it.
+        waitFor(path, request) {
+            this.pending = path
+
+            request
+                // Livewire has already reported a failed request.
+                .catch(() => {})
+                .finally(() => {
+                    // A later click may already be waiting for its own answer.
+                    if (this.pending === path) this.pending = null
+                })
+        },
+
+        open(path) {
+            this.query = ''
+            this.closeMenu()
+            this.waitFor(path, this.$wire.openDirectory(path === '' ? null : path))
+            this.reveal(path)
+        },
+
+        setCollapsed(collapsed) {
+            this.collapsed = collapsed
+
+            // The clicked button is hidden now: hand the focus to the one that undoes it.
+            this.$nextTick(() => {
+                ;(collapsed ? this.$refs.expandButton : this.$refs.collapseButton)?.focus()
+
+                if (!collapsed) this.scrollToCurrent()
+            })
+        },
+
+        searching() {
+            return this.query.trim() !== ''
+        },
+
+        // Read from the rows: a morph keeps those current, where a copy kept here would go stale.
+        results() {
+            const query = this.query.trim().toLowerCase()
+            if (!query) return []
+
+            return Array.from(this.$refs.tree.querySelectorAll('.fal-tree-row'))
+                .map((row) => row.dataset.directory.split('/'))
+                .filter((segments) => segments.at(-1).toLowerCase().includes(query))
+                .slice(0, MAX_DIRECTORY_RESULTS)
+                .map((segments) => ({
+                    path: segments.join('/'),
+                    name: segments.at(-1),
+                    parents: segments.slice(0, -1).join(' / '),
+                }))
+        },
+
+        row(event) {
+            return event.target.closest?.('[data-directory]') ?? null
+        },
+
+        onTreeClick(event) {
+            const control = event.target.closest('[data-tree-action]')
+            const row = this.row(event)
+            if (!control || !row) return
+
+            const path = row.dataset.directory
+
+            if (control.dataset.treeAction === 'toggle') return this.toggle(path)
+            if (control.dataset.treeAction === 'menu') return this.toggleMenu(control, path)
+
+            this.open(path)
+        },
+
+        // Arrow keys move between the rows in view and open or close the directory on a row.
+        onTreeKeydown(event) {
+            if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
+            if (event.target.dataset?.treeAction !== 'open') return
+
+            const row = this.row(event)
+            if (!row) return
+
+            event.preventDefault()
+
+            const path = row.dataset.directory
+            const hasChildren = 'hasChildren' in row.dataset
+
+            if (event.key === 'ArrowRight') return hasChildren && this.expand(path)
+
+            if (event.key === 'ArrowLeft') {
+                if (hasChildren && this.isExpanded(path)) return this.toggle(path)
+
+                return this.rowOf(this.parentPath(path))?.querySelector('[data-tree-action="open"]')?.focus()
+            }
+
+            const rows = Array.from(this.$refs.scroller.querySelectorAll('[data-tree-action="open"]')).filter(
+                (button) => button.offsetParent !== null,
+            )
+
+            rows[rows.indexOf(event.target) + (event.key === 'ArrowDown' ? 1 : -1)]?.focus()
+        },
+
+        toggleMenu(control, path) {
+            if (this.menu?.path === path) return this.closeMenu()
+
+            this.menu = {
+                path,
+                // Relative to the panel around the list, where the menu lives.
+                top: control.getBoundingClientRect().bottom - this.$refs.menu.parentElement.getBoundingClientRect().top,
+            }
+            this.$nextTick(() => this.$refs.menu.querySelector('button')?.focus())
+        },
+
+        closeMenu(refocus = false) {
+            if (!this.menu) return
+
+            const trigger = this.rowOf(this.menu.path)?.querySelector('[data-tree-action="menu"]')
+
+            this.menu = null
+
+            if (refocus) trigger?.focus()
+        },
+
+        // The click that opens the menu on another row also lands outside the open menu.
+        onMenuOutside(event) {
+            if (event.target.closest?.('[data-tree-action="menu"]')) return
+
+            this.closeMenu()
+        },
+
+        onMenuFocusOut(event) {
+            if (event.relatedTarget && !this.$refs.menu.contains(event.relatedTarget)) this.closeMenu()
+        },
+
+        fullPath(path) {
+            return [this.$wire.basePath, path].filter(Boolean).join('/')
+        },
+
+        createSubdirectory() {
+            const { path } = this.menu
+
+            this.closeMenu()
+            this.expand(path)
+            this.waitFor(path, this.$wire.createSubdirectory(path))
+        },
+
+        renameDirectory() {
+            const { path } = this.menu
+
+            this.closeMenu()
+            this.$wire.mountAction('renameDirectory', {
+                name: path.split('/').at(-1),
+                full_path: this.fullPath(path),
+            })
+        },
+
+        deleteDirectory() {
+            const { path } = this.menu
+
+            this.closeMenu()
+            this.$wire.mountAction('deleteDirectory', { full_path: this.fullPath(path) })
+        },
+
+        onTreeDragOver(event) {
+            const row = this.row(event)
+            if (!row) return
+
+            const path = row.dataset.directory
+
+            this.onMoveOver(event, path)
+
+            if (this.dropPath === path) this.springLoad(row)
+        },
+
+        onTreeDragLeave(event) {
+            const row = this.row(event)
+            if (!row || row.contains(event.relatedTarget)) return
+
+            if (this.dropPath === row.dataset.directory) this.dropPath = null
+            this.clearSpring()
+        },
+
+        onTreeDrop(event) {
+            const row = this.row(event)
+            if (!row) return
+
+            this.clearSpring()
+            this.onMoveDrop(event, row.dataset.directory)
+        },
+
+        springLoad(row) {
+            const path = row.dataset.directory
+
+            if (!('hasChildren' in row.dataset) || this.isExpanded(path) || this.springPath === path) return
+
+            this.clearSpring()
+            this.springPath = path
+            this.springTimer = setTimeout(() => {
+                if (this.dropPath === path) this.expand(path)
+
+                this.clearSpring()
+            }, SPRING_LOAD_DELAY)
+        },
+
+        clearSpring() {
+            clearTimeout(this.springTimer)
+            this.springPath = null
+            this.springTimer = null
+        },
+    }))
 
     /**
      * AttachmentField: the drop zone plus the field's own state handling.
@@ -318,7 +688,7 @@ document.addEventListener('alpine:init', () => {
         // round-trips through Livewire as a JS object instead of an array; guard against that
         // shape here too, on top of keeping the PHP side reindexed.
         selectedIds() {
-            return Array.isArray(this.selected) ? this.selected : Object.values(this.selected ?? {})
+            return asArray(this.selected)
         },
 
         // Loose comparison on purpose: ids can arrive as numbers (json_encode) or strings (attribute
@@ -341,6 +711,36 @@ document.addEventListener('alpine:init', () => {
             // Show the info panel's loading state instantly; the Livewire fetch clears it on arrival.
             this.$dispatch('attachment-info-loading', { scope: this.$wire.scope })
             this.$wire.highlight(id)
+        },
+
+        // Dragging a selected attachment takes the whole selection along; any other goes alone.
+        onDragStart(event, id) {
+            if (this.$wire.get('disabled')) return event.preventDefault()
+
+            // Of a selection only what is on this page comes along: the rest is not there to be dragged.
+            const onPage = Array.from(this.$root.querySelectorAll('[data-attachment]')).map(
+                (item) => item.dataset.attachment,
+            )
+            const ids = this.isSelected(id) ? this.selectedIds().filter((item) => onPage.includes(String(item))) : [id]
+
+            event.dataTransfer.setData(ATTACHMENT_DRAG_TYPE, JSON.stringify(ids))
+            event.dataTransfer.effectAllowed = 'move'
+
+            const ghost = this.$refs.dragGhost
+            const label = this.$refs.dragGhostLabel
+            if (!ghost || !label) return
+
+            // One file is named; a selection of several can only be counted.
+            label.textContent =
+                ids.length === 1
+                    ? (event.currentTarget.dataset.filename ?? '')
+                    : (config.dragLabel ?? '').replace(':count', ids.length)
+            event.dataTransfer.setDragImage(ghost, 12, 12)
+        },
+
+        onDragEnd() {
+            // A drag that ends outside every target never fires a dragleave on the last one.
+            this.dropPath = null
         },
     }))
 

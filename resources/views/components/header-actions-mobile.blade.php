@@ -7,7 +7,7 @@
     use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 @endphp
 
-@props(['layout', 'disableMimeFilter' => false])
+@props(['layout', 'disableMimeFilter' => false, 'searchPlaceholder' => null])
 
 <div class="flex flex-col gap-4 justify-end mb-2 flex-wrap mt-2 w-full md:hidden">
 
@@ -27,7 +27,7 @@
         <x-filament::input
             type="text"
             wire:model.live.debounce="search"
-            placeholder="{{ __('filament-attachment-library::views.search') }}"
+            placeholder="{{ $searchPlaceholder ?? __('filament-attachment-library::views.search') }}"
             class="w-full"
         />
     </x-filament::input.wrapper>

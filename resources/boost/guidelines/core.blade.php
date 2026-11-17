@@ -116,6 +116,7 @@ FocalPointPicker::make('focal_point')->image($url);
 | `user_model` | `Illuminate\Foundation\Auth\User::class` | Resolved when displaying who created/updated an attachment in the browser. |
 | `username_property` | `'name'` | Property read off the user model for the display name. |
 | `upload_rules` | `[]` | Extra Laravel validation rules merged with the package's built-in upload rules (`AllowedFilename`, `DestinationExists`, `HasValidExtension`). |
+| `directory_navigation` | `'cards'` | How the browser shows directories: `'cards'` above the files, or `'tree'` for a collapsible directory tree beside them. |
 
 Upstream `attachment-library.php` (disk, class mapping, MIME → type mapping) and `glide.php` (image processing) come from `laravel-attachment-library` — see its docs.
 

@@ -25,6 +25,12 @@ across such a case, please let us know by [opening an issue][issues], or by addi
 
 * The translations can now be published with `--tag=filament-attachment-library-lang`, like our other packages.
   `--tag=filament-attachment-library-translations` keeps working.
+* Run `php artisan filament:assets` to publish the new script and stylesheet, and rebuild your panel theme. The
+  attachment browser view now needs the `attachmentBrowser` Alpine component from the new script, also with the
+  default `cards` navigation.
+* If you published the package views, compare them with the new ones: the [directory tree](docs/usage/directory-navigation.md)
+  and moving files by dragging are only in the new views.
+* Directories are now always listed from A to Z, and sorting by name ignores case.
 
 <!-- EXAMPLE -->
 <!--
