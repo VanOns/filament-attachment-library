@@ -85,10 +85,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     public Layout $layout = Layout::GRID;
 
     /**
-     * Relative paths of the directories that are open in the directory tree, and whether the tree
-     * itself is collapsed. Both are kept in the session, the open directories per base path so that
-     * switching tenants never shows another tenant's state.
-     *
      * Not #[Session]: that writes on every request of every instance, and the page and the modals
      * share these, so an instance that was not touched would put its older state back.
      *
@@ -129,9 +125,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
 
     public const PAGE_SIZES = [5, 10, 25, 50, 100];
 
-    /**
-     * The most attachments one drag may move, and the most open directories that are remembered.
-     */
     public const MAX_MOVED_ATTACHMENTS = 100;
 
     public const MAX_EXPANDED_DIRECTORIES = 500;
@@ -279,25 +272,19 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         return $this->fullPath($this->currentPath);
     }
 
-    /**
-     * The path on the disk of a path the client navigates with, which is relative to the base path.
-     */
     protected function fullPath(?string $relativePath): ?string
     {
         return Path::join(Path::sanitize($this->basePath), $this->normalizePath($relativePath));
     }
 
-    /**
-     * The path the client navigates with for a path on the disk.
-     */
     public function relativePath(?string $path): ?string
     {
         return Path::relativeTo($this->normalizePath($path), $this->basePath);
     }
 
     /**
-     * Whether a path on the disk is the base path or lies below it. Everything a client asks for by
-     * path or by id has to pass this, or a tenant could reach into another tenant's directories.
+     * Everything a client asks for by path or by id has to pass this, or a tenant could reach into
+     * another tenant's directories.
      */
     protected function isWithinBasePath(?string $path): bool
     {
@@ -384,8 +371,8 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Create a directory inside a directory of the tree. Opening it and asking for the name happen
-     * in one request, so a click on another row in between cannot change where the directory lands.
+     * Opening the directory and asking for the name happen in one request, so a click on another row
+     * in between cannot change where the new directory lands.
      */
     public function createSubdirectory(?string $path = null): void
     {
@@ -428,8 +415,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Everything the directory tree shows: its nested nodes and the number of files directly in the root.
-     *
      * @return array{nodes: list<array<string, mixed>>, rootCount: int}
      */
     protected function directoryTree(): array
@@ -443,11 +428,9 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Every directory below the base path, in one listing. The tree is read straight from the disk
-     * rather than through the attachment manager, which lists one level at a time and syncs each
-     * directory it passes: far too much to repeat on every render.
-     *
-     * Listed once per request. Nothing may ask for it before it changes a directory in that request.
+     * Straight from the disk: the attachment manager lists one level at a time and syncs each
+     * directory it passes. Listed once per request, so nothing may ask for it before it changes a
+     * directory in that request.
      *
      * @return array<int, string>
      */
@@ -463,9 +446,7 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * The number of files directly inside each directory, by full path, in one query.
-     *
-     * @return array<string, int>
+     * @return array<string, int>  By full path.
      */
     protected function directoryCounts(): array
     {
@@ -505,9 +486,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         session()->put(self::TREE_COLLAPSED_SESSION_KEY, $this->treeCollapsed);
     }
 
-    /**
-     * Take over what the tree looked like when it was last changed, in this browser or another one.
-     */
     protected function restoreTreeState(): void
     {
         $this->expandedDirectories = $this->storedExpandedDirectories();
@@ -528,8 +506,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * The open directories arrive from the client and from the session: keep clean relative paths only.
-     *
      * @return array<int, string>
      */
     protected function sanitizeExpandedDirectories(mixed $paths): array
@@ -550,8 +526,6 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
     }
 
     /**
-     * Move attachments into a directory, as dropped on it in the tree or on a directory card.
-     *
      * @param  array<int, int|string>  $ids
      * @param  string|null  $path  Relative to the base path; null for the root.
      */

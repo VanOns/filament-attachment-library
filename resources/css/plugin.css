@@ -122,7 +122,6 @@
     margin: 0;
 }
 
-/* While a clicked directory is being opened, its icon makes way for a spinner. */
 [data-pending] > ul .fal-tree-row[data-current] .fal-tree-open > svg {
     display: none;
 }

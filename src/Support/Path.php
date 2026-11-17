@@ -22,9 +22,6 @@ class Path
         return $segments === [] ? null : implode('/', $segments);
     }
 
-    /**
-     * Whether a path is the base path or lies below it. Without a base path everything is.
-     */
     public static function isWithin(?string $path, ?string $basePath): bool
     {
         $basePath = self::sanitize($basePath);
@@ -32,9 +29,6 @@ class Path
         return $basePath === null || $path === $basePath || self::isBelow($path, $basePath);
     }
 
-    /**
-     * Whether a path lies below the base path, so is not the base path itself.
-     */
     public static function isBelow(?string $path, ?string $basePath): bool
     {
         $basePath = self::sanitize($basePath);
@@ -75,17 +69,11 @@ class Path
         return $parts === [] ? null : implode('/', $parts);
     }
 
-    /**
-     * The directory a path lies in; null for a path directly in the root.
-     */
     public static function parent(string $path): ?string
     {
         return str_contains($path, '/') ? Str::beforeLast($path, '/') : null;
     }
 
-    /**
-     * The last segment of a path: the name of the directory or file itself.
-     */
     public static function name(string $path): string
     {
         return Str::afterLast($path, '/');

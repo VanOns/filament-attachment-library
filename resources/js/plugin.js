@@ -264,21 +264,14 @@ const moveTargets = () => ({
 document.addEventListener('alpine:init', () => {
     Alpine.data('attachmentDropZone', dropZone)
 
-    /**
-     * The attachment browser: the drop zone for uploads, plus the directories as targets for
-     * attachments dragged inside it.
-     */
     Alpine.data('attachmentBrowser', (config) => ({
         ...dropZone(config),
         ...moveTargets(),
     }))
 
     /**
-     * The directory tree beside the files. Opening and closing a directory, and searching, happen
-     * here without a round-trip; the open directories ride along to the server on its next request.
-     *
-     * Every row carries its path in data-directory and its controls a data-tree-action, and the
-     * tree listens once for all of them. Config: expanded and collapsed (both entangled).
+     * Opening, closing and searching happen here without a round-trip. Every row carries its path
+     * in data-directory and its controls a data-tree-action; the tree listens once for all of them.
      */
     Alpine.data('attachmentDirectoryTree', (config) => ({
         expanded: config.expanded,
@@ -347,7 +340,6 @@ document.addEventListener('alpine:init', () => {
             return path.split('/').slice(0, -1).join('/')
         },
 
-        // Open every directory above a path and scroll to the current row, so it can be seen.
         reveal(path) {
             const segments = path.split('/').filter(Boolean)
 
@@ -371,7 +363,6 @@ document.addEventListener('alpine:init', () => {
             scroller.scrollTop += top - (scroller.clientHeight - row.offsetHeight) / 2
         },
 
-        // Called for a path the server is asked to open, with the request that asks it.
         waitFor(path, request) {
             this.pending = path
 
@@ -439,7 +430,6 @@ document.addEventListener('alpine:init', () => {
             this.open(path)
         },
 
-        // Arrow keys move between the rows in view and open or close the directory on a row.
         onTreeKeydown(event) {
             if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
             if (event.target.dataset?.treeAction !== 'open') return
@@ -730,7 +720,6 @@ document.addEventListener('alpine:init', () => {
             const label = this.$refs.dragGhostLabel
             if (!ghost || !label) return
 
-            // One file is named; a selection of several can only be counted.
             label.textContent =
                 ids.length === 1
                     ? (event.currentTarget.dataset.filename ?? '')

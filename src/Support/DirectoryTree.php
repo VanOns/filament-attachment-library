@@ -3,8 +3,6 @@
 namespace VanOns\FilamentAttachmentLibrary\Support;
 
 /**
- * Turns the flat list of directories on a disk into the nested, sorted nodes of the directory tree.
- *
  * Paths in a node are relative to the base path, because that is what the browser navigates with.
  *
  * @phpstan-type Node array{name: string, path: string, count: int, children: list<array<string, mixed>>}
