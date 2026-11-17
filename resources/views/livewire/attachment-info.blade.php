@@ -62,17 +62,29 @@
                         {{ $attachment->extension }} — {{ $attachment->size }} MB
                     </p>
 
-                    <hr class="mt-3 border-gray-200 dark:border-white/10">
+                    {{-- Icons for labels, as on the line above: beside a label a path has no room.
+                         A break is offered after each slash, as a path has no spaces to wrap at. --}}
+                    <dl class="mt-1 grid gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+                        <div class="flex gap-1" title="{{ __('filament-attachment-library::views.info.details.path') }}">
+                            <dt>
+                                <x-filament::icon icon="heroicon-o-folder" class="mt-0.5 size-4"/>
+                                <span class="sr-only">{{ __('filament-attachment-library::views.info.details.path') }}</span>
+                            </dt>
+                            <dd class="min-w-0 break-words">{!! preg_replace('#(?<!^)/#', '/<wbr>', e('/' . ltrim($attachment->path ?? '', '/'))) !!}</dd>
+                        </div>
 
-                    <div class="grid mt-3 grid-cols-auto gap-y-2 md:grid-cols-2">
-                        <p class="flex-1 text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.path') }}</p>
-                        <p class="flex-1">/{{ ltrim($attachment->path ?? '', '/') }}</p>
+                        <div class="flex gap-1" title="{{ __('filament-attachment-library::views.info.details.sections.date.created_at') }}">
+                            <dt>
+                                <x-filament::icon icon="heroicon-o-arrow-up-tray" class="mt-0.5 size-4"/>
+                                <span class="sr-only">{{ __('filament-attachment-library::views.info.details.sections.date.created_at') }}</span>
+                            </dt>
+                            <dd>{{ $attachment->createdAt?->translatedFormat('d F Y H:i') ?: '-' }}</dd>
+                        </div>
+                    </dl>
 
-                        <p class="text-gray-500 dark:text-gray-400">{{ __('filament-attachment-library::views.info.details.sections.date.created_at') }}</p>
-                        <p>{{ $attachment->createdAt?->translatedFormat('d F Y H:i') ?: '-' }}</p>
-
+                    <div class="mt-4">
                         <button
-                            class="col-span-2 flex items-center gap-2 w-full text-left text-sm rounded-lg px-3 py-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition group"
+                            class="flex items-center gap-2 w-full text-left text-sm rounded-lg px-3 py-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition group"
                             x-data="{ url: @js($attachment->url) }"
                             x-on:click="navigator.clipboard.writeText(url).then(
                                 () => new FilamentNotification()
