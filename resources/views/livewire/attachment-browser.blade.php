@@ -30,7 +30,7 @@
     <div class="flex justify-between align-center mb-6 items-center flex-wrap">
         <x-filament-attachment-library::breadcrumbs/>
         <x-filament-attachment-library::header-actions :$layout :$disableMimeFilter :$searchPlaceholder/>
-        <x-filament-attachment-library::header-actions-mobile :$layout :$disableMimeFilter :$searchPlaceholder/>
+        <x-filament-attachment-library::header-actions-mobile :$layout :$disableMimeFilter :$searchPlaceholder :tree-navigation="(bool) $tree"/>
     </div>
 
     <div wire:key="attachment-search-heading">
@@ -53,30 +53,27 @@
             wire:loading.class="opacity-50"
             wire:target="openPath, openDirectory"
         >
-            @if(!$directories->isEmpty())
-                {{-- With the tree, the cards are only for screens too narrow to show it --}}
-                <div @class(['md:hidden' => $tree])>
-                    <x-filament-attachment-library::items.container :layout="$layout">
-                        @foreach($directories as $directory)
-                            <div
-                                wire:key="directory-browser-item-{{ md5($directory->fullPath) }}"
-                                class="rounded-xl"
-                                data-directory="{{ $this->relativePath($directory->fullPath) }}"
-                                x-bind:class="{ 'ring-2 ring-primary-500': dropPath === $el.dataset.directory }"
-                                x-on:dragover="onMoveOver($event, $el.dataset.directory)"
-                                x-on:dragleave="onMoveLeave($event, $el.dataset.directory)"
-                                x-on:drop="onMoveDrop($event, $el.dataset.directory)"
-                            >
-                                <x-filament-attachment-library::directory.browser-item
-                                    :$directory
-                                    :layout="$layout"
-                                />
-                            </div>
-                        @endforeach
-                    </x-filament-attachment-library::items.container>
+            @if(! $tree && ! $directories->isEmpty())
+                <x-filament-attachment-library::items.container :layout="$layout">
+                    @foreach($directories as $directory)
+                        <div
+                            wire:key="directory-browser-item-{{ md5($directory->fullPath) }}"
+                            class="rounded-xl"
+                            data-directory="{{ $this->relativePath($directory->fullPath) }}"
+                            x-bind:class="{ 'ring-2 ring-primary-500': dropPath === $el.dataset.directory }"
+                            x-on:dragover="onMoveOver($event, $el.dataset.directory)"
+                            x-on:dragleave="onMoveLeave($event, $el.dataset.directory)"
+                            x-on:drop="onMoveDrop($event, $el.dataset.directory)"
+                        >
+                            <x-filament-attachment-library::directory.browser-item
+                                :$directory
+                                :layout="$layout"
+                            />
+                        </div>
+                    @endforeach
+                </x-filament-attachment-library::items.container>
 
-                    <div class="w-full border-t border-gray-300 dark:border-gray-700 my-6"></div>
-                </div>
+                <div class="w-full border-t border-gray-300 dark:border-gray-700 my-6"></div>
             @endif
 
             @if(!$attachments->isEmpty())
@@ -119,11 +116,10 @@
             @if($attachments->isEmpty() && $directories->isEmpty())
                 <x-filament-attachment-library::empty-path-notice :$currentPath/>
             @elseif($tree && $attachments->isEmpty())
-                {{-- The cards above are hidden here, so say that the directory holds no files --}}
+                {{-- The tree shows the directories in here, so say that it holds no files --}}
                 <x-filament-attachment-library::empty-path-notice
                     :$currentPath
                     :title="$search ? null : __('filament-attachment-library::views.browser.empty.title_files')"
-                    class="hidden md:block"
                 />
             @endif
         </div>

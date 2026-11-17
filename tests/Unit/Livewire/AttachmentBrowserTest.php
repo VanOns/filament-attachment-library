@@ -60,6 +60,7 @@ it('shows directory cards and no tree by default', function () {
 
     Livewire::test(AttachmentBrowser::class)
         ->assertViewHas('tree', null)
+        ->assertSeeHtml('directory-browser-item-')
         ->assertDontSeeHtml('data-directories');
 });
 
@@ -80,7 +81,8 @@ describe('directory tree', function () {
                     && $tree['nodes'][0]['count'] === 1
                     && $tree['nodes'][0]['children'][0]['count'] === 2;
             })
-            ->assertSeeHtml('data-directory="logos/partners"');
+            ->assertSeeHtml('data-directory="logos/partners"')
+            ->assertDontSeeHtml('directory-browser-item-');
     });
 
     it('starts at the base path and shows nothing above or beside it', function () {

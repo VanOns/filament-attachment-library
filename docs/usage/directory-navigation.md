@@ -10,7 +10,7 @@ The attachment browser can show the directories in two ways. Pick one in `config
 | Value | What the user sees |
 |---|---|
 | `cards` (default) | The directories of the current directory as cards above its files. |
-| `tree` | A collapsible directory tree beside the files, like a file explorer. The cards are only shown on screens too narrow for the tree. |
+| `tree` | A collapsible directory tree beside the files, like a file explorer. On a narrow screen the tree is a block above the files that opens with a tap. |
 
 The setting applies to the library page and to the browser an `AttachmentField` opens.
 

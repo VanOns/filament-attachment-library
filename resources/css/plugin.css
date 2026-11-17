@@ -64,6 +64,20 @@
     transform: rotate(90deg);
 }
 
+/* Below Tailwind's md the tree is used by touch: rows a finger can hit. */
+@media not all and (min-width: 48rem) {
+    .fal-tree-row,
+    .fal-tree-toggle,
+    .fal-tree-menu,
+    .fal-tree-open {
+        height: 2.75rem;
+    }
+
+    .fal-tree-toggle {
+        width: 1.75rem;
+    }
+}
+
 /* Over the count rather than beside it: the name needs the width. */
 .fal-tree-menu {
     position: absolute;

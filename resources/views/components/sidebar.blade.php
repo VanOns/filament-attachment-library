@@ -6,7 +6,8 @@
     'treeNavigation' => false,
 ])
 
-<div @class([ 'flex-1 max-w-md' => ! $treeNavigation, 'md:w-72 md:flex-none' => $treeNavigation, $class ])>
+{{-- On a narrow screen most of this is hidden; as a box of its own it would still take a gap in the column --}}
+<div @class([ 'max-md:contents', 'flex-1 max-w-md' => ! $treeNavigation, 'md:w-72 md:flex-none' => $treeNavigation, $class ])>
 
     {{-- Upload & create directory (mobile has its own buttons in the header) --}}
     <div class="hidden md:flex flex-col gap-2 mb-4">

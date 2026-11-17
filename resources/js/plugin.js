@@ -281,6 +281,8 @@ document.addEventListener('alpine:init', () => {
         menu: null,
         // The directory that was just clicked, until the server has opened it.
         pending: null,
+        // Only matters on a narrow screen, where the tree is a block above the files that opens on demand.
+        narrowOpen: false,
         springPath: null,
         springTimer: null,
         rememberTimer: null,
@@ -377,9 +379,23 @@ document.addEventListener('alpine:init', () => {
 
         open(path) {
             this.query = ''
+            this.narrowOpen = false
             this.closeMenu()
             this.waitFor(path, this.$wire.openDirectory(path === '' ? null : path))
             this.reveal(path)
+        },
+
+        toggleNarrow() {
+            this.narrowOpen = !this.narrowOpen
+            this.closeMenu()
+
+            if (this.narrowOpen) this.$nextTick(() => this.scrollToCurrent())
+        },
+
+        currentName() {
+            const path = this.pending ?? this.currentPath()
+
+            return path === '' ? config.rootName : path.split('/').at(-1)
         },
 
         setCollapsed(collapsed) {

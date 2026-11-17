@@ -7,9 +7,9 @@
     use VanOns\FilamentAttachmentLibrary\Livewire\AttachmentBrowser;
 @endphp
 
-@props(['layout', 'disableMimeFilter' => false, 'searchPlaceholder' => null])
+@props(['layout', 'disableMimeFilter' => false, 'searchPlaceholder' => null, 'treeNavigation' => false])
 
-<div class="flex flex-col gap-4 justify-end mb-2 flex-wrap mt-2 w-full md:hidden">
+<div class="flex flex-col gap-4 justify-end flex-wrap mt-2 w-full md:hidden">
 
     {{-- Upload & create directory --}}
     <div class="flex gap-x-2 w-full">
@@ -17,9 +17,12 @@
             {{ __('filament-attachment-library::views.actions.attachment.upload') }}
         </x-filament::button>
 
-        <x-filament::button color="gray" icon="heroicon-o-folder-plus" class="flex-1" wire:click="mountAction('createDirectory')">
-            {{ __('filament-attachment-library::views.actions.directory.create') }}
-        </x-filament::button>
+        {{-- With the tree, creating a directory is one of its own buttons --}}
+        @unless($treeNavigation)
+            <x-filament::button color="gray" icon="heroicon-o-folder-plus" class="flex-1" wire:click="mountAction('createDirectory')">
+                {{ __('filament-attachment-library::views.actions.directory.create') }}
+            </x-filament::button>
+        @endunless
     </div>
 
     {{-- Search --}}
