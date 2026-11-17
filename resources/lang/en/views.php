@@ -8,6 +8,7 @@ return [
         ],
         'empty' => [
             'title' => 'No files or folders found',
+            'title_files' => 'No files in this directory',
             'description' => 'Upload a new file or navigate to a different path.',
             'button' => 'Back to home',
         ],
@@ -76,11 +77,13 @@ return [
             'upload' => 'Upload',
             'move' => 'Move',
             'replace' => 'Replace',
+            'undo' => 'Undo',
         ],
         'directory' => [
             'rename' => 'Rename directory',
             'delete' => 'Remove directory',
             'create' => 'Create directory',
+            'create_sub' => 'New subdirectory',
         ],
     ],
     'header_actions' => [
@@ -108,6 +111,15 @@ return [
             'pdf' => 'PDF',
         ],
     ],
+    'tree' => [
+        'heading' => 'Directories',
+        'search' => 'Search directories...',
+        'collapse' => 'Collapse directories',
+        'expand' => 'Show directories',
+        'toggle' => 'Expand or collapse :directory',
+        'options' => 'Actions for :directory',
+        'no_results' => 'No directories found',
+    ],
     'field' => [
         'pick' => 'Choose files',
         'drag_to_reorder' => 'Drag to reorder',
@@ -115,6 +127,7 @@ return [
     'title' => 'File manager',
     'group' => 'Files',
     'search' => 'Search...',
+    'search_files' => 'Search files...',
     'home' => 'Home',
     'close' => 'Close',
     'submit' => 'Submit',

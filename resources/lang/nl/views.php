@@ -8,6 +8,7 @@ return [
         ],
         'empty' => [
             'title' => 'Geen bestanden of mappen gevonden',
+            'title_files' => 'Geen bestanden in deze map',
             'description' => 'Upload een nieuw bestand of navigeer naar een ander pad.',
             'button' => 'Terug naar hoofdmap',
         ],
@@ -76,11 +77,13 @@ return [
             'upload' => 'Uploaden',
             'move' => 'Verplaatsen',
             'replace' => 'Vervangen',
+            'undo' => 'Ongedaan maken',
         ],
         'directory' => [
             'rename' => 'Hernoem map',
             'delete' => 'Verwijder map',
             'create' => 'Maak map',
+            'create_sub' => 'Nieuwe submap',
         ],
     ],
     'header_actions' => [
@@ -108,6 +111,15 @@ return [
             'pdf' => 'PDF',
         ],
     ],
+    'tree' => [
+        'heading' => 'Mappen',
+        'search' => 'Zoek map...',
+        'collapse' => 'Mappen inklappen',
+        'expand' => 'Mappen tonen',
+        'toggle' => ':directory in- of uitklappen',
+        'options' => 'Acties voor :directory',
+        'no_results' => 'Geen mappen gevonden',
+    ],
     'field' => [
         'pick' => 'Kies bestand(en)',
         'drag_to_reorder' => 'Sleep om te herordenen',
@@ -115,6 +127,7 @@ return [
     'title' => 'Bestandsbeheer',
     'group' => 'Bestanden',
     'search' => 'Zoeken...',
+    'search_files' => 'Zoek bestanden...',
     'home' => 'Hoofdmap',
     'close' => 'Sluiten',
     'submit' => 'Opslaan',

@@ -12,3 +12,220 @@
 .fal-edit-attachment-modal .fi-modal-close-btn {
     top: 1.875rem;
 }
+
+/* Directory tree. Plain CSS rather than utilities on every row: a library can have hundreds of rows, and each one is re-sent on every update. */
+.fal-tree-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 2.25rem;
+    padding-inline-end: 0.25rem;
+    border-radius: 0.5rem;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.fal-tree-row:hover {
+    background-color: var(--gray-50);
+}
+
+.fal-tree-row[data-current] {
+    background-color: var(--gray-100);
+    color: var(--primary-700);
+    font-weight: 600;
+}
+
+.fal-tree-row[data-drop-target] {
+    background-color: var(--primary-50);
+    color: var(--primary-700);
+    outline: 2px dashed var(--primary-500);
+    outline-offset: -2px;
+}
+
+.fal-tree-toggle,
+.fal-tree-menu {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 2.25rem;
+    color: var(--gray-400);
+}
+
+.fal-tree-toggle svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 75ms;
+}
+
+.fal-tree-row[data-expanded] .fal-tree-toggle svg {
+    transform: rotate(90deg);
+}
+
+/* As a block above the files (Tailwind's @max-2xl) the tree is mostly used by touch: rows a finger can hit. */
+@container (width < 42rem) {
+    .fal-tree-row,
+    .fal-tree-toggle,
+    .fal-tree-menu,
+    .fal-tree-open {
+        height: 2.75rem;
+    }
+
+    .fal-tree-toggle {
+        width: 1.75rem;
+    }
+}
+
+/* Over the count rather than beside it: the name needs the width. */
+.fal-tree-menu {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0.25rem;
+    width: 1.5rem;
+    opacity: 0;
+}
+
+/* Without a pointer to hover with, the menu has to be there all the time. */
+@media (hover: none) {
+    .fal-tree-menu {
+        opacity: 1;
+    }
+
+    .fal-tree-row:has(.fal-tree-menu) .fal-tree-count {
+        display: none;
+    }
+}
+
+.fal-tree-row button:focus-visible {
+    border-radius: 0.375rem;
+    outline: 2px solid var(--primary-500);
+    outline-offset: -2px;
+}
+
+.fal-tree-row:hover .fal-tree-menu,
+.fal-tree-menu:focus-visible,
+.fal-tree-menu[aria-expanded='true'] {
+    opacity: 1;
+}
+
+.fal-tree-open {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    height: 2.25rem;
+    text-align: start;
+}
+
+.fal-tree-open > svg {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--gray-400);
+}
+
+.fal-tree-row[data-current] .fal-tree-open > svg,
+.fal-tree-row[data-drop-target] .fal-tree-open > svg {
+    color: inherit;
+}
+
+.fi-icon-btn.fal-tree-button {
+    margin: 0;
+}
+
+[data-pending] > ul .fal-tree-row[data-current] .fal-tree-open > svg {
+    display: none;
+}
+
+[data-pending] > ul .fal-tree-row[data-current] .fal-tree-open::before {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    margin: 0.125rem;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 9999px;
+    animation: fal-spin 0.6s linear infinite;
+    content: '';
+}
+
+@keyframes fal-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fal-tree-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fal-tree-parents {
+    display: block;
+    overflow: hidden;
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fal-tree-row-result,
+.fal-tree-row-result .fal-tree-open {
+    height: auto;
+}
+
+.fal-tree-row-result {
+    padding-block: 0.25rem;
+    padding-inline-start: 0.25rem;
+}
+
+.fal-tree-count {
+    flex: none;
+    padding-inline-end: 0.25rem;
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+}
+
+.fal-tree-row:has(.fal-tree-menu):hover .fal-tree-count,
+.fal-tree-row:has(.fal-tree-menu[aria-expanded='true']) .fal-tree-count {
+    display: none;
+}
+
+.dark .fal-tree-row {
+    color: var(--gray-200);
+}
+
+.dark .fal-tree-row:hover,
+.dark .fal-tree-row[data-current] {
+    background-color: rgb(255 255 255 / 0.05);
+}
+
+.dark .fal-tree-row[data-current] {
+    color: var(--primary-400);
+}
+
+.dark .fal-tree-row[data-drop-target] {
+    background-color: rgb(255 255 255 / 0.1);
+    color: var(--primary-400);
+}
+
+.dark .fal-tree-toggle,
+.dark .fal-tree-menu,
+.dark .fal-tree-open > svg {
+    color: var(--gray-500);
+}
+
+.dark .fal-tree-parents,
+.dark .fal-tree-count {
+    color: var(--gray-400);
+}

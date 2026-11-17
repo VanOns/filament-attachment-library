@@ -8,6 +8,9 @@ return [
         'add' => 'Bestand toevoegen…',
         'remove' => 'Verwijderen',
     ],
+    'delete_directory' => [
+        'description' => 'De map ":directory" wordt verwijderd, met alle bestanden en mappen die erin staan.',
+    ],
     'create_directory' => [
         'name' => 'Naam',
         'heading' => 'Map aanmaken',
