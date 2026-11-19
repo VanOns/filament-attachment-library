@@ -34,7 +34,7 @@
     </x-filament::input.wrapper>
 
     {{-- Mime-type filter --}}
-    @if(!$disableMimeFilter)
+    <div class="contents" x-data="attachmentMimeFilter({ hidden: @js($disableMimeFilter) })" x-show="! hidden">
         <x-filament::input.wrapper>
             <x-filament::input.select wire:model.live="mime">
 
@@ -44,7 +44,7 @@
 
             </x-filament::input.select>
         </x-filament::input.wrapper>
-    @endif
+    </div>
 
     {{-- Page size --}}
     <x-filament::input.wrapper>

@@ -461,18 +461,32 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
             // Fire a dynamic event name based on the statePath so only the correct listener picks it up
             $this->dispatch('attachments-selected-' . md5($this->statePath), statePath: $this->statePath, selected: $selected);
         }
+    }
 
+    /**
+     * Reset the browser for its next open. The modal wrapper (`attachmentModalBuffer`) dispatches this
+     * once the modal is hidden, so the reset doesn't show while the modal fades out.
+     */
+    #[On('attachment-modal-hidden.{scope}')]
+    public function resetBrowser(): void
+    {
         $this->highlight(null);
 
         // Reset everything except mount-time config (reset() falls back to class defaults,
-        // which would re-enable URL tracking and drop the tenant base path) and the
-        // session-persisted display preferences (resetting would clobber the stored values).
-        $this->reset(array_diff(array_keys($this->all()), ['basePath', 'trackUrl', 'scope', 'sortBy', 'pageSize', 'layout']));
+        // which would re-enable URL tracking and drop the tenant base path), the
+        // session-persisted display preferences (resetting would clobber the stored values)
+        // and the picker config: the next open sets that anyway, and keeping it means the
+        // browser doesn't change while it reopens for the same field.
+        $this->reset(array_diff(array_keys($this->all()), [
+            'basePath', 'trackUrl', 'scope', 'sortBy', 'pageSize', 'layout',
+            'statePath', 'multiple', 'mime', 'extensions', 'disableMimeFilter',
+        ]));
     }
 
     /**
      * Open this browser as a picker. Payloads for other browser levels are ignored; a payload
      * without a modal id targets the first level, for code that opens the modal itself.
+     * The info panel fetches the `$highlight` of the same payload itself (`attachmentInfo` in plugin.js).
      */
     #[On('open-attachment-modal')]
     public function openModal(?string $statePath = null, int|array|null $selected = null, ?bool $multiple = null, ?string $mime = null, ?bool $disableMimeFilter = null, int|string|null $highlight = null, ?string $modalId = null, ?array $extensions = null): void
@@ -488,11 +502,5 @@ class AttachmentBrowser extends Component implements HasActions, HasForms
         $this->disableMimeFilter = $disableMimeFilter ?? false;
 
         $this->selected = Arr::wrap($selected);
-
-        // Dispatched server-side so it also works on the lazy first load, where the
-        // payload arrives via the modal wrapper's replay.
-        if ($highlight) {
-            $this->highlight((int) $highlight);
-        }
     }
 }

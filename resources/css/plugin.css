@@ -12,3 +12,38 @@
 .fal-edit-attachment-modal .fi-modal-close-btn {
     top: 1.875rem;
 }
+
+/* Blocks of the info panel skeleton: fade slowly between two shades while the attachment loads. */
+.fal-skeleton {
+    --fal-skeleton-from: var(--gray-100);
+    --fal-skeleton-to: var(--gray-300);
+    background-color: var(--fal-skeleton-from);
+    animation: fal-skeleton 1.8s ease-in-out infinite;
+}
+
+.dark .fal-skeleton {
+    --fal-skeleton-from: color-mix(in oklab, var(--gray-700) 35%, transparent);
+    --fal-skeleton-to: var(--gray-700);
+}
+
+@keyframes fal-skeleton {
+    50% {
+        background-color: var(--fal-skeleton-to);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fal-skeleton {
+        animation: none;
+    }
+}
+
+/* Set by the info panel (attachmentInfo) when the browser clears the highlight. Overrides x-show, which Alpine only updates a frame later, so the panel empties in the same frame as the browser. */
+.fal-info-cleared .fal-info-skeleton,
+.fal-info-cleared .fal-info-details {
+    display: none !important;
+}
+
+.fal-info-cleared .fal-info-empty {
+    display: block !important;
+}
