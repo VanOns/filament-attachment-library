@@ -4,40 +4,28 @@
      */
 @endphp
 
-<div
-    @class([$class, 'relative'])
-    x-data="{ loading: false }"
-    @attachment-info-loading.window="if ($event.detail.scope === $wire.scope) loading = true"
-    @attachment-info-ready.window="if ($event.detail.scope === $wire.scope) loading = false"
->
-    {{-- Instant feedback while the Livewire fetch is in flight; cleared by attachment-info-ready --}}
-    <div
-        x-show="loading"
-        x-cloak
-        x-transition.opacity
-        class="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-[1px]"
-    >
-        <x-filament::loading-indicator class="h-8 w-8 text-primary-500" />
-    </div>
-
+<div @class([$class]) x-data="attachmentInfo">
     <x-filament::section :$contained>
-        @if(!$attachment)
-            <div>
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    <span class="break-words">{{ __('filament-attachment-library::views.info.empty.title') }}</span>
-                </h2>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {{ __('filament-attachment-library::views.info.empty.description') }}
-                </p>
-            </div>
-        @else
-            <div>
+        <x-filament-attachment-library::attachment-info-skeleton wire:key="attachment-info-skeleton" x-show="loading" x-cloak />
+
+        {{-- Always rendered, so it shows the moment the highlight is cleared --}}
+        <div wire:key="attachment-info-empty" class="fal-info-empty" x-show="! loading && (cleared || ! $wire.attachment)" x-cloak>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                <span class="break-words">{{ __('filament-attachment-library::views.info.empty.title') }}</span>
+            </h2>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {{ __('filament-attachment-library::views.info.empty.description') }}
+            </p>
+        </div>
+
+        @if($attachment)
+            <div wire:key="attachment-info-details" class="fal-info-details" x-show="! loading && ! cleared">
                 @if($attachment->isImage())
                     <img
                         alt="{{ $attachment->alt }}"
                         loading="lazy"
                         src="{{ $attachment->thumbnailUrl() }}"
-                        class="relative rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-full w-auto max-h-48 m-auto"
+                        class="relative rounded-lg focus-within:ring-2 focus-within:ring-offset-4 focus-within:ring-offset-gray-100 focus-within:ring-primary-600 h-48 w-auto max-w-full object-scale-down m-auto"
                     >
                 @endif
 
