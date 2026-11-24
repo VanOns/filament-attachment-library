@@ -4,6 +4,12 @@ const OVERLAY_MIN_HEIGHT = 160
 const findAttachmentModal = (level) => document.querySelector(`[data-attachment-modal-level="${level}"]`)
 
 /**
+ * Whether an open-attachment-modal payload is meant for the browser of the given scope. A payload
+ * without a modal id targets the first level, like in AttachmentBrowser::openModal().
+ */
+const opensScope = (payload, scope) => (payload.modalId ?? 'attachment-modal') === scope
+
+/**
  * Resolve the browser modal of the given stack level, asking the modal stack to render it first
  * when it does not exist yet.
  */
@@ -345,6 +351,94 @@ document.addEventListener('alpine:init', () => {
     }))
 
     /**
+     * Info panel of a browser. Shows a skeleton while an attachment loads, and fetches the attachment
+     * an open payload highlights itself, in parallel with the browser's own update.
+     *
+     * When the browser clears the highlight (e.g. on opening a folder), the empty state shows in the
+     * same frame as the browser's update. While Livewire handles that response, Alpine only applies
+     * `cleared` a frame later, so it is mirrored onto the element's class right away (see plugin.css).
+     */
+    Alpine.data('attachmentInfo', () => ({
+        loading: false,
+        cleared: false,
+
+        init() {
+            const scope = this.$wire.scope
+
+            // On the lazy first load, the modal wrapper only replays the open payload after this panel has rendered.
+            this.loading = !!this.$data.pendingOpen?.highlight
+
+            this.highlightEvent = `highlight-attachment.${scope}`
+            this.onHighlight = (event) => {
+                // Custom code may dispatch the id as a positional parameter.
+                if ((event.detail?.id ?? event.detail?.[0]) != null) return
+
+                this.loading = false
+                this.setCleared(true)
+            }
+            this.onLoading = (event) => {
+                if (event.detail.scope !== scope) return
+
+                this.setCleared(false)
+                this.loading = true
+            }
+            this.onReady = (event) => {
+                if (event.detail.scope !== scope) return
+
+                this.loading = false
+                this.setCleared(false)
+            }
+            this.onOpen = (event) => {
+                if (!event.detail.highlight || !opensScope(event.detail, scope)) return
+
+                this.setCleared(false)
+                this.loading = true
+                this.$wire.highlightAttachment(event.detail.highlight)
+            }
+
+            window.addEventListener(this.highlightEvent, this.onHighlight)
+            window.addEventListener('attachment-info-loading', this.onLoading)
+            window.addEventListener('attachment-info-ready', this.onReady)
+            window.addEventListener('open-attachment-modal', this.onOpen)
+        },
+
+        destroy() {
+            window.removeEventListener(this.highlightEvent, this.onHighlight)
+            window.removeEventListener('attachment-info-loading', this.onLoading)
+            window.removeEventListener('attachment-info-ready', this.onReady)
+            window.removeEventListener('open-attachment-modal', this.onOpen)
+        },
+
+        setCleared(cleared) {
+            this.cleared = cleared
+            this.$el.classList.toggle('fal-info-cleared', cleared)
+        },
+    }))
+
+    /**
+     * Mime-type filter in the browser toolbar. Shown or hidden the moment a picker opens, rather than
+     * after the browser has re-rendered, so the toolbar doesn't shift. Config: hidden.
+     */
+    Alpine.data('attachmentMimeFilter', (config) => ({
+        hidden: config.hidden,
+
+        init() {
+            // On the lazy first load, the browser renders before the modal wrapper replays the open payload.
+            if (this.$data.pendingOpen?.disableMimeFilter) this.hidden = true
+
+            this.onOpen = (event) => {
+                if (opensScope(event.detail, this.$wire.scope)) this.hidden = !!event.detail.disableMimeFilter
+            }
+
+            window.addEventListener('open-attachment-modal', this.onOpen)
+        },
+
+        destroy() {
+            window.removeEventListener('open-attachment-modal', this.onOpen)
+        },
+    }))
+
+    /**
      * Drag-to-reorder for the selected items in an AttachmentField. Config: group.
      */
     Alpine.data('attachmentSortable', (config) => ({
@@ -375,14 +469,19 @@ document.addEventListener('alpine:init', () => {
      * before its first load (e.g. the open-attachment-modal payload carrying the statePath when
      * the modal is first opened). Buffer the latest payload and replay it once the component
      * announces itself via attachment-browser-loaded. Config: scope (the modal id).
+     *
+     * On close, the browser is only reset once the modal is hidden, so the reset doesn't show while
+     * the modal fades out.
      */
     Alpine.data('attachmentModalBuffer', (config) => ({
         pendingOpen: null,
 
         init() {
             this.onOpen = (event) => {
-                if ((event.detail.modalId ?? 'attachment-modal') !== config.scope) return
+                if (!opensScope(event.detail, config.scope)) return
 
+                // Reopened before it was hidden: keep the browser as it is rather than reset it while it opens.
+                this.hiddenObserver?.disconnect()
                 this.pendingOpen = event.detail
             }
             this.onLoaded = (event) => {
@@ -391,14 +490,38 @@ document.addEventListener('alpine:init', () => {
                 this.$dispatch('open-attachment-modal', this.pendingOpen)
                 this.pendingOpen = null
             }
+            this.onClose = (event) => {
+                if (event.detail.id === config.scope) this.resetWhenHidden()
+            }
 
             window.addEventListener('open-attachment-modal', this.onOpen)
             window.addEventListener('attachment-browser-loaded', this.onLoaded)
+            window.addEventListener('close-modal', this.onClose)
         },
 
         destroy() {
             window.removeEventListener('open-attachment-modal', this.onOpen)
             window.removeEventListener('attachment-browser-loaded', this.onLoaded)
+            window.removeEventListener('close-modal', this.onClose)
+            this.hiddenObserver?.disconnect()
+        },
+
+        resetWhenHidden() {
+            const modal = this.$el.closest('[data-attachment-modal-level]')
+            const reset = () => this.$dispatch(`attachment-modal-hidden.${config.scope}`)
+
+            this.hiddenObserver?.disconnect()
+
+            if (modal.style.display === 'none') return reset()
+
+            // Alpine hides the modal with display: none once its leave transition has finished.
+            this.hiddenObserver = new MutationObserver(() => {
+                if (modal.style.display !== 'none') return
+
+                this.hiddenObserver.disconnect()
+                reset()
+            })
+            this.hiddenObserver.observe(modal, { attributes: true, attributeFilter: ['style'] })
         },
     }))
 

@@ -31,6 +31,8 @@
         :$currentPath
         :$scope
         class="hidden md:block md:sticky md:top-[var(--fal-info-top,6rem)]"
+        {{-- A stable key keeps the panel mounted when the browser re-renders, instead of remounting it empty --}}
+        :wire:key="'attachment-info-' . $scope"
     />
     <x-filament-attachment-library::attachment-info-modal :$selected :$currentPath :$scope/>
 </div>

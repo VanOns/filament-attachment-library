@@ -5,7 +5,7 @@
         {{ __('filament-attachment-library::views.info.details.modal_title') }}
     </x-slot>
 
-    <livewire:attachment-info :$selected :$currentPath :$scope :contained="false" />
+    <livewire:attachment-info :$selected :$currentPath :$scope :contained="false" :wire:key="'attachment-info-modal-' . $scope" />
 
     <x-slot name="footer">
         <div class="flex gap-4">
